@@ -1,10 +1,19 @@
-import { IsDate, IsEmail, IsNotEmpty, IsPhoneNumber, IsString, MaxLength } from 'class-validator';
+import {
+  IsDate,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsPhoneNumber,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 import { Column, Entity } from 'typeorm';
 import Model from './model.entity';
 
 @Entity('SA_USER')
 export class User extends Model {
-  @Column()
+  @IsOptional()
+  @Column({ nullable: true })
   USER_NUMBER: string;
 
   @MaxLength(15, {
@@ -14,27 +23,33 @@ export class User extends Model {
   @Column()
   USER_NAME: string;
 
-  @Column()
+  @IsOptional()
+  @Column({ nullable: true })
   FULLNAME: string;
 
-  @Column({ select: false })
+  @IsOptional()
+  @Column({ select: false, nullable: true })
   PASSWORD: string;
 
+  @IsOptional()
   @IsEmail()
   @Column({
-    unique: true,
+    nullable: true,
   })
   EMAIL: string;
 
+  @IsOptional()
   @IsPhoneNumber('VN')
-  @Column()
+  @Column({ nullable: true })
   TELEPHONE: string;
 
+  @IsOptional()
   @IsString()
-  @Column()
+  @Column({ nullable: true })
   ADDRESS: string;
 
-  @Column({ type: 'datetime' })
+  @IsOptional()
+  @Column({ nullable: true })
   @IsDate()
   BIRTHDAY: Date;
 
@@ -43,10 +58,12 @@ export class User extends Model {
   @Column()
   ROLE_CODE: string;
 
-  @Column({ default: 1 })
+  @IsOptional()
+  @Column({ default: 1, nullable: true })
   IS_ACTIVE: number;
 
-  @Column()
+  @IsOptional()
+  @Column({ nullable: true })
   @IsString()
   REMARK: string;
 }

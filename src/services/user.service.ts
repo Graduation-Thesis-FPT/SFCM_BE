@@ -18,7 +18,6 @@ class UserService {
       throw new BadRequestError('Error: User already exists!');
     }
 
-    userInfo.BIRTHDAY = new Date(userInfo.BIRTHDAY);
     userInfo.UPDATE_DATE = new Date();
     userInfo.CREATE_BY = 'sample user';
 

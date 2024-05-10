@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import {
   CreateDateColumn,
   UpdateDateColumn,
@@ -16,11 +16,13 @@ export default abstract class Model extends BaseEntity {
   CREATE_BY: string;
 
   @CreateDateColumn({ type: 'datetime' })
+  @IsOptional()
   CREATE_DATE: Date;
 
   @Column()
   UPDATE_BY: string;
 
-  @UpdateDateColumn({ type: 'datetime' })
+  @IsOptional()
+  @UpdateDateColumn({ type: 'datetime', nullable: true  })
   UPDATE_DATE: Date;
 }
