@@ -15,7 +15,7 @@ const app = express();
 
 const allowedOrigins = ['http://localhost:2024'];
 const corsOptions = {
-  credential: true,
+  credentials: true,
   origin: function (origin: any, callback: any) {
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
