@@ -26,7 +26,7 @@ const findUserById = async (userId: string): Promise<UserEntity> => {
 
 const getAllUser = async (): Promise<UserEntity[]> => {
   return await userRepository.find({ where: { IS_ACTIVE: true } });
-};  
+};
 
 // delete forever
 const deleteUser = async (userId: string) => {
@@ -48,4 +48,13 @@ const updateUserStatus = async (userId: string) => {
     .execute();
 };
 
-export { findUserByUserName, findUserById, getAllUser, deleteUser, updateUserStatus };
+const updateUser = async (userId: string, userInfor: Partial<UserEntity>) => {
+  return await userRepository
+    .createQueryBuilder()
+    .update(UserEntity)
+    .set(userInfor)
+    .where('ROWGUID = :ROWGUID', { ROWGUID: userId })
+    .execute();
+};
+
+export { findUserByUserName, findUserById, getAllUser, deleteUser, updateUserStatus, updateUser };

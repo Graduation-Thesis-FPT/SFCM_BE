@@ -5,12 +5,18 @@ import {
   findUserById,
   findUserByUserName,
   getAllUser,
+  updateUser,
   updateUserStatus,
   userRepository,
 } from '../repositories/user.repo';
-import isValidInfor from '../utils/validateRequestInfo';
+import { isValidInfor, removeUndefinedProperty } from '../utils';
 
 class UserService {
+  /**
+   * Create User
+   * @param userInfo 
+   * @returns 
+   */
   static createUserAccount = async (userInfo: User): Promise<User> => {
     const foundUser = await findUserByUserName(userInfo.USER_NAME);
 
@@ -34,7 +40,11 @@ class UserService {
     return await findUserById(userId);
   };
 
-  // delete forever
+  /**
+   * Permanently delete a user
+   * @param userId 
+   * @returns 
+   */
   static deleteUser = async (userId: string) => {
     const user = await findUserById(userId);
 
@@ -45,7 +55,11 @@ class UserService {
     return await deleteUser(userId);
   };
 
-  // deactive user
+  /**
+   * Deactive User
+   * @param userId 
+   * @returns 
+   */
   static updateUserStatus = async (userId: string) => {
     const user = await findUserById(userId);
 
@@ -60,16 +74,30 @@ class UserService {
     return await getAllUser();
   };
 
-  static updateUser = async (userId: string) => {
+  /**
+   * Update User
+   * @param userId 
+   * @param userInfo 
+   * @returns 
+   */
+  static updateUser = async (userId: string, userInfo:  Partial<User>) => {
     const user = await findUserById(userId);
 
     if (!user) {
       throw new BadRequestError('Error: User not exist!');
     }
+    
+    const isDuplicatedUserName = await findUserByUserName(userInfo.USER_NAME);
 
-    return {
-      userId,
-    };
+    if(isDuplicatedUserName) {
+      throw new BadRequestError('Error: User name is duplicated!')
+    }
+
+    const objectParams = removeUndefinedProperty(userInfo);
+
+    await isValidInfor(objectParams);
+
+    return updateUser(userId, objectParams)
   };
 }
 

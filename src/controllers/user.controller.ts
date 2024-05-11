@@ -43,7 +43,7 @@ class UserController {
   updateUser = async (req: Request, res: Response, next: NextFunction) => {
     new SuccessResponse({
       message: 'update success',
-      metadata: await UserService.updateUser(req.params.userId)
+      metadata: await UserService.updateUser(req.params.userId, req.body)
     }).send(res)
   }
 }
