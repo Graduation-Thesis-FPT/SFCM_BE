@@ -95,7 +95,9 @@ class UserService {
 
     const objectParams = removeUndefinedProperty(userInfo);
 
-    await isValidInfor(objectParams);
+    const userInstance = userRepository.create(objectParams);
+
+    await isValidInfor(userInstance);
 
     return updateUser(userId, objectParams)
   };
