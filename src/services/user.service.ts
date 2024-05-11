@@ -12,12 +12,16 @@ import isValidInfor from '../utils/validateRequestInfo';
 
 class UserService {
   static createUserAccount = async (userInfo: User): Promise<User> => {
+    console.log('service', userInfo);
     const foundUser = await findUserByUserName(userInfo.USER_NAME);
+
+    console.log('found user: ', foundUser);
 
     if (foundUser) {
       throw new BadRequestError('Error: User already exists!');
     }
 
+    if (userInfo.BIRTHDAY) userInfo.BIRTHDAY = new Date(userInfo.BIRTHDAY);
     userInfo.UPDATE_DATE = new Date();
     userInfo.CREATE_BY = 'sample user';
 
@@ -54,7 +58,7 @@ class UserService {
 
   static getAllUser = async (): Promise<User[]> => {
     return await getAllUser();
-  }
+  };
 }
 
 export default UserService;

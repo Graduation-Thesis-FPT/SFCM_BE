@@ -19,8 +19,8 @@ export class User extends Model {
   @MaxLength(15, {
     message: 'USER_NAME have max length is 10 character',
   })
-  @IsNotEmpty()
   @Column()
+  @IsNotEmpty()
   USER_NAME: string;
 
   @IsOptional()

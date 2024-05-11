@@ -4,7 +4,10 @@ import { User as UserEntity } from '../entity/user.entity';
 export const userRepository = mssqlConnection.getRepository(UserEntity);
 
 const findUserByUserName = async (userName: string): Promise<UserEntity> => {
-  return await userRepository.findOneBy({ USER_NAME: userName });
+  return await userRepository
+    .createQueryBuilder('SA_USER')
+    .where('SA_USER.USER_NAME = :USER_NAME', { USER_NAME: userName })
+    .getOne();
 };
 
 const findUserById = async (userId: string): Promise<UserEntity> => {

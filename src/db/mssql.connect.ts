@@ -9,7 +9,7 @@ const mssqlConnection = new DataSource({
   database: process.env.DB_NAME,
   entities: [User],
   options: {
-    encrypt: false
+    encrypt: true
   }
 });
 
