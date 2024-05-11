@@ -26,7 +26,7 @@ class UserController {
     }).send(res)
   }
 
-  updateUserStatus = async (req: Request, res: Response, next: NextFunction) => {
+  deactivateUser = async (req: Request, res: Response, next: NextFunction) => {
     new SuccessResponse({
       message: 'delete success',
       metadata: await UserService.updateUserStatus(req.params.id)
@@ -37,6 +37,13 @@ class UserController {
     new OK({
       message: 'success',
       metadata: await UserService.getAllUser()
+    }).send(res)
+  }
+
+  updateUser = async (req: Request, res: Response, next: NextFunction) => {
+    new SuccessResponse({
+      message: 'update success',
+      metadata: await UserService.updateUser(req.params.userId)
     }).send(res)
   }
 }

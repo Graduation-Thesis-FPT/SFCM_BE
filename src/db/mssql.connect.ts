@@ -9,8 +9,8 @@ const mssqlConnection = new DataSource({
   database: process.env.DB_NAME,
   entities: [User],
   options: {
-    encrypt: true
-  }
+    encrypt: process.env.DB_SERVER === 'localhost' ? false : true
+  },
 });
 
 export default mssqlConnection;

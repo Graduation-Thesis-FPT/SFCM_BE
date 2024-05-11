@@ -20,6 +20,7 @@ class UserService {
 
     if (userInfo.BIRTHDAY) userInfo.BIRTHDAY = new Date(userInfo.BIRTHDAY);
     userInfo.UPDATE_DATE = new Date();
+    userInfo.CREATE_DATE = new Date();
     userInfo.CREATE_BY = 'sample user';
 
     const user = userRepository.create(userInfo);
@@ -33,6 +34,7 @@ class UserService {
     return await findUserById(userId);
   };
 
+  // delete forever
   static deleteUser = async (userId: string) => {
     const user = await findUserById(userId);
 
@@ -43,6 +45,7 @@ class UserService {
     return await deleteUser(userId);
   };
 
+  // deactive user
   static updateUserStatus = async (userId: string) => {
     const user = await findUserById(userId);
 
@@ -55,6 +58,18 @@ class UserService {
 
   static getAllUser = async (): Promise<User[]> => {
     return await getAllUser();
+  };
+
+  static updateUser = async (userId: string) => {
+    const user = await findUserById(userId);
+
+    if (!user) {
+      throw new BadRequestError('Error: User not exist!');
+    }
+
+    return {
+      userId,
+    };
   };
 }
 

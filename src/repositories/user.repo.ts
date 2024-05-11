@@ -1,3 +1,4 @@
+import { BadRequestError } from '../core/error.response';
 import mssqlConnection from '../db/mssql.connect';
 import { User as UserEntity } from '../entity/user.entity';
 
@@ -11,12 +12,21 @@ const findUserByUserName = async (userName: string): Promise<UserEntity> => {
 };
 
 const findUserById = async (userId: string): Promise<UserEntity> => {
-  return await userRepository.findOneBy({ ROWGUID: userId });
+  const uuidRegex =
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+
+  if (!uuidRegex.test(userId)) {
+    throw new BadRequestError('Error: Invalid User Id');
+  }
+
+  const user = await userRepository.findOne({ where: { ROWGUID: userId, IS_ACTIVE: true } });
+
+  return user;
 };
 
 const getAllUser = async (): Promise<UserEntity[]> => {
-  return await userRepository.find();
-};
+  return await userRepository.find({ where: { IS_ACTIVE: true } });
+};  
 
 // delete forever
 const deleteUser = async (userId: string) => {
@@ -33,7 +43,7 @@ const updateUserStatus = async (userId: string) => {
   return await userRepository
     .createQueryBuilder()
     .update(UserEntity)
-    .set({ IS_ACTIVE: 0 })
+    .set({ IS_ACTIVE: true })
     .where('ROWGUID = :ROWGUID', { ROWGUID: userId })
     .execute();
 };

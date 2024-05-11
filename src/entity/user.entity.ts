@@ -7,8 +7,9 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { Column, Entity } from 'typeorm';
+import { AfterLoad, Column, Entity } from 'typeorm';
 import Model from './model.entity';
+import moment from 'moment';
 
 @Entity('SA_USER')
 export class User extends Model {
@@ -49,7 +50,7 @@ export class User extends Model {
   ADDRESS: string;
 
   @IsOptional()
-  @Column({ nullable: true })
+  @Column({ type: 'datetime' })
   @IsDate()
   BIRTHDAY: Date;
 
@@ -59,11 +60,17 @@ export class User extends Model {
   ROLE_CODE: string;
 
   @IsOptional()
-  @Column({ default: 1, nullable: true })
-  IS_ACTIVE: number;
+  @Column({ default: true })
+  IS_ACTIVE: boolean;
 
   @IsOptional()
   @Column({ nullable: true })
   @IsString()
   REMARK: string;
+
+  @AfterLoad()
+  birthDates() {
+    const birthDate = moment(this.BIRTHDAY).format('DD/MM/YYYY');
+    return (this.BIRTHDAY = this.BIRTHDAY ? (birthDate as any) : null);
+  }
 }
