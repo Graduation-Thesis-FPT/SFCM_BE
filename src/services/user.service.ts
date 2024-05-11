@@ -12,10 +12,7 @@ import isValidInfor from '../utils/validateRequestInfo';
 
 class UserService {
   static createUserAccount = async (userInfo: User): Promise<User> => {
-    console.log('service', userInfo);
     const foundUser = await findUserByUserName(userInfo.USER_NAME);
-
-    console.log('found user: ', foundUser);
 
     if (foundUser) {
       throw new BadRequestError('Error: User already exists!');
