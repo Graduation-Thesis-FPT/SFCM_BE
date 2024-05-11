@@ -1,12 +1,13 @@
 import { BadRequestError } from '../core/error.response';
 import { User } from '../entity/user.entity';
 import {
+  activeUser,
+  deactiveUser,
   deleteUser,
   findUserById,
   findUserByUserName,
   getAllUser,
   updateUser,
-  updateUserStatus,
   userRepository,
 } from '../repositories/user.repo';
 import { isValidInfor, removeUndefinedProperty } from '../utils';
@@ -33,7 +34,9 @@ class UserService {
 
     await isValidInfor(user);
 
-    return await userRepository.save(user);
+    const newUser =  await userRepository.save(user);
+
+    return newUser
   };
 
   static findUserById = async (userId: string): Promise<User> => {
@@ -46,11 +49,11 @@ class UserService {
    * @returns 
    */
   static deleteUser = async (userId: string) => {
-    const user = await findUserById(userId);
+    // const user = await findUserById(userId);
 
-    if (!user) {
-      throw new BadRequestError('Error: User not exist!');
-    }
+    // if (!user) {
+    //   throw new BadRequestError('Error: User not exist!');
+    // }
 
     return await deleteUser(userId);
   };
@@ -60,14 +63,29 @@ class UserService {
    * @param userId 
    * @returns 
    */
-  static updateUserStatus = async (userId: string) => {
+  static deactiveUser = async (userId: string) => {
     const user = await findUserById(userId);
 
     if (!user) {
       throw new BadRequestError('Error: User not exist!');
     }
 
-    return await updateUserStatus(userId);
+    return await deactiveUser(userId)
+  };
+  
+  /**
+   * Active User
+   * @param userId 
+   * @returns 
+   */
+  static activeUser = async (userId: string) => {
+    const user = await findUserById(userId);
+
+    if (!user) {
+      throw new BadRequestError('Error: User not exist!');
+    }
+
+    return await activeUser(userId)
   };
 
   static getAllUser = async (): Promise<User[]> => {

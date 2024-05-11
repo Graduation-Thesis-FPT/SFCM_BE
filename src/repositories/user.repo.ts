@@ -19,13 +19,13 @@ const findUserById = async (userId: string): Promise<UserEntity> => {
     throw new BadRequestError('Error: Invalid User Id');
   }
 
-  const user = await userRepository.findOne({ where: { ROWGUID: userId, IS_ACTIVE: true } });
+  const user = await userRepository.findOne({ where: { ROWGUID: userId } });
 
   return user;
 };
 
 const getAllUser = async (): Promise<UserEntity[]> => {
-  return await userRepository.find({ where: { IS_ACTIVE: true } });
+  return await userRepository.find();
 };
 
 // delete forever
@@ -38,8 +38,18 @@ const deleteUser = async (userId: string) => {
     .execute();
 };
 
-// soft delete
-const updateUserStatus = async (userId: string) => {
+// deactive 
+const deactiveUser = async (userId: string) => {
+  return await userRepository
+    .createQueryBuilder()
+    .update(UserEntity)
+    .set({ IS_ACTIVE: false })
+    .where('ROWGUID = :ROWGUID', { ROWGUID: userId })
+    .execute();
+};
+
+// active 
+const activeUser = async (userId: string) => {
   return await userRepository
     .createQueryBuilder()
     .update(UserEntity)
@@ -57,4 +67,12 @@ const updateUser = async (userId: string, userInfor: Partial<UserEntity>) => {
     .execute();
 };
 
-export { findUserByUserName, findUserById, getAllUser, deleteUser, updateUserStatus, updateUser };
+export {
+  findUserByUserName,
+  findUserById,
+  getAllUser,
+  deleteUser,
+  deactiveUser,
+  activeUser,
+  updateUser,
+};
