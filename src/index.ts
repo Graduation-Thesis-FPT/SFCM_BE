@@ -1,20 +1,21 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
 import 'reflect-metadata';
+
+dotenv.config({ path: '.env' });
 
 import routes from './routes';
 import { ErrorResponse } from './core/error.response';
-
-dotenv.config({ path: '.env' });
 import mssqlConnection from './db/mssql.connect';
 
 const app = express();
 
 const allowedOrigins = ['http://localhost:2024'];
 const corsOptions = {
+  credentials: true,
   origin: function (origin: any, callback: any) {
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
