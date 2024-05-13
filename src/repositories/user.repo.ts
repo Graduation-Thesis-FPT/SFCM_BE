@@ -1,9 +1,9 @@
 import { BadRequestError } from '../core/error.response';
 import mssqlConnection from '../db/mssql.connect';
+// import { Role } from '../entity/role.entity';
 import { User as UserEntity } from '../entity/user.entity';
 
 export const userRepository = mssqlConnection.getRepository(UserEntity);
-
 const findUserByUserName = async (userName: string): Promise<UserEntity> => {
   return await userRepository
     .createQueryBuilder('SA_USER')
@@ -19,13 +19,19 @@ const findUserById = async (userId: string): Promise<UserEntity> => {
     throw new BadRequestError('Error: Invalid User Id');
   }
 
-  const user = await userRepository.findOne({ where: { ROWGUID: userId } });
+  const user = await userRepository.findOne({
+    relations: { role: true },
+    where: { ROWGUID: userId },
+  });
 
   return user;
 };
 
 const getAllUser = async (): Promise<UserEntity[]> => {
-  return await userRepository.find();
+  return await userRepository.find({
+    relations: { role: true },
+    order: { UPDATE_DATE: 'DESC' },
+  });
 };
 
 // delete forever
@@ -38,7 +44,7 @@ const deleteUser = async (userId: string) => {
     .execute();
 };
 
-// deactive 
+// deactive
 const deactiveUser = async (userId: string) => {
   return await userRepository
     .createQueryBuilder()
@@ -48,7 +54,7 @@ const deactiveUser = async (userId: string) => {
     .execute();
 };
 
-// active 
+// active
 const activeUser = async (userId: string) => {
   return await userRepository
     .createQueryBuilder()
@@ -59,12 +65,7 @@ const activeUser = async (userId: string) => {
 };
 
 const updateUser = async (userId: string, userInfor: Partial<UserEntity>) => {
-  return await userRepository
-    .createQueryBuilder()
-    .update(UserEntity)
-    .set(userInfor)
-    .where('ROWGUID = :ROWGUID', { ROWGUID: userId })
-    .execute();
+  return await userRepository.update(userId, userInfor);
 };
 
 export {

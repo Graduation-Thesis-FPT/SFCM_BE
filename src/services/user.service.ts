@@ -15,8 +15,8 @@ import { isValidInfor, removeUndefinedProperty } from '../utils';
 class UserService {
   /**
    * Create User
-   * @param userInfo 
-   * @returns 
+   * @param userInfo
+   * @returns
    */
   static createUserAccount = async (userInfo: User): Promise<User> => {
     const foundUser = await findUserByUserName(userInfo.USER_NAME);
@@ -26,17 +26,16 @@ class UserService {
     }
 
     if (userInfo.BIRTHDAY) userInfo.BIRTHDAY = new Date(userInfo.BIRTHDAY);
-    userInfo.UPDATE_DATE = new Date();
-    userInfo.CREATE_DATE = new Date();
     userInfo.CREATE_BY = 'sample user';
+    userInfo.UPDATE_BY = 'sample user';
 
     const user = userRepository.create(userInfo);
 
     await isValidInfor(user);
 
-    const newUser =  await userRepository.save(user);
+    const newUser = await userRepository.save(user);
 
-    return newUser
+    return newUser;
   };
 
   static findUserById = async (userId: string): Promise<User> => {
@@ -45,8 +44,8 @@ class UserService {
 
   /**
    * Permanently delete a user
-   * @param userId 
-   * @returns 
+   * @param userId
+   * @returns
    */
   static deleteUser = async (userId: string) => {
     // const user = await findUserById(userId);
@@ -60,8 +59,8 @@ class UserService {
 
   /**
    * Deactive User
-   * @param userId 
-   * @returns 
+   * @param userId
+   * @returns
    */
   static deactiveUser = async (userId: string) => {
     const user = await findUserById(userId);
@@ -70,13 +69,13 @@ class UserService {
       throw new BadRequestError('Error: User not exist!');
     }
 
-    return await deactiveUser(userId)
+    return await deactiveUser(userId);
   };
-  
+
   /**
    * Active User
-   * @param userId 
-   * @returns 
+   * @param userId
+   * @returns
    */
   static activeUser = async (userId: string) => {
     const user = await findUserById(userId);
@@ -85,7 +84,7 @@ class UserService {
       throw new BadRequestError('Error: User not exist!');
     }
 
-    return await activeUser(userId)
+    return await activeUser(userId);
   };
 
   static getAllUser = async (): Promise<User[]> => {
@@ -94,30 +93,35 @@ class UserService {
 
   /**
    * Update User
-   * @param userId 
-   * @param userInfo 
-   * @returns 
+   * @param userId
+   * @param userInfo
+   * @returns
    */
-  static updateUser = async (userId: string, userInfo:  Partial<User>) => {
+  static updateUser = async (userId: string, userInfo: Partial<User>) => {
     const user = await findUserById(userId);
 
     if (!user) {
       throw new BadRequestError('Error: User not exist!');
     }
-    
-    const isDuplicatedUserName = await findUserByUserName(userInfo.USER_NAME);
 
-    if(isDuplicatedUserName) {
-      throw new BadRequestError('Error: User name is duplicated!')
+    if (userInfo.USER_NAME) {
+      const isDuplicatedUserName = await findUserByUserName(userInfo.USER_NAME);
+
+      if (isDuplicatedUserName) {
+        throw new BadRequestError('Error: User name is duplicated!');
+      }
     }
 
     const objectParams = removeUndefinedProperty(userInfo);
 
-    const userInstance = userRepository.create(objectParams);
+    if (!objectParams.BIRTHDAY) objectParams.BIRTHDAY = null;
+    objectParams.UPDATE_BY = 'sample user update';
+    delete objectParams.ROLE_CODE;
+    // const userInstance = userRepository.create(objectParams);
 
-    await isValidInfor(userInstance);
+    // await isValidInfor(userInstance);
 
-    return updateUser(userId, objectParams)
+    return updateUser(userId, objectParams);
   };
 }
 
