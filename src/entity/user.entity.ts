@@ -7,9 +7,8 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import Model from './model.entity';
-import { Role } from './role.entity';
 
 @Entity('SA_USER')
 export class User extends Model {
@@ -66,8 +65,4 @@ export class User extends Model {
   @Column({ nullable: true })
   @IsString()
   REMARK: string;
-
-  @ManyToOne(() => Role, role => role.user)
-  @JoinColumn({ name: 'ROLE_CODE' })
-  role: Role;
 }

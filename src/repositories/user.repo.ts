@@ -1,6 +1,6 @@
 import { BadRequestError } from '../core/error.response';
 import mssqlConnection from '../db/mssql.connect';
-// import { Role } from '../entity/role.entity';
+import { Role } from '../entity/role.entity';
 import { User as UserEntity } from '../entity/user.entity';
 
 export const userRepository = mssqlConnection.getRepository(UserEntity);
@@ -19,19 +19,53 @@ const findUserById = async (userId: string): Promise<UserEntity> => {
     throw new BadRequestError('Error: Invalid User Id');
   }
 
-  const user = await userRepository.findOne({
-    relations: { role: true },
-    where: { ROWGUID: userId },
-  });
+  const user = await userRepository
+    .createQueryBuilder('user')
+    .leftJoinAndSelect(Role, 'role', 'user.ROLE_CODE = role.ROLE_CODE')
+    .select([
+      'user.ROWGUID as ROWGUID',
+      'user.USER_NAME as USER_NAME',
+      'user.FULLNAME as FULLNAME',
+      'user.EMAIL as EMAIL',
+      'user.TELEPHONE as TELEPHONE',
+      'user.ADDRESS as ADDRESS',
+      'user.BIRTHDAY as BIRTHDAY',
+      'user.IS_ACTIVE as IS_ACTIVE',
+      'user.CREATE_DATE as CREATE_DATE',
+      'user.CREATE_BY as CREATE_BY',
+      'user.UPDATE_DATE as UPDATE_DATE',
+      'user.UPDATE_BY as UPDATE_BY',
+      'user.ROLE_CODE as ROLE_CODE',
+      'role.ROLE_NAME as ROLE_NAME',
+    ])
+    .where('user.ROWGUID = :ROWGUID', { ROWGUID: userId })
+    .getRawOne();
 
   return user;
 };
 
 const getAllUser = async (): Promise<UserEntity[]> => {
-  return await userRepository.find({
-    relations: { role: true },
-    order: { UPDATE_DATE: 'DESC' },
-  });
+  return await userRepository
+    .createQueryBuilder('user')
+    .leftJoinAndSelect(Role, 'role', 'user.ROLE_CODE = role.ROLE_CODE')
+    .select([
+      'user.ROWGUID as ROWGUID',
+      'user.USER_NAME as USER_NAME',
+      'user.FULLNAME as FULLNAME',
+      'user.EMAIL as EMAIL',
+      'user.TELEPHONE as TELEPHONE',
+      'user.ADDRESS as ADDRESS',
+      'user.BIRTHDAY as BIRTHDAY',
+      'user.IS_ACTIVE as IS_ACTIVE',
+      'user.CREATE_DATE as CREATE_DATE',
+      'user.CREATE_BY as CREATE_BY',
+      'user.UPDATE_DATE as UPDATE_DATE',
+      'user.UPDATE_BY as UPDATE_BY',
+      'user.ROLE_CODE as ROLE_CODE',
+      'role.ROLE_NAME as ROLE_NAME',
+    ])
+    .orderBy('user.UPDATE_DATE', 'DESC')
+    .getRawMany();
 };
 
 // delete forever

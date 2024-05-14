@@ -116,7 +116,6 @@ class UserService {
 
     if (!objectParams.BIRTHDAY) objectParams.BIRTHDAY = null;
     objectParams.UPDATE_BY = 'sample user update';
-    delete objectParams.ROLE_CODE;
     // const userInstance = userRepository.create(objectParams);
 
     // await isValidInfor(userInstance);
