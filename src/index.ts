@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import 'reflect-metadata';
+var cookieParser = require('cookie-parser');
 
 dotenv.config({ path: '.env' });
 
@@ -12,7 +13,6 @@ import { ErrorResponse } from './core/error.response';
 import mssqlConnection from './db/mssql.connect';
 
 const app = express();
-
 const allowedOrigins = ['http://localhost:2024'];
 const corsOptions = {
   credentials: true,
@@ -28,6 +28,7 @@ const corsOptions = {
 /**
  * App Configuration
  */
+app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json());

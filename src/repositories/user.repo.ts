@@ -102,6 +102,33 @@ const updateUser = async (userId: string, userInfor: Partial<UserEntity>) => {
   return await userRepository.update(userId, userInfor);
 };
 
+const checkPasswordIsNullById = async (userId: string) => {
+  const user = await userRepository
+    .createQueryBuilder('user')
+    .select('user.ROWGUID')
+    .where('user.ROWGUID = :ROWGUID', { ROWGUID: userId })
+    .andWhere('user.PASSWORD IS NULL')
+    .getOne();
+  return user !== null; // Trả về true nếu user có password là null, ngược lại trả về false
+};
+
+const updatePasswordById = async (userId: string, password: string) => {
+  return await userRepository
+    .createQueryBuilder()
+    .update(UserEntity)
+    .set({ PASSWORD: password })
+    .where('ROWGUID = :ROWGUID', { ROWGUID: userId })
+    .execute();
+};
+
+const getUserWithPasswordById = async (userId: string) => {
+  return await userRepository
+    .createQueryBuilder('user')
+    .addSelect('user.PASSWORD')
+    .where('user.ROWGUID = :ROWGUID', { ROWGUID: userId })
+    .getOne();
+};
+
 export {
   findUserByUserName,
   findUserById,
@@ -110,4 +137,7 @@ export {
   deactiveUser,
   activeUser,
   updateUser,
+  checkPasswordIsNullById,
+  updatePasswordById,
+  getUserWithPasswordById,
 };

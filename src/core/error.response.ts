@@ -1,4 +1,4 @@
-import { ReasonPhrases, StatusCodes } from "../utils/httpStatusCode";
+import { ReasonPhrases, StatusCodes } from '../utils/httpStatusCode';
 
 class ErrorResponse extends Error {
   status: number;
@@ -35,5 +35,13 @@ class ForbiddenError extends ErrorResponse {
     super(message, statusCode);
   }
 }
+class UnAuthorizedError extends ErrorResponse {
+  constructor(
+    message: string = ReasonPhrases.UNAUTHORIZED,
+    statusCode: number = StatusCodes.UNAUTHORIZED,
+  ) {
+    super(message, statusCode);
+  }
+}
 
-export { ForbiddenError, BadRequestError, NotFoundError, ErrorResponse };
+export { ForbiddenError, BadRequestError, NotFoundError, ErrorResponse, UnAuthorizedError };
