@@ -19,6 +19,10 @@ class AccessService {
       throw new BadRequestError('Error: User name not exist!');
     }
 
+    if (!foundUser.IS_ACTIVE) {
+      throw new BadRequestError('Error: User is not active!');
+    }
+
     const passwordIsNull = await checkPasswordIsNullById(foundUser.ROWGUID);
 
     if (passwordIsNull) {
@@ -45,7 +49,7 @@ class AccessService {
   };
 
   static changeDefaultPassword = async (userId: string, userInfo: Partial<User>) => {
-    const foundUser = await findUserByUserName(userInfo.USER_NAME);
+    const foundUser = await findUserById(userId);
     if (!foundUser) {
       throw new BadRequestError('Error: User name not exist!');
     }
@@ -61,7 +65,15 @@ class AccessService {
 
     const salt = await bcrypt.genSalt(10);
     const hashed = await bcrypt.hash(userInfo.PASSWORD, salt);
-    return updatePasswordById(userId, hashed);
+
+    const updateResult = await updatePasswordById(userId, hashed);
+    if (!updateResult) {
+      throw new BadRequestError('Error: Update password failed!');
+    }
+
+    const accessToken = createNewAccessToken(foundUser);
+    const refreshToken = createRefreshToken(foundUser);
+    return { userInfo: foundUser, accessToken: accessToken, refreshToken: refreshToken };
   };
 
   static refreshToken = async (refreshToken: string) => {
