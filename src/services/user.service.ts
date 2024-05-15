@@ -7,6 +7,7 @@ import {
   findUserById,
   findUserByUserName,
   getAllUser,
+  resetPasswordById,
   updateUser,
   userRepository,
 } from '../repositories/user.repo';
@@ -121,6 +122,13 @@ class UserService {
     // await isValidInfor(userInstance);
 
     return updateUser(userId, objectParams);
+  };
+
+  static resetPasswordById = async (userId: string, defaultPassword: string) => {
+    if (defaultPassword !== process.env.DEFAULT_PASSWORD) {
+      throw new BadRequestError('Error: Password is default!');
+    }
+    return await resetPasswordById(userId);
   };
 }
 

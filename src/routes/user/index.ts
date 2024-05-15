@@ -11,5 +11,6 @@ router.delete('/:id', asyncHandler(userController.deleteUserById));
 router.patch('/deactive/:id', asyncHandler(userController.deactivateUser));
 router.patch('/active/:id', asyncHandler(userController.activateUser));
 router.patch('/:userId', asyncHandler(userController.updateUser));
+router.patch('/reset-password/:userId', asyncHandler(userController.resetPasswordById));
 
 export default router;

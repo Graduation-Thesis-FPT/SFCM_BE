@@ -15,44 +15,51 @@ class UserController {
   findUserById = async (req: Request, res: Response, next: NextFunction) => {
     new OK({
       message: 'success',
-      metadata: await UserService.findUserById(req.params.id)
+      metadata: await UserService.findUserById(req.params.id),
     }).send(res);
-  }
+  };
 
   deleteUserById = async (req: Request, res: Response, next: NextFunction) => {
     new SuccessResponse({
       message: 'delete user success',
-      metadata: await UserService.deleteUser(req.params.id)
-    }).send(res)
-  }
+      metadata: await UserService.deleteUser(req.params.id),
+    }).send(res);
+  };
 
   deactivateUser = async (req: Request, res: Response, next: NextFunction) => {
     new SuccessResponse({
       message: 'deactive user success',
-      metadata: await UserService.deactiveUser(req.params.id)
-    }).send(res)
-  }
+      metadata: await UserService.deactiveUser(req.params.id),
+    }).send(res);
+  };
 
   activateUser = async (req: Request, res: Response, next: NextFunction) => {
     new SuccessResponse({
       message: 'active user success',
-      metadata: await UserService.activeUser(req.params.id)
-    }).send(res)
-  }
+      metadata: await UserService.activeUser(req.params.id),
+    }).send(res);
+  };
 
   getAllUser = async (req: Request, res: Response, next: NextFunction) => {
     new OK({
       message: 'success',
-      metadata: await UserService.getAllUser()
-    }).send(res)
-  }
+      metadata: await UserService.getAllUser(),
+    }).send(res);
+  };
 
   updateUser = async (req: Request, res: Response, next: NextFunction) => {
     new SuccessResponse({
       message: 'update success',
-      metadata: await UserService.updateUser(req.params.userId, req.body)
-    }).send(res)
-  }
+      metadata: await UserService.updateUser(req.params.userId, req.body),
+    }).send(res);
+  };
+
+  resetPasswordById = async (req: Request, res: Response, next: NextFunction) => {
+    new SuccessResponse({
+      message: 'reset password success',
+      metadata: await UserService.resetPasswordById(req.params.userId, req.body.DEFAULT_PASSWORD),
+    }).send(res);
+  };
 }
 
 export default new UserController();

@@ -129,6 +129,10 @@ const getUserWithPasswordById = async (userId: string) => {
     .getOne();
 };
 
+const resetPasswordById = async (userId: string) => {
+  return await userRepository.update(userId, { PASSWORD: null });
+};
+
 export {
   findUserByUserName,
   findUserById,
@@ -140,4 +144,5 @@ export {
   checkPasswordIsNullById,
   updatePasswordById,
   getUserWithPasswordById,
+  resetPasswordById,
 };
