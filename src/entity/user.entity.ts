@@ -7,15 +7,13 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { AfterLoad, Column, Entity } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import Model from './model.entity';
-import moment from 'moment';
 
 @Entity('SA_USER')
 export class User extends Model {
-  @IsOptional()
-  @Column({ nullable: true })
-  USER_NUMBER: string;
+  @PrimaryGeneratedColumn('uuid')
+  ROWGUID: string;
 
   @MaxLength(15, {
     message: 'USER_NAME have max length is 10 character',
@@ -67,10 +65,4 @@ export class User extends Model {
   @Column({ nullable: true })
   @IsString()
   REMARK: string;
-
-  @AfterLoad()
-  birthDates() {
-    const birthDate = moment(this.BIRTHDAY).format('DD/MM/YYYY');
-    return (this.BIRTHDAY = this.BIRTHDAY ? (birthDate as any) : null);
-  }
 }

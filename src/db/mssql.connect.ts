@@ -1,5 +1,6 @@
 import { DataSource } from 'typeorm';
 import { User } from '../entity/user.entity';
+import { Role } from '../entity/role.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -7,9 +8,9 @@ const mssqlConnection = new DataSource({
   username: process.env.DB_USER_NAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [User],
+  entities: [User, Role],
   options: {
-    encrypt: process.env.DB_SERVER === 'localhost' ? false : true
+    encrypt: process.env.DB_SERVER === 'localhost' ? false : true,
   },
 });
 
