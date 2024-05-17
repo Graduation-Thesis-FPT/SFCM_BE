@@ -1178,7 +1178,7 @@ VALUES ('admin','Admin','sql','sql'),
 ('manage','Manage','sql','sql')
 
 INSERT INTO SA_USER (ROLE_CODE, USER_NAME,CREATE_BY,UPDATE_BY)
-VALUES ('admin','admin','sql','sql')
+VALUES ('admin','superadmin','sql','sql')
 
 INSERT INTO SA_MENU (PARENT_CODE,MENU_CODE,MENU_NAME,MENU_ICON,IS_VISIBLE,ORDER_BY,VIEW_PAGE,CREATE_BY,UPDATE_BY)
 VALUES 
@@ -1189,4 +1189,6 @@ VALUES
 INSERT INTO SA_PERMISSION (ROLE_CODE,MENU_CODE,IS_VIEW,IS_ADD_NEW,IS_MODIFY,IS_DELETE,CREATE_BY,UPDATE_BY)
 VALUES 
 ('admin','user',1,1,1,1,'sql','sql'),
-('admin','permission',1,1,1,1,'sql','sql')
+('admin','permission',1,1,1,1,'sql','sql'),
+('manage','user',1,1,1,1,'sql','sql'),
+('manage','permission',0,0,0,0,'sql','sql'),

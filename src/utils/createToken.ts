@@ -2,12 +2,7 @@ import { User } from '../entity/user.entity';
 const jwt = require('jsonwebtoken');
 
 const createNewAccessToken = (userInfo: Partial<User>) => {
-  const { ROWGUID, USER_NAME } = userInfo;
-  return jwt.sign(
-    {
-      ROWGUID,
-      USER_NAME,
-    },
+  return jwt.sign(userInfo,
     process.env.ACCESS_TOKEN_SIGN_SECRET,
     {
       expiresIn: process.env.EXPIRES_ACCESS_TOKEN,
@@ -16,12 +11,7 @@ const createNewAccessToken = (userInfo: Partial<User>) => {
 };
 
 const createRefreshToken = (userInfo: Partial<User>) => {
-  const { ROWGUID, USER_NAME } = userInfo;
-  return jwt.sign(
-    {
-      ROWGUID,
-      USER_NAME,
-    },
+  return jwt.sign(userInfo,
     process.env.REFRESH_TOKEN_SIGN_SECRET,
     {
       expiresIn: process.env.EXPIRES_REFRESH_TOKEN,

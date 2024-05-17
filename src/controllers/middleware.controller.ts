@@ -18,6 +18,7 @@ class MiddlewareController {
       if (err) {
         throw new ForbiddenError('Error: authorization required!');
       }
+      res.locals.user = user;
       next();
     });
   };
