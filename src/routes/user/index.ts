@@ -1,8 +1,11 @@
 import { Router } from 'express';
 import userController from '../../controllers/user.controller';
 import { asyncHandler } from '../../utils';
+import { authentication } from '../../auth/authUtils';
 
 const router = Router();
+
+router.use(authentication)
 
 router.get('/:id', asyncHandler(userController.findUserById));
 router.get('', asyncHandler(userController.getAllUser));

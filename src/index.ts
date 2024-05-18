@@ -43,7 +43,18 @@ app.all('*', (req, res, next) => {
 });
 
 app.use((error: Error | any, req: Request, res: Response, next: NextFunction) => {
-  const statusCode = error.status || 500;
+  let statusCode = error.status || 500;
+
+  if (error.name === 'TokenExpiredError') {
+    statusCode = 401;
+    error.message = 'Token has expired please login again!';
+  }
+
+  if(error.name === 'JsonWebTokenError') {
+    statusCode = 401;
+    error.message = 'Invalid token please login again!';
+  }
+
   return res.status(statusCode).json({
     status: 'error',
     code: statusCode,

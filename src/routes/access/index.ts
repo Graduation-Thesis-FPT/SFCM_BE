@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import accessController from '../../controllers/access.controller';
 import { asyncHandler } from '../../utils';
+import { verifyRefreshToken } from '../../auth/authUtils';
 
 const router = Router();
 
 router.post('/login', asyncHandler(accessController.login));
-router.post('/refresh-token', asyncHandler(accessController.refreshToken));
+router.post('/refresh-token', verifyRefreshToken, asyncHandler(accessController.handlerRefreshToken));
 router.patch(
   '/change-default-password/:userId',
   asyncHandler(accessController.changeDefaultPassword),

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { validate } from 'class-validator';
+import _ from 'lodash';
 import { BadRequestError } from '../core/error.response';
 
 const isValidInfor = async (requestData: object) => {
@@ -30,4 +31,8 @@ const removeUndefinedProperty = (obj: Record<string, any>) => {
   return obj;
 };
 
-export { removeUndefinedProperty, asyncHandler, isValidInfor };
+const getInfoData = (object: object, fields: string[]) => {
+  return _.pick(object, fields);
+};
+
+export { removeUndefinedProperty, asyncHandler, isValidInfor, getInfoData };

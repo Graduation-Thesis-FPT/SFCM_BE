@@ -4,6 +4,7 @@ import { Role } from '../entity/role.entity';
 import { User as UserEntity } from '../entity/user.entity';
 
 export const userRepository = mssqlConnection.getRepository(UserEntity);
+
 const findUserByUserName = async (userName: string): Promise<UserEntity> => {
   return await userRepository
     .createQueryBuilder('SA_USER')

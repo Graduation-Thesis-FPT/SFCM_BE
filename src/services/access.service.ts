@@ -1,4 +1,5 @@
-import { BadRequestError, UnAuthorizedError } from '../core/error.response';
+import { createNewAccessToken, createRefreshToken } from '../auth/authUtils';
+import { BadRequestError } from '../core/error.response';
 import { User } from '../entity/user.entity';
 import {
   checkPasswordIsNullById,
@@ -8,8 +9,8 @@ import {
   updatePasswordById,
 } from '../repositories/user.repo';
 import bcrypt from 'bcrypt';
-import { createNewAccessToken, createRefreshToken } from '../utils/createToken';
-const jwt = require('jsonwebtoken');
+import { getInfoData } from '../utils';
+// const jwt = require('jsonwebtoken');
 
 class AccessService {
   static login = async (userInfo: Partial<User>) => {
@@ -45,7 +46,20 @@ class AccessService {
 
     const accessToken = createNewAccessToken(resDataUser);
     const refreshToken = createRefreshToken(resDataUser);
-    return { userInfo: resDataUser, accessToken: accessToken, refreshToken: refreshToken };
+    return {
+      userInfo: getInfoData(resDataUser, [
+        'ROWGUID',
+        'USER_NAME',
+        'FULLNAME',
+        'EMAIL',
+        'ADDRESS',
+        'BIRTHDAY',
+        'ROLE_CODE',
+        'ROLE_NAME',
+      ]),
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    };
   };
 
   static changeDefaultPassword = async (userId: string, userInfo: Partial<User>) => {
@@ -73,28 +87,39 @@ class AccessService {
 
     const accessToken = createNewAccessToken(foundUser);
     const refreshToken = createRefreshToken(foundUser);
-    return { userInfo: foundUser, accessToken: accessToken, refreshToken: refreshToken };
+    return {
+      userInfo: getInfoData(foundUser, [
+        'ROWGUID',
+        'USER_NAME',
+        'FULLNAME',
+        'EMAIL',
+        'ADDRESS',
+        'BIRTHDAY',
+        'ROLE_CODE',
+        'ROLE_NAME',
+      ]),
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    };
   };
 
-  static refreshToken = async (refreshToken: string) => {
-    return jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SIGN_SECRET,
-      async (err: any, user: Partial<User>) => {
-        if (err) {
-          throw new UnAuthorizedError('Error: authorization required!');
-        }
-        const resDataUser = await findUserById(user.ROWGUID);
-
-        const newAccessToken = createNewAccessToken(resDataUser);
-        const newRefreshToken = createRefreshToken(resDataUser);
-        return {
-          userInfo: resDataUser,
-          accessToken: newAccessToken,
-          refreshToken: newRefreshToken,
-        };
-      },
-    );
+  static handlerRefreshToken = async (user: User) => {
+    const newAccessToken = createNewAccessToken(user);
+    const newRefreshToken = createRefreshToken(user);
+    return {
+      userInfo: getInfoData(user, [
+        'ROWGUID',
+        'USER_NAME',
+        'FULLNAME',
+        'EMAIL',
+        'ADDRESS',
+        'BIRTHDAY',
+        'ROLE_CODE',
+        'ROLE_NAME',
+      ]),
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    };
   };
 }
 export default AccessService;

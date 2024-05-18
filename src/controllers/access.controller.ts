@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import AccessService from '../services/access.service';
 import { SuccessResponse } from '../core/success.response';
-import { UnAuthorizedError } from '../core/error.response';
 
 class AccessController {
   login = async (req: Request, res: Response) => {
@@ -18,18 +17,11 @@ class AccessController {
     }).send(res);
   };
 
-  refreshToken = async (req: Request, res: Response) => {
-    const currentRefreshToken = req.body.refreshToken;
-
-    if (!currentRefreshToken) {
-      throw new UnAuthorizedError('Error: authorization required!');
-    }
-
-    const result = await AccessService.refreshToken(currentRefreshToken);
-
+  handlerRefreshToken = async (req: Request, res: Response) => {
+    const { user } = res.locals;
     new SuccessResponse({
-      message: 'refresh token success',
-      metadata: result,
+      message: 'Get token success',
+      metadata: await AccessService.handlerRefreshToken(user),
     }).send(res);
   };
 }
