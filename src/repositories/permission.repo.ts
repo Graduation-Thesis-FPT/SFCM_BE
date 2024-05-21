@@ -32,6 +32,7 @@ const getAllPermission = async (role: string): Promise<Permission[]> => {
       'sp.IS_MODIFY',
       'sp.IS_DELETE',
       'sp.ROLE_CODE',
+      'sp.ROWGUID'
     ])
     .from('SA_MENU', 'sm')
     .leftJoin('SA_PERMISSION', 'sp', 'sm.MENU_CODE = sp.MENU_CODE')
