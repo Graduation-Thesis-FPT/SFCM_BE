@@ -2,29 +2,33 @@ import { IsNotEmpty } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import Model from './model.entity';
 
-@Entity('SA_PERMISSION')
-export class Permission extends Model {
+@Entity('SA_MENU')
+export class Menu extends Model {
   @PrimaryGeneratedColumn()
   @Column('uuid')
   ROWGUID: string;
 
-  @IsNotEmpty()
   @Column()
-  ROLE_CODE: string;
+  PARENT_CODE: string;
 
   @Column()
   @IsNotEmpty()
   MENU_CODE: string;
 
   @Column()
-  IS_VIEW: boolean;
+  @IsNotEmpty()
+  MENU_NAME: string;
 
   @Column()
-  IS_ADD_NEW: boolean;
+  MENU_ICON: string;
 
   @Column()
-  IS_MODIFY: boolean;
+  IS_VISIBLE: boolean;
 
   @Column()
-  IS_DELETE: boolean;
+  @IsNotEmpty()
+  ORDER_BY: bigint;
+
+  @Column()
+  VIEW_PAGE: string;
 }

@@ -11,9 +11,10 @@ class PermissionController {
   };
 
   getAllPermission = async (req: Request, res: Response) => {
+    const role = res.locals.user.ROLE_CODE
     new SuccessResponse({
       message: 'get permissions success',
-      metadata: await PermissionService.getAllPermission()
+      metadata: await PermissionService.getAllPermission(role)
     }).send(res);
   }
 }

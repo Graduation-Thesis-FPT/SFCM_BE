@@ -7,8 +7,8 @@ class PermissionService {
     return { data: 'granted' };
   };
 
-  static getAllPermission = async () => {
-    const permissions = await getAllPermission();
+  static getAllPermission = async (role: string) => {
+    const permissions = await getAllPermission(role);
 
     let newPermission = [];
     for (let permission of permissions) {
@@ -30,7 +30,9 @@ class PermissionService {
       }
     }
 
-    return newPermission;
+    const finalPermission = newPermission.filter((newPer) => newPer.child.length > 0);
+
+    return finalPermission;
   };
 }
 export default PermissionService;
