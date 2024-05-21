@@ -5,7 +5,7 @@ import { authentication } from '../../auth/authUtils';
 
 const router = Router();
 
-router.use(authentication)
+router.use(authentication);
 
 router.get('/:id', asyncHandler(userController.findUserById));
 router.get('', asyncHandler(userController.getAllUser));

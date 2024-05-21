@@ -1,6 +1,9 @@
 import { DataSource } from 'typeorm';
 import { User } from '../entity/user.entity';
 import { Role } from '../entity/role.entity';
+// import path from 'path';
+import { Permission } from '../entity/permission.entity';
+import { Menu } from '../entity/menu.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -8,7 +11,8 @@ const mssqlConnection = new DataSource({
   username: process.env.DB_USER_NAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [User, Role],
+  entities: [User, Role, Permission, Menu],
+  // entities: [path.join(__dirname, '../entity/*.entity.ts')],
   options: {
     encrypt: process.env.DB_SERVER === 'localhost' ? false : true,
   },

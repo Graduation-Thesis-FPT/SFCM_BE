@@ -4,8 +4,7 @@ import Model from './model.entity';
 
 @Entity('SA_MENU')
 export class Menu extends Model {
-  @PrimaryGeneratedColumn()
-  @Column('uuid')
+  @PrimaryGeneratedColumn('uuid')
   ROWGUID: string;
 
   @Column()
@@ -27,7 +26,7 @@ export class Menu extends Model {
 
   @Column()
   @IsNotEmpty()
-  ORDER_BY: bigint;
+  ORDER_BY: number;
 
   @Column()
   VIEW_PAGE: string;

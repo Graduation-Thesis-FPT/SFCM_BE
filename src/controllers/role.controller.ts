@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { OK } from '../core/success.response';
 import RoleService from '../services/role.service';
 
 class RoleController {
-  getAllRole = async (req: Request, res: Response, next: NextFunction) => {
+  getAllRole = async (req: Request, res: Response) => {
     new OK({
       message: 'success',
       metadata: await RoleService.getAllRole(),

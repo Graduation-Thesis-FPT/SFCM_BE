@@ -1,10 +1,9 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import 'reflect-metadata';
-var cookieParser = require('cookie-parser');
 
 dotenv.config({ path: '.env' });
 
@@ -16,6 +15,7 @@ const app = express();
 const allowedOrigins = ['http://localhost:2024'];
 const corsOptions = {
   credentials: true,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   origin: function (origin: any, callback: any) {
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
@@ -28,7 +28,6 @@ const corsOptions = {
 /**
  * App Configuration
  */
-app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json());
@@ -42,7 +41,8 @@ app.all('*', (req, res, next) => {
   next(new ErrorResponse(`Can't not find ${req.originalUrl} on this server`, 404));
 });
 
-app.use((error: Error | any, req: Request, res: Response, next: NextFunction) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+app.use((error: Error | any, req: Request, res: Response) => {
   let statusCode = error.status || 500;
 
   if (error.name === 'TokenExpiredError') {
@@ -50,7 +50,7 @@ app.use((error: Error | any, req: Request, res: Response, next: NextFunction) =>
     error.message = 'Token has expired please login again!';
   }
 
-  if(error.name === 'JsonWebTokenError') {
+  if (error.name === 'JsonWebTokenError') {
     statusCode = 401;
     error.message = 'Invalid token please login again!';
   }

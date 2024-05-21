@@ -10,7 +10,6 @@ import {
 } from '../repositories/user.repo';
 import bcrypt from 'bcrypt';
 import { getInfoData } from '../utils';
-// const jwt = require('jsonwebtoken');
 
 class AccessService {
   static login = async (userInfo: Partial<User>) => {

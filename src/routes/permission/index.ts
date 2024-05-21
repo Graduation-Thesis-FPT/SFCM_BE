@@ -5,9 +5,9 @@ import { authentication } from '../../auth/authUtils';
 
 const router = Router();
 
-router.use(authentication)
+router.use(authentication);
 
 router.post('', asyncHandler(permissionController.grantPermission));
-router.get('', asyncHandler(permissionController.getAllPermission))
+router.get('', asyncHandler(permissionController.getAllPermission));
 
 export default router;

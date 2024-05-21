@@ -22,21 +22,21 @@ const manager = mssqlConnection.manager;
 
 const getAllPermission = async (role: string): Promise<Permission[]> => {
   const rawData = await manager
-    .createQueryBuilder()
+    .createQueryBuilder('SA_MENU', 'sm')
+    .leftJoinAndSelect('SA_PERMISSION', 'sp', 'sm.MENU_CODE = sp.MENU_CODE')
+    .where('ROLE_CODE = :role', { role })
+    .orWhere('PARENT_CODE is null')
     .select([
-      'sm.PARENT_CODE',
-      'sm.MENU_NAME',
-      'sm.MENU_CODE',
-      'sp.IS_VIEW',
-      'sp.IS_ADD_NEW',
-      'sp.IS_MODIFY',
-      'sp.IS_DELETE',
-      'sp.ROLE_CODE',
-      'sp.ROWGUID'
+      'sm.PARENT_CODE as PARENT_CODE',
+      'sm.MENU_NAME as MENU_NAME',
+      'sm.MENU_CODE as MENU_CODE',
+      'sp.IS_VIEW as IS_VIEW',
+      'sp.IS_ADD_NEW as IS_ADD_NEW',
+      'sp.IS_MODIFY as IS_MODIFY',
+      'sp.IS_DELETE as IS_DELETE',
+      'sp.ROLE_CODE as ROLE_CODE',
+      'sp.ROWGUID as ROWGUID',
     ])
-    .from('SA_MENU', 'sm')
-    .leftJoin('SA_PERMISSION', 'sp', 'sm.MENU_CODE = sp.MENU_CODE')
-    .where('sp.ROLE_CODE = :role OR sm.PARENT_CODE IS NULL', { role })
     .getRawMany();
 
   return rawData;

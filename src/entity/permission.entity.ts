@@ -4,8 +4,7 @@ import Model from './model.entity';
 
 @Entity('SA_PERMISSION')
 export class Permission extends Model {
-  @PrimaryGeneratedColumn()
-  @Column('uuid')
+  @PrimaryGeneratedColumn('uuid')
   ROWGUID: string;
 
   @IsNotEmpty()

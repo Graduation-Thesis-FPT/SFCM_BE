@@ -1,6 +1,10 @@
 import { getAllPermission } from '../repositories/permission.repo';
 
-import _ from 'lodash';
+interface parentMenu {
+  MENU_NAME: string;
+  MENU_CODE: string;
+  child: object[];
+}
 
 class PermissionService {
   static grantPermission = async () => {
@@ -10,9 +14,13 @@ class PermissionService {
   static getAllPermission = async (role: string) => {
     const permissions = await getAllPermission(role);
 
-    let newPermission = [];
-    for (let permission of permissions) {
-      const obj: any = {};
+    const newPermission = [];
+    for (const permission of permissions) {
+      const obj: parentMenu = {
+        MENU_NAME: '',
+        MENU_CODE: '',
+        child: [],
+      };
       if (permission.PARENT_CODE === null) {
         obj['MENU_NAME'] = permission.MENU_NAME;
         obj['MENU_CODE'] = permission.MENU_CODE;
@@ -22,7 +30,7 @@ class PermissionService {
       }
 
       if (newPermission.length > 0) {
-        for (let newPer of newPermission) {
+        for (const newPer of newPermission) {
           if (newPer['MENU_CODE'] === permission.PARENT_CODE) {
             newPer.child.push(permission);
           }
@@ -30,7 +38,7 @@ class PermissionService {
       }
     }
 
-    const finalPermission = newPermission.filter((newPer) => newPer.child.length > 0);
+    const finalPermission = newPermission.filter(newPer => newPer.child.length > 0);
 
     return finalPermission;
   };
