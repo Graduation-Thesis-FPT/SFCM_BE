@@ -19,7 +19,7 @@ class UserService {
    * @param userInfo
    * @returns
    */
-  static createUserAccount = async (userInfo: User): Promise<User> => {
+  static createUserAccount = async (userInfo: User, createBy: User): Promise<User> => {
     const foundUser = await findUserByUserName(userInfo.USER_NAME);
 
     if (foundUser) {
@@ -27,9 +27,8 @@ class UserService {
     }
 
     if (userInfo.BIRTHDAY) userInfo.BIRTHDAY = new Date(userInfo.BIRTHDAY);
-    userInfo.CREATE_BY = 'sample user';
-    userInfo.UPDATE_BY = 'sample user';
-
+    userInfo.CREATE_BY = createBy.ROWGUID;
+    userInfo.UPDATE_BY = createBy.ROWGUID;
     const user = userRepository.create(userInfo);
 
     await isValidInfor(user);
@@ -98,7 +97,7 @@ class UserService {
    * @param userInfo
    * @returns
    */
-  static updateUser = async (userId: string, userInfo: Partial<User>) => {
+  static updateUser = async (userId: string, userInfo: Partial<User>, updateBy: User) => {
     const user = await findUserById(userId);
 
     if (!user) {
@@ -116,7 +115,7 @@ class UserService {
     const objectParams = removeUndefinedProperty(userInfo);
 
     if (!objectParams.BIRTHDAY) objectParams.BIRTHDAY = null;
-    objectParams.UPDATE_BY = 'sample user update';
+    objectParams.UPDATE_BY = updateBy.ROWGUID;
     // const userInstance = userRepository.create(objectParams);
 
     // await isValidInfor(userInstance);

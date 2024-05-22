@@ -4,9 +4,10 @@ import PermissionService from '../services/permission.service';
 
 class PermissionController {
   updatePermission = async (req: Request, res: Response) => {
+    const updateBy = res.locals.user;
     new SuccessResponse({
       message: 'grant permission success',
-      metadata: await PermissionService.updatePermission(req.body),
+      metadata: await PermissionService.updatePermission(req.body, updateBy),
     }).send(res);
   };
 

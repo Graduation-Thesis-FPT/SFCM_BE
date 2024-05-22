@@ -6,9 +6,10 @@ import { User } from '../entity/user.entity';
 class UserController {
   createUserAccount = async (req: Request, res: Response) => {
     const userAccountInfo: User = req.body;
+    const createBy = res.locals.user;
     new CREATED({
       message: 'create user success',
-      metadata: await UserService.createUserAccount(userAccountInfo),
+      metadata: await UserService.createUserAccount(userAccountInfo, createBy),
     }).send(res);
   };
 
@@ -48,9 +49,10 @@ class UserController {
   };
 
   updateUser = async (req: Request, res: Response) => {
+    const updateBy = res.locals.user;
     new SuccessResponse({
       message: 'update success',
-      metadata: await UserService.updateUser(req.params.userId, req.body),
+      metadata: await UserService.updateUser(req.params.userId, req.body, updateBy),
     }).send(res);
   };
 

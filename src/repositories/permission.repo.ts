@@ -1,5 +1,6 @@
 import mssqlConnection from '../db/mssql.connect';
 import { Permission as PermissionEntity } from '../entity/permission.entity';
+import { User } from '../entity/user.entity';
 import { Permission } from '../models/permission.model';
 import { manager } from './index.repo';
 
@@ -40,7 +41,7 @@ const getAllPermission = async (role: string): Promise<Permission[]> => {
   return rawData;
 };
 
-const updatePermission = async (permissions: Partial<Permission>[]) => {
+const updatePermission = async (permissions: Partial<Permission>[], updateBy: User) => {
   // permissions.forEach(permission => {
   //   await permissionRepository
   //     .createQueryBuilder()
@@ -65,6 +66,7 @@ const updatePermission = async (permissions: Partial<Permission>[]) => {
         IS_DELETE: per.IS_DELETE,
         IS_VIEW: per.IS_VIEW,
         IS_MODIFY: per.IS_MODIFY,
+        UPDATE_BY: updateBy.ROWGUID,
       })
       .where('ROLE_CODE= :roleCode', { roleCode: per.ROLE_CODE })
       .andWhere('MENU_CODE= :menuCode', { menuCode: per.MENU_CODE })

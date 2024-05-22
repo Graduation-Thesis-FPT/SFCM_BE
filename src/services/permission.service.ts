@@ -1,3 +1,4 @@
+import { User } from '../entity/user.entity';
 import { Permission } from '../models/permission.model';
 import { getAllPermission, updatePermission } from '../repositories/permission.repo';
 
@@ -8,8 +9,8 @@ interface parentMenu {
 }
 
 class PermissionService {
-  static updatePermission = async (permissions: Partial<Permission>[]) => {
-    return await updatePermission(permissions);
+  static updatePermission = async (permissions: Partial<Permission>[], updateBy: User) => {
+    return await updatePermission(permissions, updateBy);
   };
 
   static getAllPermission = async (role: string) => {
