@@ -2,7 +2,7 @@ import { User } from '../entity/user.entity';
 import { Permission } from '../models/permission.model';
 import { getAllPermission, updatePermission } from '../repositories/permission.repo';
 
-interface parentMenu {
+export interface parentMenu {
   MENU_NAME: string;
   MENU_CODE: string;
   child: object[];
