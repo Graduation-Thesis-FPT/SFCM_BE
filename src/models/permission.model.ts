@@ -6,4 +6,6 @@ export interface Permission {
   IS_ADD_NEW: boolean;
   IS_MODIFY: boolean;
   IS_DELETE: boolean;
+  ROWGUID: string;
+  ROLE_CODE: string;
 }

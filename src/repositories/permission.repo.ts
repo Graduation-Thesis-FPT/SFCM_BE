@@ -42,4 +42,38 @@ const getAllPermission = async (role: string): Promise<Permission[]> => {
   return rawData;
 };
 
-export { getAllPermission };
+const grantPermission = async (permissions: Partial<Permission>[]) => {
+  // permissions.forEach(permission => {
+  //   await permissionRepository
+  //     .createQueryBuilder()
+  //     .update(PermissionEntity)
+  //     .set({
+  //       IS_ADD_NEW: permission.IS_ADD_NEW,
+  //       IS_DELETE: permission.IS_DELETE,
+  //       IS_VIEW: permission.IS_VIEW,
+  //       IS_MODIFY: permission.IS_MODIFY,
+  //     })
+  //     .where('ROWGUID= :ROWGUID', { ROWGUID: permission.ROWGUID })
+  //     .execute();
+  // });
+
+  const result = [];
+  for (const per of permissions) {
+    const response = await permissionRepository
+      .createQueryBuilder()
+      .update(PermissionEntity)
+      .set({
+        IS_ADD_NEW: per.IS_ADD_NEW,
+        IS_DELETE: per.IS_DELETE,
+        IS_VIEW: per.IS_VIEW,
+        IS_MODIFY: per.IS_MODIFY,
+      })
+      .where('ROLE_CODE= :ROLE_CODE', { ROLE_CODE: per.ROLE_CODE })
+      .andWhere('MENU_CODE= :MENU_CODE', { MENU_CODE: per.MENU_CODE })
+      .execute();
+    result.push(response);
+  }
+  return result;
+};
+
+export { getAllPermission, grantPermission };

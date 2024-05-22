@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import express from 'express';
+import express, { NextFunction } from 'express';
 import { Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -41,8 +41,8 @@ app.all('*', (req, res, next) => {
   next(new ErrorResponse(`Can't not find ${req.originalUrl} on this server`, 404));
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-app.use((error: Error | any, req: Request, res: Response) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+app.use((error: Error | any, req: Request, res: Response, next: NextFunction) => {
   let statusCode = error.status || 500;
 
   if (error.name === 'TokenExpiredError') {
