@@ -7,7 +7,7 @@ const router = Router();
 
 router.use(authentication);
 
-router.patch('', asyncHandler(permissionController.grantPermission));
+router.patch('', asyncHandler(permissionController.updatePermission));
 router.get('', asyncHandler(permissionController.getAllPermission));
 
 export default router;

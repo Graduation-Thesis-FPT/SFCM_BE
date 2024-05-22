@@ -1,5 +1,5 @@
 import { Permission } from '../models/permission.model';
-import { getAllPermission, grantPermission } from '../repositories/permission.repo';
+import { getAllPermission, updatePermission } from '../repositories/permission.repo';
 
 interface parentMenu {
   MENU_NAME: string;
@@ -8,8 +8,8 @@ interface parentMenu {
 }
 
 class PermissionService {
-  static grantPermission = async (permissions: Partial<Permission>[]) => {
-    return await grantPermission(permissions);
+  static updatePermission = async (permissions: Partial<Permission>[]) => {
+    return await updatePermission(permissions);
   };
 
   static getAllPermission = async (role: string) => {

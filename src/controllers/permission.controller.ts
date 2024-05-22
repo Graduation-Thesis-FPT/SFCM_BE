@@ -3,10 +3,10 @@ import { OK, SuccessResponse } from '../core/success.response';
 import PermissionService from '../services/permission.service';
 
 class PermissionController {
-  grantPermission = async (req: Request, res: Response) => {
+  updatePermission = async (req: Request, res: Response) => {
     new SuccessResponse({
       message: 'grant permission success',
-      metadata: await PermissionService.grantPermission(req.body),
+      metadata: await PermissionService.updatePermission(req.body),
     }).send(res);
   };
 

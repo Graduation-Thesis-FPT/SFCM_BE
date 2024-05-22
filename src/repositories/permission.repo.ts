@@ -1,11 +1,9 @@
 import mssqlConnection from '../db/mssql.connect';
-// import { Menu } from '../entity/menu.entity';
 import { Permission as PermissionEntity } from '../entity/permission.entity';
 import { Permission } from '../models/permission.model';
+import { manager } from './index.repo';
 
 export const permissionRepository = mssqlConnection.getRepository(PermissionEntity);
-
-const manager = mssqlConnection.manager;
 
 // const getAllPermission = async (role: string): Promise<Permission[]> => {
 //   const rawData = await manager.query(
@@ -42,7 +40,7 @@ const getAllPermission = async (role: string): Promise<Permission[]> => {
   return rawData;
 };
 
-const grantPermission = async (permissions: Partial<Permission>[]) => {
+const updatePermission = async (permissions: Partial<Permission>[]) => {
   // permissions.forEach(permission => {
   //   await permissionRepository
   //     .createQueryBuilder()
@@ -68,12 +66,12 @@ const grantPermission = async (permissions: Partial<Permission>[]) => {
         IS_VIEW: per.IS_VIEW,
         IS_MODIFY: per.IS_MODIFY,
       })
-      .where('ROLE_CODE= :ROLE_CODE', { ROLE_CODE: per.ROLE_CODE })
-      .andWhere('MENU_CODE= :MENU_CODE', { MENU_CODE: per.MENU_CODE })
+      .where('ROLE_CODE= :roleCode', { roleCode: per.ROLE_CODE })
+      .andWhere('MENU_CODE= :menuCode', { menuCode: per.MENU_CODE })
       .execute();
     result.push(response);
   }
   return result;
 };
 
-export { getAllPermission, grantPermission };
+export { getAllPermission, updatePermission };
