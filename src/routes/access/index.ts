@@ -13,7 +13,7 @@ router.post(
   asyncHandler(accessController.handlerRefreshToken),
 );
 
-router.use(authentication);
+// router.use(authentication);
 
 router.patch(
   '/change-default-password/:userId',
