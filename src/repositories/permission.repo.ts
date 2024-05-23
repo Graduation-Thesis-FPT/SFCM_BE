@@ -76,4 +76,17 @@ const updatePermission = async (permissions: Partial<Permission>[], updateBy: Us
   return result;
 };
 
-export { getAllPermission, updatePermission };
+const getPermissionByRoleCode = async (roleCode: string) => {
+  return await permissionRepository.find({ where: { ROLE_CODE: roleCode } });
+};
+
+const checkPermissionAccessMenu = async (roleCode: string, menuCode: string) => {
+  const isExist = await permissionRepository
+    .createQueryBuilder('permission')
+    .where('permission.ROLE_CODE = :roleCode', { roleCode: roleCode })
+    .andWhere('permission.MENU_CODE = :menuCode', { menuCode: menuCode })
+    .getOne();
+  return isExist;
+};
+
+export { getAllPermission, updatePermission, getPermissionByRoleCode, checkPermissionAccessMenu };

@@ -1,5 +1,13 @@
 import { getMenuByRoleCode } from '../repositories/menu.repo';
-import { parentMenu } from './permission.service';
+
+interface parentMenu {
+  MENU_NAME: string;
+  MENU_CODE: string;
+  MENU_ICON: string;
+  VIEW_PAGE: string;
+  ROWGUID: string;
+  child: object[];
+}
 
 class MenuService {
   static getMenuByRoleCode = async (roleCode: string) => {
@@ -10,11 +18,17 @@ class MenuService {
       const obj: parentMenu = {
         MENU_NAME: '',
         MENU_CODE: '',
+        MENU_ICON: '',
+        VIEW_PAGE: '',
+        ROWGUID: '',
         child: [],
       };
       if (item.PARENT_CODE === null) {
         obj['MENU_NAME'] = item.MENU_NAME;
         obj['MENU_CODE'] = item.MENU_CODE;
+        obj['MENU_ICON'] = item.MENU_ICON;
+        obj['VIEW_PAGE'] = item.VIEW_PAGE;
+        obj['ROWGUID'] = item.ROWGUID;
         obj['child'] = [];
         newMenu.push(obj);
         continue;
