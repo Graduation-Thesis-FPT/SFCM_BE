@@ -9,5 +9,6 @@ router.use(authentication);
 
 router.patch('', asyncHandler(permissionController.updatePermission));
 router.get('', asyncHandler(permissionController.getAllPermission));
+router.get('/grant-permission', asyncHandler(permissionController.getGrantPermission));
 
 export default router;

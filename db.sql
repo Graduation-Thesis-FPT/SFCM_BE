@@ -1175,20 +1175,28 @@ GO
 
 INSERT INTO SA_ROLE (ROLE_CODE, ROLE_NAME,CREATE_BY,UPDATE_BY)
 VALUES ('admin','Admin','sql','sql'),
-('manage','Manage','sql','sql')
-
-INSERT INTO SA_USER (ROLE_CODE, USER_NAME,CREATE_BY,UPDATE_BY)
-VALUES ('admin','superadmin','sql','sql')
+('manager','Manager','sql','sql')
 
 INSERT INTO SA_MENU (PARENT_CODE,MENU_CODE,MENU_NAME,MENU_ICON,IS_VISIBLE,ORDER_BY,VIEW_PAGE,CREATE_BY,UPDATE_BY)
 VALUES 
 (NULL,'user-manager',N'Quản lý người dùng','Users',1,100,NULL,'sql','sql'),
-('user-manage','user',N'Người dùng',NULL,1,101,'User','sql','sql'),
-('user-manage','permission',N'Phân quyền',NULL,1,102,'Permission','sql','sql')
+('user-manager','user',N'Người dùng',NULL,1,101,'User','sql','sql'),
+('user-manager','permission',N'Phân quyền',NULL,1,102,'Permission','sql','sql'),
+(NULL,'danhmucdungchung',N'Danh mục dùng chung','List',1,200,'DanhMucDungChung','sql','sql'),
+('danhmucdungchung','thietkekho',N'Thiết kế kho',NULL,1,201,'ThietKeKho','sql','sql'),
+('danhmucdungchung','quanlykho',N'Quản lý kho',NULL,1,202,'QuanLyKho','sql','sql')
 
 INSERT INTO SA_PERMISSION (ROLE_CODE,MENU_CODE,IS_VIEW,IS_ADD_NEW,IS_MODIFY,IS_DELETE,CREATE_BY,UPDATE_BY)
 VALUES 
 ('admin','user',1,1,1,1,'sql','sql'),
 ('admin','permission',1,1,1,1,'sql','sql'),
-('manage','user',1,1,1,1,'sql','sql'),
-('manage','permission',0,0,0,0,'sql','sql'),
+('admin','thietkekho',1,1,1,1,'sql','sql'),
+('admin','quanlykho',1,1,1,1,'sql','sql'),
+('manager','user',1,1,1,1,'sql','sql'),
+('manager','permission',1,0,0,0,'sql','sql'),
+('manager','thietkekho',1,1,1,1,'sql','sql'),
+('manager','quanlykho',1,1,1,1,'sql','sql')
+
+INSERT INTO SA_USER (ROLE_CODE, USER_NAME,CREATE_BY,UPDATE_BY)
+VALUES ('admin','superadmin','sql','sql')
+

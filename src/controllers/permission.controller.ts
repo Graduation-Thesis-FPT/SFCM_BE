@@ -18,6 +18,15 @@ class PermissionController {
       metadata: await PermissionService.getAllPermission(role),
     }).send(res);
   };
+
+  getGrantPermission = async (req: Request, res: Response) => {
+    const userInfo = res.locals.user;
+    const menuCode = req.query.menuCode as string;
+    new OK({
+      message: 'get grant permission success',
+      metadata: await PermissionService.getGrantPermission(userInfo.ROLE_CODE, menuCode),
+    }).send(res);
+  };
 }
 
 export default new PermissionController();
