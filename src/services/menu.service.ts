@@ -1,6 +1,6 @@
 import { getMenuByRoleCode } from '../repositories/menu.repo';
 
-interface parentMenu {
+interface ParentMenu {
   MENU_NAME: string;
   MENU_CODE: string;
   MENU_ICON: string;
@@ -15,7 +15,7 @@ class MenuService {
 
     const newMenu = [];
     for (const item of menu) {
-      const obj: parentMenu = {
+      const obj: ParentMenu = {
         MENU_NAME: '',
         MENU_CODE: '',
         MENU_ICON: '',

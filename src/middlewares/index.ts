@@ -7,6 +7,7 @@ const HEADER = {
   MENU_CODE: 'menu-code',
 };
 
+// the type HttpMethod only accept value GET POST DELETE and PATCH, the type PermissionProperty same
 type HttpMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH';
 type PermissionProperty = 'IS_VIEW' | 'IS_ADD_NEW' | 'IS_DELETE' | 'IS_MODIFY';
 

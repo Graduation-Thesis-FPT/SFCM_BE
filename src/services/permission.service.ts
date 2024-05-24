@@ -6,7 +6,7 @@ import {
   updatePermission,
 } from '../repositories/permission.repo';
 
-export interface parentMenu {
+export interface ParentMenu {
   MENU_NAME: string;
   MENU_CODE: string;
   child: object[];
@@ -26,7 +26,7 @@ class PermissionService {
 
     const newPermission = [];
     for (const permission of permissions) {
-      const obj: parentMenu = {
+      const obj: ParentMenu = {
         MENU_NAME: '',
         MENU_CODE: '',
         child: [],
