@@ -2,6 +2,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { BadRequestError } from '../core/error.response';
 import { checkPermissionAccessMenu } from '../repositories/permission.repo';
+import { ERROR_MESSAGE } from '../constants';
 
 const HEADER = {
   MENU_CODE: 'menu-code',
@@ -23,7 +24,7 @@ const grantPermission = async (req: Request, res: Response, next: NextFunction) 
   const menuCode = req.headers[HEADER.MENU_CODE] as string;
 
   if (!menuCode) {
-    throw new BadRequestError('Missing menuCode!');
+    throw new BadRequestError(ERROR_MESSAGE.MISSING_MENU_CODE);
   }
 
   const method = req.method as HttpMethod;
@@ -31,13 +32,13 @@ const grantPermission = async (req: Request, res: Response, next: NextFunction) 
   const permission = await checkPermissionAccessMenu(ROLE_CODE, menuCode);
 
   if (!permission) {
-    throw new BadRequestError('You do not have permission to access this page!');
+    throw new BadRequestError(ERROR_MESSAGE.YOU_DO_NOT_HAVE_PERMISSION_TO_ACCESS_THIS_PAGE);
   }
 
   const permissionProperty = methodPermissionMap[method] as PermissionProperty;
 
   if (!permission[permissionProperty]) {
-    throw new BadRequestError('You do not have this permission');
+    throw new BadRequestError(ERROR_MESSAGE.YOU_DO_NOT_HAVE_THIS_PERMISSION);
   }
 
   next();

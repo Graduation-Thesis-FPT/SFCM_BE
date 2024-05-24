@@ -10,6 +10,7 @@ dotenv.config({ path: '.env' });
 import routes from './routes';
 import { ErrorResponse } from './core/error.response';
 import mssqlConnection from './db/mssql.connect';
+import { ERROR_MESSAGE } from './constants';
 
 const app = express();
 const allowedOrigins = ['http://localhost:2024'];
@@ -47,19 +48,19 @@ app.use((error: Error | any, req: Request, res: Response, next: NextFunction) =>
 
   if (error.name === 'TokenExpiredError') {
     statusCode = 401;
-    error.message = 'Token has expired please login again!';
+    error.message = ERROR_MESSAGE.INVALID_TOKEN_PLEASE_LOGIN_AGAIN;
   }
 
   if (error.name === 'JsonWebTokenError') {
     statusCode = 401;
-    error.message = 'Invalid token please login again!';
+    error.message = ERROR_MESSAGE.INVALID_TOKEN_PLEASE_LOGIN_AGAIN;
   }
 
   return res.status(statusCode).json({
     status: 'error',
     code: statusCode,
     stack: error.stack,
-    message: error.message || 'Internal Server Error',
+    message: error.message || ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
   });
 });
 

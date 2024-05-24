@@ -4,6 +4,7 @@ import { BadRequestError, UnAuthorizedError } from '../core/error.response';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { asyncHandler } from '../utils';
 import { findUserById } from '../repositories/user.repo';
+import { ERROR_MESSAGE } from '../constants';
 
 const HEADER = {
   AUTHORIZATION: 'token',
@@ -25,7 +26,7 @@ const createRefreshToken = (userInfo: Partial<User>) => {
 const authentication = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const accessToken = req.headers[HEADER.AUTHORIZATION] as string;
   if (!accessToken) {
-    throw new BadRequestError('Invalid Request Missing Token');
+    throw new BadRequestError(ERROR_MESSAGE.INVALID_REQUEST_MISSING_TOKEN);
   }
 
   try {
@@ -35,7 +36,7 @@ const authentication = asyncHandler(async (req: Request, res: Response, next: Ne
     ) as JwtPayload;
     const user = await findUserById(decodeUser.ROWGUID);
     if (!user) {
-      throw new UnAuthorizedError('Invalid Request');
+      throw new UnAuthorizedError(ERROR_MESSAGE.INVALID_REQUEST);
     }
 
     res.locals.user = user;
@@ -49,7 +50,7 @@ const verifyRefreshToken = asyncHandler(async (req: Request, res: Response, next
   const resfreshToken = req.headers[HEADER.REFRESHTOKEN] as string;
 
   if (!resfreshToken) {
-    throw new BadRequestError('Invalid Request Missing Token');
+    throw new BadRequestError(ERROR_MESSAGE.INVALID_REQUEST_MISSING_TOKEN);
   }
 
   try {
@@ -59,7 +60,7 @@ const verifyRefreshToken = asyncHandler(async (req: Request, res: Response, next
     ) as JwtPayload;
     const user = await findUserById(decodeUser.ROWGUID);
     if (!user) {
-      throw new UnAuthorizedError('Invalid Request');
+      throw new UnAuthorizedError(ERROR_MESSAGE.INVALID_REQUEST);
     }
 
     res.locals.user = user;

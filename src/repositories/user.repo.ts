@@ -1,3 +1,4 @@
+import { ERROR_MESSAGE } from '../constants';
 import { BadRequestError } from '../core/error.response';
 import mssqlConnection from '../db/mssql.connect';
 import { Role } from '../entity/role.entity';
@@ -17,7 +18,7 @@ const findUserById = async (userId: string): Promise<UserEntity> => {
     /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
 
   if (!uuidRegex.test(userId)) {
-    throw new BadRequestError('Error: Invalid User Id');
+    throw new BadRequestError(ERROR_MESSAGE.INVALID_USER_ID);
   }
 
   const user = await userRepository

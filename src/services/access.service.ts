@@ -10,17 +10,18 @@ import {
 } from '../repositories/user.repo';
 import bcrypt from 'bcrypt';
 import { getInfoData } from '../utils';
+import { ERROR_MESSAGE } from '../constants';
 
 class AccessService {
   static login = async (userInfo: Partial<User>) => {
     const foundUser = await findUserByUserName(userInfo.USER_NAME);
 
     if (!foundUser) {
-      throw new BadRequestError('Error: User name not exist!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_NAME_NOT_EXIST);
     }
 
     if (!foundUser.IS_ACTIVE) {
-      throw new BadRequestError('Error: User is not active!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_IS_NOT_ACTIVE);
     }
 
     const passwordIsNull = await checkPasswordIsNullById(foundUser.ROWGUID);
@@ -29,7 +30,7 @@ class AccessService {
       if (userInfo.PASSWORD === process.env.DEFAULT_PASSWORD) {
         return { changeDefaultPassword: true, ROWGUID: foundUser.ROWGUID };
       } else {
-        throw new BadRequestError('Error: Password is incorrect!');
+        throw new BadRequestError(ERROR_MESSAGE.PASSWORD_IS_INCORRECT);
       }
     }
 
@@ -38,7 +39,7 @@ class AccessService {
     const isMatch = await bcrypt.compare(userInfo.PASSWORD, user.PASSWORD);
 
     if (!isMatch) {
-      throw new BadRequestError('Error: Password is incorrect!');
+      throw new BadRequestError(ERROR_MESSAGE.PASSWORD_IS_INCORRECT);
     }
 
     const resDataUser = await findUserById(foundUser.ROWGUID);
@@ -64,16 +65,16 @@ class AccessService {
   static changeDefaultPassword = async (userId: string, userInfo: Partial<User>) => {
     const foundUser = await findUserById(userId);
     if (!foundUser) {
-      throw new BadRequestError('Error: User name not exist!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_NAME_NOT_EXIST);
     }
 
     const passwordIsNull = await checkPasswordIsNullById(userId);
     if (!passwordIsNull) {
-      throw new BadRequestError('Error: Password is already!');
+      throw new BadRequestError(ERROR_MESSAGE.PASSWORD_IS_ALREADY);
     }
 
     if (userInfo.PASSWORD === process.env.DEFAULT_PASSWORD) {
-      throw new BadRequestError('Error: Password is default!');
+      throw new BadRequestError(ERROR_MESSAGE.PASSWORD_IS_DEFAULT);
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -81,7 +82,7 @@ class AccessService {
 
     const updateResult = await updatePasswordById(userId, hashed);
     if (!updateResult) {
-      throw new BadRequestError('Error: Update password failed!');
+      throw new BadRequestError(ERROR_MESSAGE.UPDATE_PASSWORD_FAILED);
     }
 
     const accessToken = createNewAccessToken(foundUser);

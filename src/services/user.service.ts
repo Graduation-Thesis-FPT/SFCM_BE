@@ -1,3 +1,4 @@
+import { ERROR_MESSAGE } from '../constants';
 import { BadRequestError } from '../core/error.response';
 import { User } from '../entity/user.entity';
 import {
@@ -23,7 +24,7 @@ class UserService {
     const foundUser = await findUserByUserName(userInfo.USER_NAME);
 
     if (foundUser) {
-      throw new BadRequestError('Error: User already exists!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_ALREADY_EXIST);
     }
 
     if (userInfo.BIRTHDAY) userInfo.BIRTHDAY = new Date(userInfo.BIRTHDAY);
@@ -66,7 +67,7 @@ class UserService {
     const user = await findUserById(userId);
 
     if (!user) {
-      throw new BadRequestError('Error: User not exist!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_NOT_EXIST);
     }
 
     return await deactiveUser(userId);
@@ -81,7 +82,7 @@ class UserService {
     const user = await findUserById(userId);
 
     if (!user) {
-      throw new BadRequestError('Error: User not exist!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_NOT_EXIST);
     }
 
     return await activeUser(userId);
@@ -101,14 +102,14 @@ class UserService {
     const user = await findUserById(userId);
 
     if (!user) {
-      throw new BadRequestError('Error: User not exist!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_NOT_EXIST);
     }
 
     if (userInfo.USER_NAME) {
       const isDuplicatedUserName = await findUserByUserName(userInfo.USER_NAME);
 
       if (isDuplicatedUserName) {
-        throw new BadRequestError('Error: User name is duplicated!');
+        throw new BadRequestError(ERROR_MESSAGE.USER_NAME_IS_DUPLICATED);
       }
     }
 
@@ -125,7 +126,7 @@ class UserService {
 
   static resetPasswordById = async (userId: string, defaultPassword: string) => {
     if (defaultPassword !== process.env.DEFAULT_PASSWORD) {
-      throw new BadRequestError('Error: Password is default!');
+      throw new BadRequestError(ERROR_MESSAGE.PASSWORD_IS_DEFAULT);
     }
     return await resetPasswordById(userId);
   };
