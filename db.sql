@@ -1182,7 +1182,7 @@ VALUES
 (NULL,'user-manager',N'Quản lý người dùng','Users',1,100,NULL,'sql','sql'),
 ('user-manager','user',N'Người dùng',NULL,1,101,'User','sql','sql'),
 ('user-manager','permission',N'Phân quyền',NULL,1,102,'Permission','sql','sql'),
-(NULL,'danhmucdungchung',N'Danh mục dùng chung','List',1,200,'DanhMucDungChung','sql','sql'),
+(NULL,'danhmucdungchung',N'Danh mục dùng chung','List',1,200,NULL,'sql','sql'),
 ('danhmucdungchung','thietkekho',N'Thiết kế kho',NULL,1,201,'ThietKeKho','sql','sql'),
 ('danhmucdungchung','quanlykho',N'Quản lý kho',NULL,1,202,'QuanLyKho','sql','sql')
 
