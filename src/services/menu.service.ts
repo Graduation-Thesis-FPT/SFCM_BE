@@ -1,3 +1,4 @@
+import { Permission } from '../models/permission.model';
 import { getMenuByRoleCode } from '../repositories/menu.repo';
 
 interface ParentMenu {
@@ -6,7 +7,7 @@ interface ParentMenu {
   MENU_ICON: string;
   VIEW_PAGE: string;
   ROWGUID: string;
-  child: object[];
+  child: Permission[];
 }
 
 class MenuService {

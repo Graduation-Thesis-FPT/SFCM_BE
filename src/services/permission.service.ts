@@ -1,16 +1,10 @@
 import { User } from '../entity/user.entity';
-import { Permission } from '../models/permission.model';
+import { ParentMenu, Permission } from '../models/permission.model';
 import {
   checkPermissionAccessMenu,
   getAllPermission,
   updatePermission,
 } from '../repositories/permission.repo';
-
-export interface ParentMenu {
-  MENU_NAME: string;
-  MENU_CODE: string;
-  child: object[];
-}
 
 class PermissionService {
   static getGrantPermission = async (roleCode: string, menuCode: string) => {
