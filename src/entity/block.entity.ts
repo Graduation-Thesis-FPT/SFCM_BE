@@ -27,7 +27,7 @@ export class Block extends Model {
   @Column()
   BLOCK_HEIGH: number;
 
-  @Column()
+  @Column({ default: false })
   STATUS: boolean;
 
   @BeforeInsert()

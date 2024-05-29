@@ -9,5 +9,7 @@ const router = Router();
 router.use(authentication);
 
 router.post('', asyncHandler(grantPermission), asyncHandler(blockController.createBlock));
+router.delete('', asyncHandler(grantPermission), asyncHandler(blockController.deleteBlock));
+router.get('', asyncHandler(grantPermission), asyncHandler(blockController.getBlock));
 
 export default router;
