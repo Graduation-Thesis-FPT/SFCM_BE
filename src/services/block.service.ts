@@ -26,7 +26,7 @@ class BlockService {
       );
       if (isDuplicateBlock) {
         throw new BadRequestError(
-          `Không thể thêm dãy ${blockInfo.BLOCK_NAME.trim()} ở kho ${blockInfo.WAREHOUSE_CODE.trim()} (Đã tồn tại)`,
+          `Không thể thêm dãy ${blockInfo.BLOCK_NAME} ở kho ${blockInfo.WAREHOUSE_CODE} (Đã tồn tại)`,
         );
       }
 
@@ -50,7 +50,7 @@ class BlockService {
 
       const block = await findBlockById(blockID);
       if (!block) {
-        throw new BadRequestError(`Block with ID ${block.BLOCK_NAME} not exist!`);
+        throw new BadRequestError(`Block with ID ${block.ROWGUID} not exist!`);
       }
 
       if (block.STATUS) {
