@@ -1,4 +1,5 @@
-import { BadRequestError, UnAuthorizedError } from '../core/error.response';
+import { createNewAccessToken, createRefreshToken } from '../auth/authUtils';
+import { BadRequestError } from '../core/error.response';
 import { User } from '../entity/user.entity';
 import {
   checkPasswordIsNullById,
@@ -8,19 +9,19 @@ import {
   updatePasswordById,
 } from '../repositories/user.repo';
 import bcrypt from 'bcrypt';
-import { createNewAccessToken, createRefreshToken } from '../utils/createToken';
-const jwt = require('jsonwebtoken');
+import { getInfoData } from '../utils';
+import { ERROR_MESSAGE } from '../constants';
 
 class AccessService {
   static login = async (userInfo: Partial<User>) => {
     const foundUser = await findUserByUserName(userInfo.USER_NAME);
 
     if (!foundUser) {
-      throw new BadRequestError('Error: User name not exist!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_NAME_NOT_EXIST);
     }
 
     if (!foundUser.IS_ACTIVE) {
-      throw new BadRequestError('Error: User is not active!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_IS_NOT_ACTIVE);
     }
 
     const passwordIsNull = await checkPasswordIsNullById(foundUser.ROWGUID);
@@ -29,7 +30,7 @@ class AccessService {
       if (userInfo.PASSWORD === process.env.DEFAULT_PASSWORD) {
         return { changeDefaultPassword: true, ROWGUID: foundUser.ROWGUID };
       } else {
-        throw new BadRequestError('Error: Password is incorrect!');
+        throw new BadRequestError(ERROR_MESSAGE.PASSWORD_IS_INCORRECT);
       }
     }
 
@@ -38,29 +39,42 @@ class AccessService {
     const isMatch = await bcrypt.compare(userInfo.PASSWORD, user.PASSWORD);
 
     if (!isMatch) {
-      throw new BadRequestError('Error: Password is incorrect!');
+      throw new BadRequestError(ERROR_MESSAGE.PASSWORD_IS_INCORRECT);
     }
 
     const resDataUser = await findUserById(foundUser.ROWGUID);
 
     const accessToken = createNewAccessToken(resDataUser);
     const refreshToken = createRefreshToken(resDataUser);
-    return { userInfo: resDataUser, accessToken: accessToken, refreshToken: refreshToken };
+    return {
+      userInfo: getInfoData(resDataUser, [
+        'ROWGUID',
+        'USER_NAME',
+        'FULLNAME',
+        'EMAIL',
+        'ADDRESS',
+        'BIRTHDAY',
+        'ROLE_CODE',
+        'ROLE_NAME',
+      ]),
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    };
   };
 
   static changeDefaultPassword = async (userId: string, userInfo: Partial<User>) => {
     const foundUser = await findUserById(userId);
     if (!foundUser) {
-      throw new BadRequestError('Error: User name not exist!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_NAME_NOT_EXIST);
     }
 
     const passwordIsNull = await checkPasswordIsNullById(userId);
     if (!passwordIsNull) {
-      throw new BadRequestError('Error: Password is already!');
+      throw new BadRequestError(ERROR_MESSAGE.PASSWORD_IS_ALREADY);
     }
 
     if (userInfo.PASSWORD === process.env.DEFAULT_PASSWORD) {
-      throw new BadRequestError('Error: Password is default!');
+      throw new BadRequestError(ERROR_MESSAGE.PASSWORD_IS_DEFAULT);
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -68,33 +82,44 @@ class AccessService {
 
     const updateResult = await updatePasswordById(userId, hashed);
     if (!updateResult) {
-      throw new BadRequestError('Error: Update password failed!');
+      throw new BadRequestError(ERROR_MESSAGE.UPDATE_PASSWORD_FAILED);
     }
 
     const accessToken = createNewAccessToken(foundUser);
     const refreshToken = createRefreshToken(foundUser);
-    return { userInfo: foundUser, accessToken: accessToken, refreshToken: refreshToken };
+    return {
+      userInfo: getInfoData(foundUser, [
+        'ROWGUID',
+        'USER_NAME',
+        'FULLNAME',
+        'EMAIL',
+        'ADDRESS',
+        'BIRTHDAY',
+        'ROLE_CODE',
+        'ROLE_NAME',
+      ]),
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    };
   };
 
-  static refreshToken = async (refreshToken: string) => {
-    return jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SIGN_SECRET,
-      async (err: any, user: Partial<User>) => {
-        if (err) {
-          throw new UnAuthorizedError('Error: authorization required!');
-        }
-        const resDataUser = await findUserById(user.ROWGUID);
-
-        const newAccessToken = createNewAccessToken(resDataUser);
-        const newRefreshToken = createRefreshToken(resDataUser);
-        return {
-          userInfo: resDataUser,
-          accessToken: newAccessToken,
-          refreshToken: newRefreshToken,
-        };
-      },
-    );
+  static handlerRefreshToken = async (user: User) => {
+    const newAccessToken = createNewAccessToken(user);
+    const newRefreshToken = createRefreshToken(user);
+    return {
+      userInfo: getInfoData(user, [
+        'ROWGUID',
+        'USER_NAME',
+        'FULLNAME',
+        'EMAIL',
+        'ADDRESS',
+        'BIRTHDAY',
+        'ROLE_CODE',
+        'ROLE_NAME',
+      ]),
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    };
   };
 }
 export default AccessService;

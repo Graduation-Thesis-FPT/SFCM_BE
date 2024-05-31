@@ -1,5 +1,6 @@
 import { Response } from 'express';
-import { ReasonPhrases, StatusCodes } from '../utils/httpStatusCode';
+import { StatusCodes } from '../utils/httpStatusCode';
+import { REASON_PHRASES } from '../constants';
 
 interface SuccessResponseOptions {
   message: string;
@@ -16,10 +17,10 @@ class SuccessResponse {
   constructor({
     message,
     statusCode = StatusCodes.OK,
-    reasonStatusCode = ReasonPhrases.OK,
+    reasonStatusCode = REASON_PHRASES.OK,
     metadata = {},
   }: SuccessResponseOptions) {
-    this.message = !message ? reasonStatusCode : message; 
+    this.message = !message ? reasonStatusCode : message;
     this.statusCode = statusCode;
     this.metadata = metadata;
   }
@@ -31,7 +32,7 @@ class SuccessResponse {
 
 class OK extends SuccessResponse {
   constructor({ message, metadata }: { message?: string; metadata?: object }) {
-    super({ message, metadata, statusCode: StatusCodes.OK, reasonStatusCode: ReasonPhrases.OK });
+    super({ message, metadata, statusCode: StatusCodes.OK, reasonStatusCode: REASON_PHRASES.OK });
   }
 }
 
@@ -39,7 +40,7 @@ class CREATED extends SuccessResponse {
   constructor({
     message,
     statusCode = StatusCodes.CREATED,
-    reasonStatusCode = ReasonPhrases.CREATED,
+    reasonStatusCode = REASON_PHRASES.CREATED,
     metadata,
   }: SuccessResponseOptions) {
     super({ message, statusCode, reasonStatusCode, metadata });

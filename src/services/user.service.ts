@@ -1,3 +1,4 @@
+import { ERROR_MESSAGE } from '../constants';
 import { BadRequestError } from '../core/error.response';
 import { User } from '../entity/user.entity';
 import {
@@ -19,17 +20,16 @@ class UserService {
    * @param userInfo
    * @returns
    */
-  static createUserAccount = async (userInfo: User): Promise<User> => {
+  static createUserAccount = async (userInfo: User, createBy: User): Promise<User> => {
     const foundUser = await findUserByUserName(userInfo.USER_NAME);
 
     if (foundUser) {
-      throw new BadRequestError('Error: User already exists!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_ALREADY_EXIST);
     }
 
     if (userInfo.BIRTHDAY) userInfo.BIRTHDAY = new Date(userInfo.BIRTHDAY);
-    userInfo.CREATE_BY = 'sample user';
-    userInfo.UPDATE_BY = 'sample user';
-
+    userInfo.CREATE_BY = createBy.ROWGUID;
+    userInfo.UPDATE_BY = createBy.ROWGUID;
     const user = userRepository.create(userInfo);
 
     await isValidInfor(user);
@@ -67,7 +67,7 @@ class UserService {
     const user = await findUserById(userId);
 
     if (!user) {
-      throw new BadRequestError('Error: User not exist!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_NOT_EXIST);
     }
 
     return await deactiveUser(userId);
@@ -82,7 +82,7 @@ class UserService {
     const user = await findUserById(userId);
 
     if (!user) {
-      throw new BadRequestError('Error: User not exist!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_NOT_EXIST);
     }
 
     return await activeUser(userId);
@@ -98,25 +98,25 @@ class UserService {
    * @param userInfo
    * @returns
    */
-  static updateUser = async (userId: string, userInfo: Partial<User>) => {
+  static updateUser = async (userId: string, userInfo: Partial<User>, updateBy: User) => {
     const user = await findUserById(userId);
 
     if (!user) {
-      throw new BadRequestError('Error: User not exist!');
+      throw new BadRequestError(ERROR_MESSAGE.USER_NOT_EXIST);
     }
 
     if (userInfo.USER_NAME) {
       const isDuplicatedUserName = await findUserByUserName(userInfo.USER_NAME);
 
       if (isDuplicatedUserName) {
-        throw new BadRequestError('Error: User name is duplicated!');
+        throw new BadRequestError(ERROR_MESSAGE.USER_NAME_IS_DUPLICATED);
       }
     }
 
     const objectParams = removeUndefinedProperty(userInfo);
 
     if (!objectParams.BIRTHDAY) objectParams.BIRTHDAY = null;
-    objectParams.UPDATE_BY = 'sample user update';
+    objectParams.UPDATE_BY = updateBy.ROWGUID;
     // const userInstance = userRepository.create(objectParams);
 
     // await isValidInfor(userInstance);
@@ -126,7 +126,7 @@ class UserService {
 
   static resetPasswordById = async (userId: string, defaultPassword: string) => {
     if (defaultPassword !== process.env.DEFAULT_PASSWORD) {
-      throw new BadRequestError('Error: Password is default!');
+      throw new BadRequestError(ERROR_MESSAGE.PASSWORD_IS_DEFAULT);
     }
     return await resetPasswordById(userId);
   };

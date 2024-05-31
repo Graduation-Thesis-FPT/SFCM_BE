@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { validate } from 'class-validator';
+import _ from 'lodash';
 import { BadRequestError } from '../core/error.response';
 
 const isValidInfor = async (requestData: object) => {
@@ -30,4 +31,16 @@ const removeUndefinedProperty = (obj: Record<string, any>) => {
   return obj;
 };
 
-export { removeUndefinedProperty, asyncHandler, isValidInfor };
+const getInfoData = (object: object, fields: string[]) => {
+  return _.pick(object, fields);
+};
+
+const isValidID = (id: string) => {
+  const uuidRegex =
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+
+  if (!uuidRegex.test(id)) return false;
+  return true;
+};
+
+export { removeUndefinedProperty, asyncHandler, isValidInfor, getInfoData, isValidID };

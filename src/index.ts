@@ -1,21 +1,22 @@
 import dotenv from 'dotenv';
-import express from 'express';
-import { NextFunction, Request, Response } from 'express';
+import express, { NextFunction } from 'express';
+import { Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import 'reflect-metadata';
-var cookieParser = require('cookie-parser');
 
 dotenv.config({ path: '.env' });
 
 import routes from './routes';
 import { ErrorResponse } from './core/error.response';
 import mssqlConnection from './db/mssql.connect';
+import { ERROR_MESSAGE } from './constants';
 
 const app = express();
 const allowedOrigins = ['http://localhost:2024'];
 const corsOptions = {
   credentials: true,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   origin: function (origin: any, callback: any) {
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
@@ -28,7 +29,6 @@ const corsOptions = {
 /**
  * App Configuration
  */
-app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json());
@@ -42,13 +42,25 @@ app.all('*', (req, res, next) => {
   next(new ErrorResponse(`Can't not find ${req.originalUrl} on this server`, 404));
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 app.use((error: Error | any, req: Request, res: Response, next: NextFunction) => {
-  const statusCode = error.status || 500;
+  let statusCode = error.status || 500;
+
+  if (error.name === 'TokenExpiredError') {
+    statusCode = 401;
+    error.message = ERROR_MESSAGE.INVALID_TOKEN_PLEASE_LOGIN_AGAIN;
+  }
+
+  if (error.name === 'JsonWebTokenError') {
+    statusCode = 401;
+    error.message = ERROR_MESSAGE.INVALID_TOKEN_PLEASE_LOGIN_AGAIN;
+  }
+
   return res.status(statusCode).json({
     status: 'error',
     code: statusCode,
     stack: error.stack,
-    message: error.message || 'Internal Server Error',
+    message: error.message || ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
   });
 });
 
