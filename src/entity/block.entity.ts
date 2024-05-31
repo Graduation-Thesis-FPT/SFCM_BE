@@ -25,7 +25,7 @@ export class Block extends Model {
   BLOCK_WIDTH: number;
 
   @Column()
-  BLOCK_HEIGH: number;
+  BLOCK_HEIGHT: number;
 
   @Column({ default: false })
   STATUS: boolean;

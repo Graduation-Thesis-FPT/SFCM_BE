@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import { validate } from 'class-validator';
 import _ from 'lodash';
 import { BadRequestError } from '../core/error.response';
-import { ERROR_MESSAGE } from '../constants';
 
 const isValidInfor = async (requestData: object) => {
   const errors = await validate(requestData);

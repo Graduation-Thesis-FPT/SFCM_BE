@@ -44,4 +44,8 @@ const grantPermission = async (req: Request, res: Response, next: NextFunction) 
   next();
 };
 
-export { grantPermission };
+const validateRequest = (cb: () => void) => {
+  return cb();
+};
+
+export { grantPermission, validateRequest };

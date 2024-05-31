@@ -1,17 +1,11 @@
 import mssqlConnection from '../db/mssql.connect';
 import { Block as BlockEntity } from '../entity/block.entity';
-import { User } from '../entity/user.entity';
 import { isValidInfor } from '../utils';
 
 export const blockRepository = mssqlConnection.getRepository(BlockEntity);
 
-const createBlock = async (blockInfo: BlockEntity, createBy: User) => {
-  blockInfo.CREATE_BY = createBy.ROWGUID;
-  blockInfo.UPDATE_BY = createBy.ROWGUID;
-  blockInfo.UPDATE_DATE = new Date();
-  blockInfo.STATUS = false;
-
-  const block = blockRepository.create(blockInfo);
+const createBlock = async (blockListInfo: BlockEntity[]) => {
+  const block = blockRepository.create(blockListInfo);
 
   await isValidInfor(block);
 
@@ -42,4 +36,18 @@ const findBlockById = async (blockId: string) => {
     .getOne();
 };
 
-export { createBlock, checkDuplicateBlock, deleteBlockMany, getAllBlock, findBlockById };
+const findBlockByWarehouseCode = async (warehouseCode: string) => {
+  return await blockRepository
+    .createQueryBuilder('block')
+    .where('block.WAREHOUSE_CODE = :warehouseCode', { warehouseCode: warehouseCode })
+    .getOne();
+};
+
+export {
+  createBlock,
+  checkDuplicateBlock,
+  deleteBlockMany,
+  getAllBlock,
+  findBlockById,
+  findBlockByWarehouseCode,
+};

@@ -6,10 +6,10 @@ import BlockService from '../services/block.service';
 class BlockController {
   createBlock = async (req: Request, res: Response) => {
     const createBy = res.locals.user;
-
+    const blockList = res.locals.requestData;
     new CREATED({
       message: SUCCESS_MESSAGE.LOGIN_SUCCESS,
-      metadata: await BlockService.createBlock(req.body, createBy),
+      metadata: await BlockService.createBlock(blockList, createBy),
     }).send(res);
   };
 
