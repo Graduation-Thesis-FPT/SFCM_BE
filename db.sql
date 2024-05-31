@@ -1182,20 +1182,36 @@ VALUES
 (NULL,'user-manager',N'Quản lý người dùng','Users',1,100,NULL,'sql','sql'),
 ('user-manager','user',N'Người dùng',NULL,1,101,'User','sql','sql'),
 ('user-manager','permission',N'Phân quyền',NULL,1,102,'Permission','sql','sql'),
-(NULL,'danhmucdungchung',N'Danh mục dùng chung','List',1,200,'DanhMucDungChung','sql','sql'),
-('danhmucdungchung','thietkekho',N'Thiết kế kho',NULL,1,201,'ThietKeKho','sql','sql'),
-('danhmucdungchung','quanlykho',N'Quản lý kho',NULL,1,202,'QuanLyKho','sql','sql')
+(NULL,'generic-list',N'Danh mục dùng chung','List',1,200,NULL,'sql','sql'),
+('generic-list','warehouse-list',N'Danh mục kho',NULL,1,201,'WarehouseList','sql','sql'),
+('generic-list','warehouse-design',N'Thiết kế kho',NULL,1,203,'WarehouseDesign','sql','sql'),
+('generic-list','gate-list',N'Danh mục cổng',NULL,1,204,'GateList','sql','sql'),
+('generic-list','equipment-group-list',N'Danh mục loại thiết bị',NULL,1,205,'EquipmentGroupList','sql','sql'),
+('generic-list','equipment-list',N'Danh mục thiết bị',NULL,1,206,'EquipmentList','sql','sql'),
+('generic-list','method-list',N'Danh mục phương án',NULL,1,207,'MethodList','sql','sql'),
+('generic-list','product-group-list',N'Danh mục loại hàng hóa',NULL,1,208,'ProductGroupList','sql','sql'),
+('generic-list','unit-list',N'Danh mục đơn vị tính',NULL,1,209,'UnitList','sql','sql'),
+('generic-list','customer-group-list',N'Danh mục loại khách hàng',NULL,1,210,'CustomerGroupList','sql','sql'),
+('generic-list','customer-list',N'Danh mục khách hàng',NULL,1,211,'CustomerList','sql','sql'),
+('generic-list','tractor-list',N'Danh mục đầu kéo',NULL,1,212,'TractorList','sql','sql'),
+('generic-list','trailer-list',N'Danh mục rơ-mooc',NULL,1,213,'TrailerList','sql','sql'),
+(NULL,'input-data',N'Dữ liệu đầu vào','FolderInput',1,300,NULL,'sql','sql'),
+('input-data','vessel-info',N'Thông tin tàu chuyến',NULL,1,301,'VesselInfo','sql','sql'),
+('input-data','manifest-loading-list',N'Kê khai hàng hóa',NULL,1,302,'ManifestLoadingList','sql','sql'),
+('input-data','good-manifest',N'Bảng kê danh mục hàng hóa',NULL,1,303,'GoodManifest','sql','sql')
+
+
 
 INSERT INTO SA_PERMISSION (ROLE_CODE,MENU_CODE,IS_VIEW,IS_ADD_NEW,IS_MODIFY,IS_DELETE,CREATE_BY,UPDATE_BY)
 VALUES 
 ('admin','user',1,1,1,1,'sql','sql'),
 ('admin','permission',1,1,1,1,'sql','sql'),
-('admin','thietkekho',1,1,1,1,'sql','sql'),
-('admin','quanlykho',1,1,1,1,'sql','sql'),
+('admin','warehouse-list',1,1,1,1,'sql','sql'),
+('admin','warehouse-design',1,1,1,1,'sql','sql'),
 ('manager','user',1,1,1,1,'sql','sql'),
-('manager','permission',1,0,0,0,'sql','sql'),
-('manager','thietkekho',1,1,1,1,'sql','sql'),
-('manager','quanlykho',1,1,1,1,'sql','sql')
+('manager','permission',1,1,1,1,'sql','sql'),
+('manager','warehouse-list',1,1,1,1,'sql','sql'),
+('manager','warehouse-design',1,1,1,1,'sql','sql'),
 
 INSERT INTO SA_USER (ROLE_CODE, USER_NAME,CREATE_BY,UPDATE_BY)
 VALUES ('admin','superadmin','sql','sql')
