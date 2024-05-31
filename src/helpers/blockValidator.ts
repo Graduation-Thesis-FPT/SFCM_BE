@@ -5,12 +5,24 @@ import { BadRequestError } from '../core/error.response';
 
 const validateBlock = (data: Block) => {
   const blockSchema = Joi.object({
-    WAREHOUSE_CODE: Joi.string().trim().required(),
-    BLOCK_NAME: Joi.string().trim().required(),
-    TIER_COUNT: Joi.optional(),
-    SLOT_COUNT: Joi.optional(),
-    BLOCK_WIDTH: Joi.optional(),
-    BLOCK_HEIGHT: Joi.optional(),
+    WAREHOUSE_CODE: Joi.string().trim().required().messages({
+      'any.required': 'WAREHOUSE_CODE không được để trống',
+    }),
+    BLOCK_NAME: Joi.string().trim().required().messages({
+      'any.required': 'BLOCK_NAME không được để trống',
+    }),
+    TIER_COUNT: Joi.number().positive().messages({
+      'number.positive': 'TIER_COUNT phải là số dương',
+    }),
+    SLOT_COUNT: Joi.number().positive().messages({
+      'number.positive': 'SLOT_COUNT phải là số dương',
+    }),
+    BLOCK_WIDTH: Joi.number().positive().messages({
+      'number.positive': 'BLOCK_WIDTH phải là số dương',
+    }),
+    BLOCK_HEIGHT: Joi.number().positive().messages({
+      'number.positive': 'BLOCK_HEIGHT phải là số dương',
+    }),
   });
 
   return blockSchema.validate(data);

@@ -8,7 +8,7 @@ class BlockController {
     const createBy = res.locals.user;
     const blockList = res.locals.requestData;
     new CREATED({
-      message: SUCCESS_MESSAGE.LOGIN_SUCCESS,
+      message: SUCCESS_MESSAGE.CREATE_BLOCK_SUCCESS,
       metadata: await BlockService.createBlock(blockList, createBy),
     }).send(res);
   };
