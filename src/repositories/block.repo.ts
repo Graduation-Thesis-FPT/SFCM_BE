@@ -26,7 +26,11 @@ const deleteBlockMany = async (blockListId: string[]) => {
 };
 
 const getAllBlock = async () => {
-  return await blockRepository.find();
+  return await blockRepository.find({
+    order: {
+      UPDATE_DATE: 'DESC',
+    },
+  });
 };
 
 const findBlockById = async (blockId: string) => {
