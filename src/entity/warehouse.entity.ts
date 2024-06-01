@@ -18,6 +18,9 @@ export class WareHouse extends Model {
   @Column()
   ACREAGE: number;
 
+  @Column({ default: false })
+  STATUS: boolean;
+
   @BeforeInsert()
   @BeforeUpdate()
   trimString() {
