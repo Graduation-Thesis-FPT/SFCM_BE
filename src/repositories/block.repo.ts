@@ -13,11 +13,10 @@ const createBlock = async (blockListInfo: BlockEntity[]) => {
   return newBlock;
 };
 
-const checkDuplicateBlock = async (warehouseCode: string, blockName: string) => {
+const checkDuplicateBlock = async (warehouseCode: string) => {
   return await blockRepository
     .createQueryBuilder('block')
     .where('block.WAREHOUSE_CODE = :warehouseCode', { warehouseCode: warehouseCode })
-    .andWhere('block.BLOCK_NAME = :blockName', { blockName: blockName })
     .getOne();
 };
 
