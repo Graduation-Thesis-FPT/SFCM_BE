@@ -5,6 +5,7 @@ import roleRoute from './role/index';
 import permissionRoute from './permission/index';
 import menuRouter from './menu/index';
 import blockRouter from './block/index';
+import warehouseRouter from './warehouse/index';
 
 const routes = Router();
 
@@ -17,5 +18,6 @@ routes.use('/api/v1/menu', menuRouter);
 
 // Warehouse design
 routes.use('/api/v1/block', blockRouter);
+routes.use('/api/v1/warehouse', warehouseRouter);
 
 export default routes;
