@@ -4,12 +4,13 @@ import { SUCCESS_MESSAGE } from '../constants';
 import BlockService from '../services/block.service';
 
 class BlockController {
-  createBlock = async (req: Request, res: Response) => {
+  createAndUpdateBlock = async (req: Request, res: Response) => {
     const createBy = res.locals.user;
     const blockList = res.locals.requestData;
+
     new CREATED({
       message: SUCCESS_MESSAGE.CREATE_BLOCK_SUCCESS,
-      metadata: await BlockService.createBlock(blockList, createBy),
+      metadata: await BlockService.createAndUpdateBlock(blockList, createBy),
     }).send(res);
   };
 

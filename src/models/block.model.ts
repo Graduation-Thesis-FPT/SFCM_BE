@@ -1,4 +1,5 @@
 export interface Block {
+  ROWGUID?: string;
   WAREHOUSE_CODE: string;
   BLOCK_NAME: string;
   TIER_COUNT: number;
@@ -10,4 +11,9 @@ export interface Block {
   CREATE_DATE?: Date;
   UPDATE_BY?: string;
   UPDATE_DATE?: Date;
+}
+
+export interface BlockListInfo {
+  insert: Block[];
+  update: Block[];
 }

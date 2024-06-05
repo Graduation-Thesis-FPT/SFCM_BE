@@ -13,7 +13,7 @@ router.post(
   '',
   asyncHandler(grantPermission),
   validateBlockRequest,
-  asyncHandler(blockController.createBlock),
+  asyncHandler(blockController.createAndUpdateBlock),
 );
 router.delete('', asyncHandler(grantPermission), asyncHandler(blockController.deleteBlock));
 router.get('', asyncHandler(grantPermission), asyncHandler(blockController.getBlock));
