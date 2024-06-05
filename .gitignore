@@ -21,3 +21,9 @@ package-lock
 !.vscode/launch.json
 !.vscode/extensions.json
 .history/*
+
+#misc
+.DS_Store
+
+#lock file
+bun.lockb
