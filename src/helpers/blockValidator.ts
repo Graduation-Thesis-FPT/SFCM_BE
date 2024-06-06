@@ -30,7 +30,7 @@ const validateInsertBlock = (data: Block) => {
 
 const validateUpdateBlock = (data: Block) => {
   const blockSchema = Joi.object({
-    ROWGUID: Joi.optional(),
+    ROWGUID: Joi.string().trim().required(),
     WAREHOUSE_CODE: Joi.string().trim().optional(),
     BLOCK_NAME: Joi.optional(),
     TIER_COUNT: Joi.number()

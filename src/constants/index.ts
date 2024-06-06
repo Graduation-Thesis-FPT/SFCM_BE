@@ -24,6 +24,9 @@ export const ERROR_MESSAGE = {
   // warehouse - block
   BLOCK_DUPLICATED: 'BLOCK_DUPLICATED',
   BLOCK_NOT_EXIST: 'BLOCK_NOT_EXIST',
+
+  // gate
+  GATE_NOT_EXIST: 'GATE_NOT_EXIST', // check cổng này tồn tại hay không
 };
 
 export const SUCCESS_MESSAGE = {
@@ -50,6 +53,9 @@ export const SUCCESS_MESSAGE = {
   // warehouse - block
   DELETE_WAREHOUSE_SUCCESS: 'DELETE_WAREHOUSE_SUCCESS',
   GET_WAREHOUSE_SUCCESS: 'GET_WAREHOUSE_SUCCESS',
+
+  // gate
+  CREATE_GATE_SUCCESS: 'CREATE_GATE_SUCCESS',
 };
 
 export const REASON_PHRASES = {

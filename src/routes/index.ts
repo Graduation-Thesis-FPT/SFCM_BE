@@ -6,6 +6,7 @@ import permissionRoute from './permission/index';
 import menuRouter from './menu/index';
 import blockRouter from './block/index';
 import warehouseRouter from './warehouse/index';
+import gateRouter from './gate/index';
 
 const routes = Router();
 
@@ -19,5 +20,8 @@ routes.use('/api/v1/menu', menuRouter);
 // Warehouse design
 routes.use('/api/v1/block', blockRouter);
 routes.use('/api/v1/warehouse', warehouseRouter);
+
+// gate
+routes.use('/api/v1/gate', gateRouter);
 
 export default routes;
