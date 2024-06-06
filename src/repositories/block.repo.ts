@@ -1,22 +1,28 @@
 import mssqlConnection from '../db/mssql.connect';
 import { Block as BlockEntity } from '../entity/block.entity';
-import { isValidInfor } from '../utils';
+import { Block } from '../models/block.model';
+import { warehouseRepository } from './warehouse.repo';
 
 export const blockRepository = mssqlConnection.getRepository(BlockEntity);
 
-const createBlock = async (blockListInfo: BlockEntity[]) => {
+const createBlock = async (blockListInfo: Block[]) => {
   const block = blockRepository.create(blockListInfo);
-
-  await isValidInfor(block);
 
   const newBlock = await blockRepository.save(block);
   return newBlock;
 };
 
-const checkDuplicateBlock = async (warehouseCode: string) => {
+const updateBlock = async (blockListInfo: Block[]) => {
+  return await Promise.all(
+    blockListInfo.map(block => blockRepository.update(block.ROWGUID, block)),
+  );
+};
+
+const checkDuplicateBlock = async (warehouseCode: string, blockName: string) => {
   return await blockRepository
     .createQueryBuilder('block')
     .where('block.WAREHOUSE_CODE = :warehouseCode', { warehouseCode: warehouseCode })
+    .andWhere('block.BLOCK_NAME = :blockName', { blockName: blockName })
     .getOne();
 };
 
@@ -39,10 +45,10 @@ const findBlockById = async (blockId: string) => {
     .getOne();
 };
 
-const findBlockByWarehouseCode = async (warehouseCode: string) => {
-  return await blockRepository
-    .createQueryBuilder('block')
-    .where('block.WAREHOUSE_CODE = :warehouseCode', { warehouseCode: warehouseCode })
+const isValidWarehouseCode = async (warehouseCode: string) => {
+  return await warehouseRepository
+    .createQueryBuilder('wh')
+    .where('wh.WAREHOUSE_CODE = :warehouseCode', { warehouseCode: warehouseCode })
     .getOne();
 };
 
@@ -52,5 +58,6 @@ export {
   deleteBlockMany,
   getAllBlock,
   findBlockById,
-  findBlockByWarehouseCode,
+  isValidWarehouseCode,
+  updateBlock,
 };

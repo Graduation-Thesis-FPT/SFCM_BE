@@ -1,13 +1,10 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryColumn } from 'typeorm';
 import Model from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('BS_WAREHOUSE')
 export class WareHouse extends Model {
-  @PrimaryGeneratedColumn('uuid')
-  ROWGUID: string;
-
-  @Column()
+  @PrimaryColumn()
   @IsNotEmpty()
   WAREHOUSE_CODE: string;
 

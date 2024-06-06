@@ -1,8 +1,8 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import Model from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
-@Entity('BS_BLOCK')
+@Entity('BS_CELL')
 export class Block extends Model {
   @PrimaryGeneratedColumn('uuid')
   ROWGUID: string;
@@ -29,11 +29,4 @@ export class Block extends Model {
 
   @Column({ default: false })
   STATUS: boolean;
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  trimString() {
-    this.WAREHOUSE_CODE = this.WAREHOUSE_CODE.trim();
-    this.BLOCK_NAME = this.BLOCK_NAME.trim();
-  }
 }

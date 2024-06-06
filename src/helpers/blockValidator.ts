@@ -3,7 +3,7 @@ import { Block } from '../models/block.model';
 import { NextFunction, Request, Response } from 'express';
 import { BadRequestError } from '../core/error.response';
 
-const validateBlock = (data: Block) => {
+const validateInsertBlock = (data: Block) => {
   const blockSchema = Joi.object({
     WAREHOUSE_CODE: Joi.string().trim().required().messages({
       'any.required': 'WAREHOUSE_CODE không được để trống',
@@ -28,20 +28,71 @@ const validateBlock = (data: Block) => {
   return blockSchema.validate(data);
 };
 
+const validateUpdateBlock = (data: Block) => {
+  const blockSchema = Joi.object({
+    ROWGUID: Joi.optional(),
+    WAREHOUSE_CODE: Joi.string().trim().optional(),
+    BLOCK_NAME: Joi.optional(),
+    TIER_COUNT: Joi.number()
+      .positive()
+      .messages({
+        'number.positive': 'TIER_COUNT phải là số dương',
+      })
+      .optional(),
+    SLOT_COUNT: Joi.number()
+      .positive()
+      .messages({
+        'number.positive': 'SLOT_COUNT phải là số dương',
+      })
+      .optional(),
+    BLOCK_WIDTH: Joi.number()
+      .positive()
+      .messages({
+        'number.positive': 'BLOCK_WIDTH phải là số dương',
+      })
+      .optional(),
+    BLOCK_HEIGHT: Joi.number()
+      .positive()
+      .messages({
+        'number.positive': 'BLOCK_HEIGHT phải là số dương',
+      })
+      .optional(),
+  });
+
+  return blockSchema.validate(data);
+};
+
 const validateBlockRequest = (req: Request, res: Response, next: NextFunction) => {
-  const blockListInfo = req.body;
-  const requestData = [];
-  for (const blockInfo of blockListInfo) {
-    const { error, value } = validateBlock(blockInfo);
+  const { insert, update } = req.body;
 
-    if (error) {
-      console.log(error.details);
-      throw new BadRequestError(error.message);
+  const insertData = [];
+  const updateData = [];
+  if (insert) {
+    for (const blockInfo of insert) {
+      const { error, value } = validateInsertBlock(blockInfo);
+
+      if (error) {
+        console.log(error.details);
+        throw new BadRequestError(error.message);
+      }
+
+      insertData.push(value);
     }
-
-    requestData.push(value);
   }
-  res.locals.requestData = requestData;
+
+  if (update) {
+    for (const blockInfo of update) {
+      const { error, value } = validateUpdateBlock(blockInfo);
+
+      if (error) {
+        console.log(error.details);
+        throw new BadRequestError(error.message);
+      }
+
+      updateData.push(value);
+    }
+  }
+  res.locals.requestData = { insert: insertData, update: updateData };
   next();
 };
 
