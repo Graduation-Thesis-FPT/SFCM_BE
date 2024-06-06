@@ -4,6 +4,7 @@ package-lock
 
 # Keep environment variables out of version control
 .env
+.env.*
 
 # IDEs and editors
 /.idea
@@ -21,3 +22,9 @@ package-lock
 !.vscode/launch.json
 !.vscode/extensions.json
 .history/*
+
+#misc
+.DS_Store
+
+#lock file
+bun.lockb
