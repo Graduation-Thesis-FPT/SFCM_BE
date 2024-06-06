@@ -7,6 +7,7 @@ import menuRouter from './menu/index';
 import blockRouter from './block/index';
 import warehouseRouter from './warehouse/index';
 import gateRouter from './gate/index';
+import equipRouter from './equip-type/index';
 
 const routes = Router();
 
@@ -23,5 +24,8 @@ routes.use('/api/v1/warehouse', warehouseRouter);
 
 // gate
 routes.use('/api/v1/gate', gateRouter);
+
+// equipment
+routes.use('/api/v1/equip-type', equipRouter);
 
 export default routes;
