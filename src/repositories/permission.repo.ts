@@ -36,6 +36,7 @@ const getAllPermission = async (role: string): Promise<Permission[]> => {
       'sp.ROLE_CODE as ROLE_CODE',
       'sp.ROWGUID as ROWGUID',
     ])
+    .orderBy('sm.ORDER_BY', 'ASC')
     .getRawMany();
 
   return rawData;
