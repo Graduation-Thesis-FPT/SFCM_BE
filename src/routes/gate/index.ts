@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { asyncHandler } from '../../utils';
 import { authentication } from '../../auth/authUtils';
-import blockController from '../../controllers/block.controller';
 import { grantPermission } from '../../middlewares';
 import gateController from '../../controllers/gate.controller';
 import { validateGateRequest } from '../../helpers/gateValidator';
@@ -16,7 +15,7 @@ router.post(
   validateGateRequest,
   asyncHandler(gateController.createAndUpdateGate),
 );
-router.delete('', asyncHandler(grantPermission), asyncHandler(blockController.deleteBlock));
-router.get('', asyncHandler(grantPermission), asyncHandler(blockController.getBlock));
+router.delete('', asyncHandler(grantPermission), asyncHandler(gateController.deleteGate));
+router.get('', asyncHandler(grantPermission), asyncHandler(gateController.getAllGate));
 
 export default router;

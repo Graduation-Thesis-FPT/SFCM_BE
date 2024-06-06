@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { CREATED, OK, SuccessResponse } from '../core/success.response';
 import { SUCCESS_MESSAGE } from '../constants';
-import BlockService from '../services/block.service';
 import GateService from '../services/gate.service';
 
 class GateController {
@@ -15,18 +14,18 @@ class GateController {
     }).send(res);
   };
 
-  deleteBlock = async (req: Request, res: Response) => {
-    const { ROWGUID_LIST } = req.body;
+  deleteGate = async (req: Request, res: Response) => {
+    const { GATE_CODE_LIST } = req.body;
     new SuccessResponse({
-      message: SUCCESS_MESSAGE.DELETE_BLOCK_SUCCESS,
-      metadata: await BlockService.deleteBlock(ROWGUID_LIST),
+      message: SUCCESS_MESSAGE.DELETE_GATE_SUCCESS,
+      metadata: await GateService.deleteGate(GATE_CODE_LIST),
     }).send(res);
   };
 
-  getBlock = async (req: Request, res: Response) => {
+  getAllGate = async (req: Request, res: Response) => {
     new OK({
-      message: SUCCESS_MESSAGE.GET_BLOCK_SUCCESS,
-      metadata: await BlockService.getAllBlock(),
+      message: SUCCESS_MESSAGE.GET_GATE_SUCCESS,
+      metadata: await GateService.getAllGate(),
     }).send(res);
   };
 }

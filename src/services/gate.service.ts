@@ -1,12 +1,12 @@
 import { BadRequestError } from '../core/error.response';
-import { isValidID } from '../utils';
 import { ERROR_MESSAGE } from '../constants';
 import { User } from '../entity/user.entity';
-import { deleteBlockMany, findBlockById, getAllBlock } from '../repositories/block.repo';
 import { Gate, GateListInfo } from '../models/gate.model';
 import {
   createGate,
+  deleteGateMany,
   findGateByGateCode,
+  getAllGate,
   isDuplicateGate,
   updateGate,
 } from '../repositories/gate.repo';
@@ -54,30 +54,19 @@ class GateService {
     };
   };
 
-  static deleteBlock = async (blockListID: string[]) => {
-    for (const blockID of blockListID) {
-      const isValidId = isValidID(blockID);
-      if (!isValidId) {
-        throw new BadRequestError(`ID ${blockID} is invalid!`);
-      }
-
-      const block = await findBlockById(blockID);
-      if (!block) {
-        throw new BadRequestError(`Block with ID ${block.ROWGUID} not exist!`);
-      }
-
-      if (block.STATUS) {
-        throw new BadRequestError(
-          `Không thể xóa dãy ${block.BLOCK_NAME} ở kho ${block.WAREHOUSE_CODE}`,
-        );
+  static deleteGate = async (gateCodeList: string[]) => {
+    for (const gateCode of gateCodeList) {
+      const gate = await findGateByGateCode(gateCode.trim());
+      if (!gate) {
+        throw new BadRequestError(`Gate with ID ${gateCode} not exist!`);
       }
     }
 
-    return await deleteBlockMany(blockListID);
+    return await deleteGateMany(gateCodeList);
   };
 
-  static getAllBlock = async () => {
-    return await getAllBlock();
+  static getAllGate = async () => {
+    return await getAllGate();
   };
 }
 export default GateService;

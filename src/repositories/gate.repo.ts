@@ -29,4 +29,16 @@ const findGateByGateCode = async (gateCode: string) => {
     .getOne();
 };
 
-export { isDuplicateGate, createGate, findGateByGateCode, updateGate };
+const deleteGateMany = async (gateCode: string[]) => {
+  return await gateRepository.delete(gateCode);
+};
+
+const getAllGate = async () => {
+  return await gateRepository.find({
+    order: {
+      UPDATE_DATE: 'DESC',
+    },
+  });
+};
+
+export { isDuplicateGate, createGate, findGateByGateCode, updateGate, deleteGateMany, getAllGate };
