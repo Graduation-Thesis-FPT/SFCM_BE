@@ -53,10 +53,10 @@ class WarehouseService {
         }
     }
 
-    static deleteWarehouse = async (warehouseCodeList: WareHouse[]) => {
+    static deleteWarehouse = async (warehouseCodeList: string[]) => {
         for (const warehouseCode of warehouseCodeList) {
 
-            const warehouse = await findWarehouseByCode(warehouseCode.WAREHOUSE_CODE);
+            const warehouse = await findWarehouseByCode(warehouseCode);
             if (!warehouse) {
                 throw new BadRequestError(`Warehouse with ID ${warehouse.WAREHOUSE_CODE} not exist!`);
             }

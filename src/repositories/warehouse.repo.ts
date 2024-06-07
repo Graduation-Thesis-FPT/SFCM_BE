@@ -20,8 +20,8 @@ const getAllWarehouse = async () => {
   })
 }
 
-const deleteWarehose = async (warehouseListId: WareHouse[]) => {
-  return await warehouseRepository.delete(warehouseListId.map(e => e.WAREHOUSE_CODE))
+const deleteWarehose = async (warehouseListId: string[]) => {
+  return await warehouseRepository.delete(warehouseListId)
 }
 
 const createWarehouse = async (warehouseList: WareHouse[]) => {
