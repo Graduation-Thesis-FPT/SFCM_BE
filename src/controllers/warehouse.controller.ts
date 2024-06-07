@@ -8,16 +8,15 @@ class WarehouseController {
     const createBy = res.locals.user;
     const warehouseList = res.locals.requestData;
     new CREATED({
-      message: SUCCESS_MESSAGE.CREATE_BLOCK_SUCCESS,
-      metadata: await WarehouseService.createAndUpdateWarehouse([], createBy),
+      message: SUCCESS_MESSAGE.CREATE_WAREHOUSE_SUCCESS,
+      metadata: await WarehouseService.createAndUpdateWarehouse(warehouseList, createBy),
     }).send(res);
   };
 
   deleteWarehouse = async (req: Request, res: Response) => {
-    const { warehouseCodeList } = req.body;
     new SuccessResponse({
       message: SUCCESS_MESSAGE.DELETE_WAREHOUSE_SUCCESS,
-      metadata: await WarehouseService.deleteWarehouse(warehouseCodeList),
+      metadata: await WarehouseService.deleteWarehouse(req.body),
     }).send(res);
   };
 
