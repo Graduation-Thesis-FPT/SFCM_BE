@@ -16,7 +16,7 @@ class WarehouseController {
   deleteWarehouse = async (req: Request, res: Response) => {
     new SuccessResponse({
       message: SUCCESS_MESSAGE.DELETE_WAREHOUSE_SUCCESS,
-      metadata: await WarehouseService.deleteWarehouse(req.body),
+      metadata: await WarehouseService.deleteWarehouse(req.body.warehouseCodeList),
     }).send(res);
   };
 
