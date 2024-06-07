@@ -1,6 +1,7 @@
 import mssqlConnection from '../db/mssql.connect';
 import { WareHouse as WarehouseEntity } from '../entity/warehouse.entity';
-import { isValidInfor } from '../utils';
+import { WareHouse } from '../models/warehouse.model';
+
 
 export const warehouseRepository = mssqlConnection.getRepository(WarehouseEntity);
 
@@ -19,26 +20,20 @@ const getAllWarehouse = async () => {
   })
 }
 
-const deleteWarehose = async (warehouseListId: string[]) => {
-  return await warehouseRepository.delete(warehouseListId)
+const deleteWarehose = async (warehouseListId: WareHouse[]) => {
+  return await warehouseRepository.delete(warehouseListId.map(e => e.WAREHOUSE_CODE))
 }
 
-const createWarehouse = async (warehouseList: WarehouseEntity[]) => {
-  const warehouse = warehouseRepository.create(warehouseList);
-  await isValidInfor(warehouse);
-
-  const newWarehouse = warehouseRepository.save(warehouseList);
+const createWarehouse = async (warehouseList: WareHouse[]) => {
+  const newWarehouse = await warehouseRepository.save(warehouseList);
   return newWarehouse;
 }
 
-const updateWareHouse = async (warehouseList: WarehouseEntity[]) => {
-  const warehouse = warehouseRepository.create(warehouseList);
-  await isValidInfor(warehouse);
-
-  for await (const warehouse of warehouseList) {
-    await warehouseRepository.update({ WAREHOUSE_CODE: warehouse.WAREHOUSE_CODE }, warehouse)
+const updateWareHouse = async (warehouseList: WareHouse[]) => {
+  for await (const data of warehouseList) {
+    await warehouseRepository.update({ WAREHOUSE_CODE: data.WAREHOUSE_CODE }, data)
   }
-  return warehouseList;
+  return true;
 }
 
 

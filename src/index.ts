@@ -13,7 +13,7 @@ import mssqlConnection from './db/mssql.connect';
 import { ERROR_MESSAGE } from './constants';
 
 const app = express();
-const allowedOrigins = ['http://localhost:2024'];
+const allowedOrigins = ['http://localhost:2024', 'http://127.0.0.1:2024', 'http://localhost:3050'];
 const corsOptions = {
   credentials: true,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

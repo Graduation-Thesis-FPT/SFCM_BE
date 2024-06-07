@@ -1,46 +1,62 @@
 import { BadRequestError } from '../core/error.response';
-import { isValidID } from '../utils';
 import { ERROR_MESSAGE } from '../constants';
 import { User } from '../entity/user.entity';
-import { findWarehouseByCode, getAllWarehouse, deleteWarehose, createWarehouse } from '../repositories/warehouse.repo';
-import { WareHouse } from '../entity/warehouse.entity';
-
+import { findWarehouseByCode, getAllWarehouse, deleteWarehose, createWarehouse, updateWareHouse } from '../repositories/warehouse.repo';
+import { WareHouse, WareHouseInfo } from '../models/warehouse.model';
 
 class WarehouseService {
-    static createAndUpdateWarehouse = async (warehouseListInfo: WareHouse[], createBy: User) => {
-        // let updateDataList = warehouseListInfo.filter((e: any) => e['status'] == 'edit');
-        // let insertDataList = warehouseListInfo.filter((e: any) => e['status'] == 'add');
+    static createAndUpdateWarehouse = async (warehouseListInfo: WareHouseInfo, createBy: User) => {
+        let insertData = warehouseListInfo.insert;
+        let updateData = warehouseListInfo.update;
 
-        // for (const insertData of insertDataList) {
-        //     delete insertData['status'];
-        //     const warehouse = await findWarehouseByCode(insertData.WAREHOUSE_CODE);
+        let createdWarehouse;
+        let updatedWarehouse;
+        if (insertData.length) {
+            for (const data of insertData) {
+                const checkExist = await findWarehouseByCode(data.WAREHOUSE_CODE);
 
-        //     if (warehouse) {
-        //     } else {
-        //         throw new BadRequestError(ERROR_MESSAGE.INVALID_WAREHOUSE_CODE);
-        //     }
-        // }
-        for (const warehouseInfo of warehouseListInfo) {
-            const warehouse = await findWarehouseByCode(warehouseInfo.WAREHOUSE_CODE);
-
-            if (warehouse) {
-                throw new BadRequestError(
-                    `Không thể thêm kho ${warehouseInfo.WAREHOUSE_NAME} (Đã tồn tại)`,
-                );
+                if (checkExist) {
+                    throw new BadRequestError(ERROR_MESSAGE.WAREHOUSE_EXIST);
+                }
+                data.CREATE_BY = createBy.ROWGUID;
+                data.UPDATE_BY = createBy.ROWGUID;
+                data.UPDATE_DATE = new Date();
+                data.CREATE_DATE = new Date();
+                data.STATUS = false;
             }
-            warehouseInfo.CREATE_BY = createBy.ROWGUID;
-            warehouseInfo.UPDATE_BY = createBy.ROWGUID;
-            warehouseInfo.UPDATE_DATE = new Date();
-            warehouseInfo.STATUS = false;
         }
-        const newWarehouse = await createWarehouse(warehouseListInfo);
-        return newWarehouse;
+        createdWarehouse = await createWarehouse(insertData);
+
+        if (updateData.length) {
+            for (const data of updateData) {
+                const checkExist = await findWarehouseByCode(data.WAREHOUSE_CODE);
+
+                if (!checkExist) {
+                    throw new BadRequestError(ERROR_MESSAGE.WAREHOUSE_NOT_EXIST);
+                }
+                if (data.STATUS) {
+                    throw new BadRequestError(
+                        `Không thể cập nhật kho ${data.WAREHOUSE_CODE} vì đang hoạt động`,
+                    );
+                }
+                data.CREATE_BY = createBy.ROWGUID;
+                data.UPDATE_BY = createBy.ROWGUID;
+                data.UPDATE_DATE = new Date();
+                data.CREATE_DATE = new Date();
+                data.STATUS = false;
+            }
+            updatedWarehouse = await updateWareHouse(updateData);
+        }
+        return {
+            createdWarehouse,
+            updatedWarehouse
+        }
     }
 
-    static deleteWarehouse = async (warehouseCodeList: string[]) => {
+    static deleteWarehouse = async (warehouseCodeList: WareHouse[]) => {
         for (const warehouseCode of warehouseCodeList) {
 
-            const warehouse = await findWarehouseByCode(warehouseCode);
+            const warehouse = await findWarehouseByCode(warehouseCode.WAREHOUSE_CODE);
             if (!warehouse) {
                 throw new BadRequestError(`Warehouse with ID ${warehouse.WAREHOUSE_CODE} not exist!`);
             }
