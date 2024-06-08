@@ -3,7 +3,7 @@ import Model from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('BS_CELL')
-export class Block extends Model {
+export class Cell extends Model {
   @PrimaryGeneratedColumn('uuid')
   ROWGUID: string;
 
@@ -13,7 +13,7 @@ export class Block extends Model {
 
   @Column()
   @IsNotEmpty()
-  BLOCK_NAME: string;
+  BLOCK_CODE: string;
 
   @Column()
   TIER_COUNT: number;

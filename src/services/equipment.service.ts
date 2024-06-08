@@ -11,7 +11,7 @@ import {
   getAllEquipment,
   updateEquipment,
 } from '../repositories/equipment.repo';
-import { findBlockById } from '../repositories/block.repo';
+import { findBlockById } from '../repositories/cell.repo';
 import { isValidID } from '../utils';
 
 class EquipmentService {

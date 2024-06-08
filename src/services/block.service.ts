@@ -10,70 +10,70 @@ import {
   getAllBlock,
   isValidWarehouseCode,
   updateBlock,
-} from '../repositories/block.repo';
-import { Block, BlockListInfo } from '../models/block.model';
+} from '../repositories/cell.repo';
+import { Cell, CellListInfo } from '../models/block.model';
 
 class BlockService {
-  static createAndUpdateBlock = async (blockListInfo: BlockListInfo, createBy: User) => {
-    const insertData = blockListInfo.insert;
-    const updateData = blockListInfo.update;
+  static createAndUpdateCell = async (cellListInfo: CellListInfo, createBy: User) => {
+    const insertData = cellListInfo.insert;
+    const updateData = cellListInfo.update;
 
-    let newCreatedBlock: Block[] = [];
-    let updatedBlock;
+    let newCreatedCell: Cell[] = [];
+    let updatedCell;
     if (insertData) {
-      for (const blockInfo of insertData) {
-        const block = await isValidWarehouseCode(blockInfo.WAREHOUSE_CODE);
+      for (const cellInfo of insertData) {
+        const cell = await isValidWarehouseCode(cellInfo.WAREHOUSE_CODE);
 
-        if (!block) {
+        if (!cell) {
           throw new BadRequestError(ERROR_MESSAGE.INVALID_WAREHOUSE_CODE);
         }
         const isDuplicateBlock = await checkDuplicateBlock(
-          blockInfo.WAREHOUSE_CODE,
-          blockInfo.BLOCK_NAME,
+          cellInfo.WAREHOUSE_CODE,
+          cellInfo.BLOCK_NAME,
         );
         if (isDuplicateBlock) {
           throw new BadRequestError(
-            `Không thể thêm dãy ${blockInfo.BLOCK_NAME} ở kho ${blockInfo.WAREHOUSE_CODE} (Đã tồn tại)`,
+            `Không thể thêm dãy ${cellInfo.BLOCK_NAME} ở kho ${cellInfo.WAREHOUSE_CODE} (Đã tồn tại)`,
           );
         }
 
-        blockInfo.CREATE_BY = createBy.ROWGUID;
-        blockInfo.UPDATE_BY = createBy.ROWGUID;
-        blockInfo.UPDATE_DATE = new Date();
-        blockInfo.STATUS = false;
+        cellInfo.CREATE_BY = createBy.ROWGUID;
+        cellInfo.UPDATE_BY = createBy.ROWGUID;
+        cellInfo.UPDATE_DATE = new Date();
+        cellInfo.STATUS = false;
       }
 
-      newCreatedBlock = await createBlock(insertData);
+      newCreatedCell = await createBlock(insertData);
     }
 
     if (updateData) {
-      for (const blockInfo of updateData) {
-        const block = await findBlockById(blockInfo.ROWGUID);
-        if (!block) {
+      for (const cellInfo of updateData) {
+        const cell = await findBlockById(cellInfo.ROWGUID);
+        if (!cell) {
           throw new BadRequestError(ERROR_MESSAGE.BLOCK_NOT_EXIST);
         }
 
-        if (block.STATUS) {
+        if (cell.STATUS) {
           throw new BadRequestError(
-            `Không thể cập nhật dãy ${block.BLOCK_NAME} ở kho ${block.WAREHOUSE_CODE} đang hoạt động`,
+            `Không thể cập nhật dãy ${cell.BLOCK_NAME} ở kho ${cell.WAREHOUSE_CODE} đang hoạt động`,
           );
         }
 
-        blockInfo.CREATE_BY = createBy.ROWGUID;
-        blockInfo.UPDATE_BY = createBy.ROWGUID;
-        blockInfo.UPDATE_DATE = new Date();
+        cellInfo.CREATE_BY = createBy.ROWGUID;
+        cellInfo.UPDATE_BY = createBy.ROWGUID;
+        cellInfo.UPDATE_DATE = new Date();
       }
 
-      updatedBlock = await updateBlock(updateData);
+      updatedCell = await updateBlock(updateData);
     }
 
     return {
-      newCreatedBlock,
-      updatedBlock,
+      newCreatedCell,
+      updatedCell,
     };
   };
 
-  static deleteBlock = async (blockListID: string[]) => {
+  static deleteCell = async (blockListID: string[]) => {
     for (const blockID of blockListID) {
       const isValidId = isValidID(blockID);
       if (!isValidId) {
@@ -95,7 +95,7 @@ class BlockService {
     return await deleteBlockMany(blockListID);
   };
 
-  static getAllBlock = async () => {
+  static getAllCell = async () => {
     return await getAllBlock();
   };
 }

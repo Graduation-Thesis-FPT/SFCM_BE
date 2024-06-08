@@ -1,4 +1,4 @@
-export interface Block {
+export interface Cell {
   ROWGUID?: string;
   WAREHOUSE_CODE: string;
   BLOCK_NAME: string;
@@ -13,7 +13,7 @@ export interface Block {
   UPDATE_DATE?: Date;
 }
 
-export interface BlockListInfo {
-  insert: Block[];
-  update: Block[];
+export interface CellListInfo {
+  insert: Cell[];
+  update: Cell[];
 }
