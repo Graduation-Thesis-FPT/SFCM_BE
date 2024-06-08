@@ -8,15 +8,15 @@ import {
   getAllEquipType,
   isDuplicateEquipType,
   updateEquipType,
-} from '../repositories/equip-type.repo';
-import { EquipType, EquipTypeListInfo } from '../models/equip-type.model';
+} from '../repositories/equipment-type.repo';
+import { EquipmentType, EquipmentTypeListInfo } from '../models/equipment-type.model';
 
 class EquipTypeService {
-  static createAndUpdateEquipType = async (equipInfo: EquipTypeListInfo, createBy: User) => {
+  static createAndUpdateEquipType = async (equipInfo: EquipmentTypeListInfo, createBy: User) => {
     const insertData = equipInfo.insert;
     const updateData = equipInfo.update;
 
-    let newCreatedEquipType: EquipType[] = [];
+    let newCreatedEquipType: EquipmentType[] = [];
     let newUpdatedEquipType;
     if (insertData) {
       for (const equipInfo of insertData) {

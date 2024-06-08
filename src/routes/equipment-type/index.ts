@@ -2,8 +2,8 @@ import { Router } from 'express';
 import { asyncHandler } from '../../utils';
 import { authentication } from '../../auth/authUtils';
 import { grantPermission } from '../../middlewares';
-import equipTypeController from '../../controllers/equip-type.controller';
-import { validateEquipTypeRequest } from '../../helpers/equipmentValidator';
+import equipTypeController from '../../controllers/equipment-type.controller';
+import { validateEquipTypeRequest } from '../../helpers/equipmentTypeValidator';
 
 const router = Router();
 

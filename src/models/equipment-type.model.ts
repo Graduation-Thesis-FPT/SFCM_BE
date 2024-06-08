@@ -1,4 +1,4 @@
-export interface EquipType {
+export interface EquipmentType {
   EQU_TYPE: string;
   EQU_TYPE_NAME: string;
   CREATE_BY?: string;
@@ -7,7 +7,7 @@ export interface EquipType {
   UPDATE_DATE?: Date;
 }
 
-export interface EquipTypeListInfo {
-  insert: EquipType[];
-  update: EquipType[];
+export interface EquipmentTypeListInfo {
+  insert: EquipmentType[];
+  update: EquipmentType[];
 }

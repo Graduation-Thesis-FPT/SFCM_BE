@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { CREATED, OK, SuccessResponse } from '../core/success.response';
 import { SUCCESS_MESSAGE } from '../constants';
-import EquipTypeService from '../services/equipType.service';
+import EquipTypeService from '../services/equipmentType.service';
 
 class EquipTypeController {
   createAndUpdateEquipType = async (req: Request, res: Response) => {
