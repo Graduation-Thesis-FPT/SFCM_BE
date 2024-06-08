@@ -3,7 +3,7 @@ import Model from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('BS_EQUIPMENTS_TYPE')
-export class EquipType extends Model {
+export class EquipmentType extends Model {
   @PrimaryColumn()
   @IsNotEmpty()
   EQU_TYPE: string;
