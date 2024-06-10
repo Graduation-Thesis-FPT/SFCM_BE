@@ -115,7 +115,7 @@ CREATE TABLE [dbo].[BS_METHOD](
 	[METHOD_CODE] [nvarchar](50) NOT NULL PRIMARY KEY,
 	[METHOD_NAME] [nvarchar](500) NOT NULL,
 	[IS_IN_OUT] [char](1) NOT NULL,
-	[IS_SERVICE] [int] NULL,
+	[IS_SERVICE] [bit] NULL,
 	[CREATE_BY] [nvarchar](100) NOT NULL,
 	[CREATE_DATE] [datetime] NOT NULL DEFAULT (getdate()),
 	[UPDATE_BY] [nvarchar](100) NOT NULL,
@@ -660,8 +660,11 @@ FOREIGN KEY ([ITEM_TYPE_CODE]) REFERENCES [dbo].[BS_ITEM_TYPE]([ITEM_TYPE_CODE])
 GO
 
 INSERT INTO SA_ROLE (ROLE_CODE, ROLE_NAME,CREATE_BY,UPDATE_BY)
-VALUES ('admin','Admin','sql','sql'),
-('manager','Manager','sql','sql')
+VALUES ('admin',N'Quản trị viên','sql','sql'),
+('procedure-staff',N'Thủ tục','sql','sql'),
+('gate-operator',N'Điều hành cổng','sql','sql'),
+('tally-operator',N'Điều hành kiểm đếm','sql','sql'),
+('warehouse-operator',N'Điều hành kho','sql','sql')
 
 INSERT INTO SA_MENU (PARENT_CODE,MENU_CODE,MENU_NAME,MENU_ICON,IS_VISIBLE,ORDER_BY,VIEW_PAGE,CREATE_BY,UPDATE_BY)
 VALUES 
@@ -693,13 +696,34 @@ VALUES
 ('admin','warehouse-list',1,1,1,1,'sql','sql'),
 ('admin','warehouse-design',1,1,1,1,'sql','sql'),
 ('admin','gate-list',1,1,1,1,'sql','sql'),
-('manager','user',1,1,1,1,'sql','sql'),
-('manager','permission',1,1,1,1,'sql','sql'),
-('manager','warehouse-list',1,1,1,1,'sql','sql'),
-('manager','warehouse-design',1,1,1,1,'sql','sql')
+('admin','equipment-group-list',1,1,1,1,'sql','sql'),
+('admin','equipment-list',1,1,1,1,'sql','sql'),
+('admin','method-list',1,1,1,1,'sql','sql'),
+('admin','product-group-list',1,1,1,1,'sql','sql'),
+('admin','unit-list',1,1,1,1,'sql','sql'),
+('admin','customer-group-list',1,1,1,1,'sql','sql'),
+('admin','customer-list',1,1,1,1,'sql','sql'),
+('admin','tractor-list',1,1,1,1,'sql','sql'),
+('admin','trailer-list',1,1,1,1,'sql','sql'),
+('procedure-staff','user',1,0,0,0,'sql','sql'),
+('procedure-staff','permission',1,0,0,0,'sql','sql'),
+('procedure-staff','warehouse-list',1,1,1,1,'sql','sql'),
+('procedure-staff','warehouse-design',1,1,1,1,'sql','sql'),
+('procedure-staff','gate-list',1,1,1,1,'sql','sql'),
+('procedure-staff','equipment-group-list',1,1,1,1,'sql','sql'),
+('procedure-staff','equipment-list',1,1,1,1,'sql','sql'),
+('procedure-staff','method-list',1,1,1,1,'sql','sql'),
+('procedure-staff','product-group-list',1,1,1,1,'sql','sql'),
+('procedure-staff','unit-list',1,1,1,1,'sql','sql'),
+('procedure-staff','customer-group-list',1,1,1,1,'sql','sql'),
+('procedure-staff','customer-list',1,1,1,1,'sql','sql'),
+('procedure-staff','tractor-list',1,1,1,1,'sql','sql'),
+('procedure-staff','trailer-list',1,1,1,1,'sql','sql')
 
 INSERT INTO SA_USER (ROLE_CODE, USER_NAME,CREATE_BY,UPDATE_BY)
-VALUES ('admin','superadmin','sql','sql')
+VALUES ('admin','superadmin','sql','sql'),
+VALUES ('procedure-staff','vusiphu','sql','sql')
+
 
 
 
