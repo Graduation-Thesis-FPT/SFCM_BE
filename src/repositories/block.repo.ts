@@ -4,6 +4,7 @@ import { Cell as CellEntity } from '../entity/cell.entity';
 import { Block } from '../models/block.model';
 import { warehouseRepository } from './warehouse.repo';
 import { Cell } from '../models/cell.model';
+import { boolean } from 'joi';
 
 export const blockRepository = mssqlConnection.getRepository(BlockEntity);
 export const cellRepository = mssqlConnection.getRepository(CellEntity);
@@ -34,8 +35,8 @@ const createBlockandCell = async (blockListInfo: Block[], statusCreateBlock: boo
           CREATE_BY: blockInfo.CREATE_BY,
           CREATE_DATE: blockInfo.CREATE_DATE,
           UPDATE_BY: blockInfo.UPDATE_BY,
-          UPDATE_DATE: blockInfo.UPDATE_DATE
-        })
+          UPDATE_DATE: blockInfo.UPDATE_DATE,
+        });
       }
     }
   }
@@ -44,28 +45,26 @@ const createBlockandCell = async (blockListInfo: Block[], statusCreateBlock: boo
   if (statusCreateBlock) {
     newBlock = await blockRepository.save(blockListInfo);
   }
-  for await (const data of arrayCell) {
-    await cellRepository.save(data);
-  }
+  await cellRepository.save(arrayCell);
   return newBlock;
-}
+};
 
 const checkCellStatus = async (blockListID: string[]) => {
   const cellArrStatus = await cellRepository
     .createQueryBuilder('cell')
-    .select(["cell.BLOCK_CODE", "cell.WAREHOUSE_CODE"])
-    .where("BLOCK_CODE IN (:...ids)", { ids: blockListID })
+    .select(['cell.BLOCK_CODE', 'cell.WAREHOUSE_CODE'])
+    .where('BLOCK_CODE IN (:...ids)', { ids: blockListID })
     .where('STATUS =:status', { status: 1 })
     .getMany();
 
   return cellArrStatus;
-}
+};
 
 const deleteBlockMany = async (blockListId: string[], statusDeleteBlock: boolean = true) => {
   await cellRepository
     .createQueryBuilder()
     .delete()
-    .where("BLOCK_CODE IN (:...ids)", { ids: blockListId })
+    .where('BLOCK_CODE IN (:...ids)', { ids: blockListId })
     .from('BS_CELL')
     .execute();
   if (statusDeleteBlock) {
@@ -78,7 +77,9 @@ const updateBlock = async (blockListInfo: Block[]) => {
   let blockCode = blockListInfo.map(e => e.BLOCK_CODE);
   await deleteBlockMany(blockCode, false);
   await createBlockandCell(blockListInfo, false);
-  return await Promise.all(blockListInfo.map(block => blockRepository.update(block.BLOCK_CODE, block)));
+  return await Promise.all(
+    blockListInfo.map(block => blockRepository.update(block.BLOCK_CODE, block)),
+  );
 };
 
 const getAllBlock = async () => {
@@ -102,7 +103,7 @@ const getAllCell = async () => {
       UPDATE_DATE: 'DESC',
     },
   });
-}
+};
 
 export {
   createBlockandCell,
@@ -112,5 +113,5 @@ export {
   checkCellStatus,
   isValidWarehouseCode,
   updateBlock,
-  getAllCell
+  getAllCell,
 };

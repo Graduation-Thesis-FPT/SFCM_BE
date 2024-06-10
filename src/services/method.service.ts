@@ -25,7 +25,7 @@ class MethodService {
             throw new BadRequestError(`method code ${methodInfo.METHOD_CODE} is existed`);
           }
 
-          methodInfo.METHOD_CODE = methodInfo.METHOD_CODE.toUpperCase();
+          methodInfo.METHOD_CODE = methodInfo.METHOD_CODE;
           methodInfo.CREATE_BY = createBy.ROWGUID;
           methodInfo.UPDATE_BY = createBy.ROWGUID;
           methodInfo.UPDATE_DATE = new Date();
