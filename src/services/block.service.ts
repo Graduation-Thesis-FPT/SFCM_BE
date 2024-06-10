@@ -70,7 +70,7 @@ class BlockService {
 
   static deleteBlockNCell = async (blockListID: string[]) => {
     let cellArrStatus = await checkCellStatus(blockListID);
-    if (cellArrStatus) {
+    if (cellArrStatus.length) {
       throw new BadRequestError(
         `Không thể xóa mã dãy ${cellArrStatus.map(e => e.BLOCK_CODE).join(', ')} đang hoạt động`,
       );
