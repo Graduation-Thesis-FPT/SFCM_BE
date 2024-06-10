@@ -9,11 +9,10 @@ import { boolean } from 'joi';
 export const blockRepository = mssqlConnection.getRepository(BlockEntity);
 export const cellRepository = mssqlConnection.getRepository(CellEntity);
 
-const checkDuplicateBlock = async (warehouseCode: string, blockName: string) => {
+const checkDuplicateBlock = async (BLOCK_CODE: string) => {
   return await blockRepository
     .createQueryBuilder('block')
-    .where('block.WAREHOUSE_CODE = :warehouseCode', { warehouseCode: warehouseCode })
-    .andWhere('block.BLOCK_NAME = :blockName', { blockName: blockName })
+    .where('block.BLOCK_CODE = :blockCode', { blockCode: BLOCK_CODE })
     .getOne();
 };
 

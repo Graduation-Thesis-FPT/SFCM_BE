@@ -29,8 +29,7 @@ class BlockService {
           throw new BadRequestError(ERROR_MESSAGE.INVALID_WAREHOUSE_CODE);
         }
         const isDuplicateBlock = await checkDuplicateBlock(
-          blockInfo.WAREHOUSE_CODE,
-          blockInfo.BLOCK_NAME,
+          blockInfo.BLOCK_CODE
         );
         console.log(isDuplicateBlock);
         if (isDuplicateBlock) {
