@@ -4,7 +4,6 @@ import { Cell as CellEntity } from '../entity/cell.entity';
 import { Block } from '../models/block.model';
 import { warehouseRepository } from './warehouse.repo';
 import { Cell } from '../models/cell.model';
-import { boolean } from 'joi';
 
 export const blockRepository = mssqlConnection.getRepository(BlockEntity);
 export const cellRepository = mssqlConnection.getRepository(CellEntity);
@@ -45,7 +44,9 @@ const createBlockandCell = async (blockListInfo: Block[], statusCreateBlock: boo
   if (statusCreateBlock) {
     newBlock = await blockRepository.save(blockListInfo);
   }
-  await cellRepository.save(arrayCell);
+  for await (const data of arrayCell) {
+    await cellRepository.save(data);
+  }
   return newBlock;
 }
 
@@ -67,9 +68,9 @@ const deleteBlockMany = async (blockListId: string[], statusDeleteBlock: boolean
     .where("BLOCK_CODE IN (:...ids)", { ids: blockListId })
     .from('BS_CELL')
     .execute();
-    if (statusDeleteBlock) {
-      await blockRepository.delete(blockListId);
-    }
+  if (statusDeleteBlock) {
+    await blockRepository.delete(blockListId);
+  }
   return true;
 };
 

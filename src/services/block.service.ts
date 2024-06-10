@@ -32,6 +32,7 @@ class BlockService {
           blockInfo.WAREHOUSE_CODE,
           blockInfo.BLOCK_NAME,
         );
+        console.log(isDuplicateBlock)
         if (isDuplicateBlock) {
           throw new BadRequestError(
             `Không thể thêm dãy ${blockInfo.BLOCK_NAME} ở kho ${blockInfo.WAREHOUSE_CODE} (Đã tồn tại)`,
@@ -48,7 +49,6 @@ class BlockService {
 
     if (updateData.length) {
       let cellArrStatus = await checkCellStatus(updateData.map(e=> e.BLOCK_CODE));
-      console.log(cellArrStatus)
       if (cellArrStatus.length) {
         throw new BadRequestError(
           `Không thể cập nhật mã dãy ${cellArrStatus.map(e => e.BLOCK_CODE).join(', ')} đang hoạt động`,
