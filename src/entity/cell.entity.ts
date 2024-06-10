@@ -16,17 +16,11 @@ export class Cell extends Model {
   BLOCK_CODE: string;
 
   @Column()
-  TIER_COUNT: number;
+  TIER_ORDERED: number;
 
   @Column()
-  SLOT_COUNT: number;
+  SLOT_ORDERED: number;
 
-  @Column()
-  BLOCK_WIDTH: number;
-
-  @Column()
-  BLOCK_HEIGHT: number;
-
-  @Column({ default: false })
-  STATUS: boolean;
+  @Column({ default: 0 })
+  STATUS: number;
 }

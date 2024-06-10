@@ -18,15 +18,35 @@ GO
 CREATE TABLE [dbo].[BS_CELL](
 	[ROWGUID] [uniqueidentifier] PRIMARY KEY default (newid()),
 	[WAREHOUSE_CODE] [nvarchar](50) NOT NULL,
-	[BLOCK] [nvarchar](10) NOT NULL,
-	[TIER_COUNT] [int] NULL,
+	[BLOCK_CODE] [nvarchar](10) NOT NULL,
+	[TIER_ORDERED] [int] NULL,
+	[SLOT_ORDERED] [int] NULL,
 	[SLOT_COUNT] [int] NULL,
+	CELL_LENGTH [numeric](10, 2) not null,
+	CELL_WIDTH [numeric](10, 2) not null,
+	CELL_HEIGHT [numeric](10, 2) not null,
 	[STATUS] [int] NULL,
 	[CREATE_BY] [nvarchar](100) NOT NULL,
 	[CREATE_DATE] [datetime] NOT NULL DEFAULT (getdate()),
 	[UPDATE_BY] [nvarchar](100) NOT NULL,
 	[UPDATE_DATE] [datetime] NOT NULL DEFAULT (getdate()),
 )
+
+create table BS_BLOCK(
+	BLOCK_CODE [nvarchar](10) primary key,
+	BLOCK_NAME [nvarchar](250) not null,
+	[WAREHOUSE_CODE] [nvarchar](50) NOT NULL,
+	[TIER_COUNT] [int] NULL,
+	[SLOT_COUNT] [int] NULL,
+	BLOCK_LENGTH int not null,
+	BLOCK_WIDTH int not null,
+	BLOCK_HEIGHT int not null,
+	[CREATE_BY] [nvarchar](100) NOT NULL,
+	[CREATE_DATE] [datetime] NOT NULL DEFAULT (getdate()),
+	[UPDATE_BY] [nvarchar](100) NOT NULL,
+	[UPDATE_DATE] [datetime] NOT NULL DEFAULT (getdate()),
+)
+
 
 CREATE TABLE [dbo].[BS_CUSTOMER](
 	[CUSTOMER_TYPE_CODE] [nvarchar](50) NOT NULL,
@@ -56,8 +76,7 @@ CREATE TABLE [dbo].[BS_EQUIPMENTS](
 	[EQU_TYPE] [nvarchar](10) NOT NULL,
 	[EQU_CODE] [nvarchar](10) NOT NULL PRIMARY KEY,
 	[EQU_CODE_NAME] [nvarchar](50) NOT NULL,
-	REF_ROWGUID uniqueidentifier null,
-	[BLOCK] [nvarchar](max) NULL,
+	[BLOCK_CODE] [nvarchar](10) NULL,
 	[CREATE_BY] [nvarchar](100) NOT NULL,
 	[CREATE_DATE] [datetime] NOT NULL DEFAULT (getdate()),
 	[UPDATE_BY] [nvarchar](100) NOT NULL,
@@ -485,11 +504,14 @@ CREATE TABLE [dbo].[SA_USER](
 	[UPDATE_BY] [nvarchar](500) NOT NULL,
 	[UPDATE_DATE] [datetime] NOT NULL DEFAULT (getdate()),
 )
-
--- Foreign key for BS_CELL
-ALTER TABLE [dbo].[BS_CELL]
-ADD CONSTRAINT FK_BS_CELL_WAREHOUSE
+-- Foreign key for BS_BLOCK
+ALTER TABLE [dbo].[BS_BLOCK]
+ADD CONSTRAINT FK_BS_BLOCK_WAREHOUSE
 FOREIGN KEY ([WAREHOUSE_CODE]) REFERENCES [dbo].[BS_WAREHOUSE]([WAREHOUSE_CODE]);
+
+ALTER TABLE [dbo].[BS_CELL]
+ADD CONSTRAINT FK_BS_CELL_BLOCK
+FOREIGN KEY (BLOCK_CODE) REFERENCES [dbo].[BS_BLOCK](BLOCK_CODE);
 
 -- Foreign key for BS_CUSTOMER
 ALTER TABLE [dbo].[BS_CUSTOMER]
@@ -499,7 +521,7 @@ FOREIGN KEY ([CUSTOMER_TYPE_CODE]) REFERENCES [dbo].[BS_CUSTOMER_TYPE]([CUSTOMER
 -- Foreign key for BS_EQUIPMENTS
 ALTER TABLE [dbo].[BS_EQUIPMENTS]
 ADD CONSTRAINT FK_BS_EQUIPMENTS_CELL
-FOREIGN KEY (REF_ROWGUID) REFERENCES [dbo].[BS_CELL]([ROWGUID]);
+FOREIGN KEY (BLOCK_CODE) REFERENCES [dbo].BS_BLOCK(BLOCK_CODE);
 
 ALTER TABLE [dbo].[BS_EQUIPMENTS]
 ADD CONSTRAINT FK_BS_EQUIPMENTS_TYPE

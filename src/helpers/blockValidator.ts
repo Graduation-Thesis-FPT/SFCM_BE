@@ -1,15 +1,18 @@
 import Joi from 'joi';
+import { Block } from '../models/block.model';
 import { NextFunction, Request, Response } from 'express';
 import { BadRequestError } from '../core/error.response';
-import { Cell } from '../models/block.model';
 
-const validateInsertBlock = (data: Cell) => {
+const validateInsertBlock = (data: Block) => {
   const blockSchema = Joi.object({
     WAREHOUSE_CODE: Joi.string().trim().required().messages({
       'any.required': 'WAREHOUSE_CODE không được để trống',
     }),
     BLOCK_NAME: Joi.string().trim().required().messages({
       'any.required': 'BLOCK_NAME không được để trống',
+    }),
+    BLOCK_CODE: Joi.string().trim().required().messages({
+      'any.required': 'BLOCK_CODE không được để trống',
     }),
     TIER_COUNT: Joi.number().positive().messages({
       'number.positive': 'TIER_COUNT phải là số dương',
@@ -23,14 +26,17 @@ const validateInsertBlock = (data: Cell) => {
     BLOCK_HEIGHT: Joi.number().positive().messages({
       'number.positive': 'BLOCK_HEIGHT phải là số dương',
     }),
+    BLOCK_LENGTH: Joi.number().positive().messages({
+      'number.positive': 'BLOCK_LENGTH phải là số dương',
+    }),
   });
 
   return blockSchema.validate(data);
 };
 
-const validateUpdateBlock = (data: Cell) => {
+const validateUpdateBlock = (data: Block) => {
   const blockSchema = Joi.object({
-    ROWGUID: Joi.string().trim().required(),
+    BLOCK_CODE: Joi.string().trim().required(),
     WAREHOUSE_CODE: Joi.string().trim().optional(),
     BLOCK_NAME: Joi.optional(),
     TIER_COUNT: Joi.number()
@@ -57,12 +63,18 @@ const validateUpdateBlock = (data: Cell) => {
         'number.positive': 'BLOCK_HEIGHT phải là số dương',
       })
       .optional(),
+      BLOCK_LENGTH: Joi.number()
+      .positive()
+      .messages({
+        'number.positive': 'BLOCK_LENGTH phải là số dương',
+      })
+      .optional(),
   });
 
   return blockSchema.validate(data);
 };
 
-const validateCellRequest = (req: Request, res: Response, next: NextFunction) => {
+const validateBlockRequest = (req: Request, res: Response, next: NextFunction) => {
   const { insert, update } = req.body;
 
   const insertData = [];
@@ -96,4 +108,4 @@ const validateCellRequest = (req: Request, res: Response, next: NextFunction) =>
   next();
 };
 
-export { validateCellRequest };
+export { validateBlockRequest };
