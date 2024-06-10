@@ -21,7 +21,7 @@ class BlockService {
 
     let newCreatedBlock: Block[] = [];
     let updatedBlock;
-    if (insertData) {
+    if (insertData.length) {
       for (const blockInfo of insertData) {
         const block = await isValidWarehouseCode(blockInfo.WAREHOUSE_CODE);
 
@@ -46,7 +46,7 @@ class BlockService {
       newCreatedBlock = await createBlockandCell(insertData);
     }
 
-    if (updateData) {
+    if (updateData.length) {
       let cellArrStatus = await checkCellStatus(updateData.map(e=> e.BLOCK_CODE));
 
       if (cellArrStatus) {
@@ -65,7 +65,7 @@ class BlockService {
 
     return {
       newCreatedBlock,
-      updatedBlock,
+      updatedBlock
     };
   };
 

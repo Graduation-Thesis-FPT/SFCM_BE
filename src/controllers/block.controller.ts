@@ -9,7 +9,7 @@ class BlockController {
     const blockList = res.locals.requestData;
 
     new CREATED({
-      message: SUCCESS_MESSAGE.CREATE_BLOCK_SUCCESS,
+      message: SUCCESS_MESSAGE.SAVE_BLOCK_SUCCESS,
       metadata: await BlockService.createAndUpdateBlockAndCell(blockList, createBy),
     }).send(res);
   };
@@ -31,7 +31,7 @@ class BlockController {
 
   getCell = async (req: Request, res: Response) => {
     new OK({
-      message: SUCCESS_MESSAGE.GET_BLOCK_SUCCESS,
+      message: SUCCESS_MESSAGE.GET_CELL_SUCCESS,
       metadata: await BlockService.getAllCell(),
     }).send(res);
   }
