@@ -5,13 +5,13 @@ import { BadRequestError } from '../core/error.response';
 
 const validateInsertBlock = (data: Block) => {
   const blockSchema = Joi.object({
-    WAREHOUSE_CODE: Joi.string().trim().required().messages({
+    WAREHOUSE_CODE: Joi.string().uppercase().trim().required().messages({
       'any.required': 'WAREHOUSE_CODE không được để trống',
     }),
-    BLOCK_NAME: Joi.string().trim().required().messages({
+    BLOCK_NAME: Joi.string().uppercase().trim().required().messages({
       'any.required': 'BLOCK_NAME không được để trống',
     }),
-    BLOCK_CODE: Joi.string().trim().required().messages({
+    BLOCK_CODE: Joi.string().uppercase().trim().required().messages({
       'any.required': 'BLOCK_CODE không được để trống',
     }),
     TIER_COUNT: Joi.number().positive().messages({
