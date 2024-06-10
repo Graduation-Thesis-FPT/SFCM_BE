@@ -61,15 +61,15 @@ const checkCellStatus = async (blockListID: string[]) => {
 }
 
 const deleteBlockMany = async (blockListId: string[], statusDeleteBlock: boolean = true) => {
-  if (statusDeleteBlock) {
-    await blockRepository.delete(blockListId);
-  }
   await cellRepository
     .createQueryBuilder()
     .delete()
     .where("BLOCK_CODE IN (:...ids)", { ids: blockListId })
     .from('BS_CELL')
     .execute();
+    if (statusDeleteBlock) {
+      await blockRepository.delete(blockListId);
+    }
   return true;
 };
 
