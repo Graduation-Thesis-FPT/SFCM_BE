@@ -2,6 +2,7 @@ import Joi from 'joi';
 import { Block } from '../models/block.model';
 import { NextFunction, Request, Response } from 'express';
 import { BadRequestError } from '../core/error.response';
+import { checkDuplicatedID } from '../utils';
 
 const validateInsertBlock = (data: Block) => {
   const blockSchema = Joi.object({
@@ -76,7 +77,7 @@ const validateUpdateBlock = (data: Block) => {
 
 const validateBlockRequest = (req: Request, res: Response, next: NextFunction) => {
   const { insert, update } = req.body;
-
+  checkDuplicatedID(insert, 'BLOCK_CODE', 'Thêm mới');
   const insertData = [];
   const updateData = [];
   if (insert) {

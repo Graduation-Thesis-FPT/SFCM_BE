@@ -49,7 +49,7 @@ const isValidID = (id: string) => {
 const checkDuplicatedID = (data: any, key: string, tag: string) => {
   const uniqueData = _.uniqBy(data, key);
   if (uniqueData.length !== data.length) {
-    throw new BadRequestError(`Duplicate ${key} in ${tag} operation`);
+    throw new BadRequestError(`Trùng mã ${key} trong khi ${tag}`);
   }
 };
 
