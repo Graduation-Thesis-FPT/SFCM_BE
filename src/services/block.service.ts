@@ -10,10 +10,10 @@ import {
   isValidWarehouseCode,
   updateBlock,
   checkCellStatus,
-  getAllCell
+  getAllCell,
 } from '../repositories/block.repo';
 import { Block, BlockListInfo } from '../models/block.model';
-
+import { Cell } from '../models/cell.model';
 class BlockService {
   static createAndUpdateBlockAndCell = async (blockListInfo: BlockListInfo, createBy: User) => {
     const insertData = blockListInfo.insert;
@@ -32,7 +32,7 @@ class BlockService {
           blockInfo.WAREHOUSE_CODE,
           blockInfo.BLOCK_NAME,
         );
-        console.log(isDuplicateBlock)
+        console.log(isDuplicateBlock);
         if (isDuplicateBlock) {
           throw new BadRequestError(
             `Không thể thêm dãy ${blockInfo.BLOCK_NAME} ở kho ${blockInfo.WAREHOUSE_CODE} (Đã tồn tại)`,
@@ -48,7 +48,7 @@ class BlockService {
     }
 
     if (updateData.length) {
-      let cellArrStatus = await checkCellStatus(updateData.map(e=> e.BLOCK_CODE));
+      let cellArrStatus = await checkCellStatus(updateData.map(e => e.BLOCK_CODE));
       if (cellArrStatus.length) {
         throw new BadRequestError(
           `Không thể cập nhật mã dãy ${cellArrStatus.map(e => e.BLOCK_CODE).join(', ')} đang hoạt động`,
@@ -64,7 +64,7 @@ class BlockService {
 
     return {
       newCreatedBlock,
-      updatedBlock
+      updatedBlock,
     };
   };
 
@@ -82,9 +82,8 @@ class BlockService {
     return await getAllBlock();
   };
 
-  static getAllCell = async () => {
-    return await getAllCell()
-  }
-
+  static getAllCell = async (WAREHOUSE_CODE : string, BLOCK_CODE : string) => {
+    return await getAllCell(WAREHOUSE_CODE, BLOCK_CODE);
+  };
 }
 export default BlockService;

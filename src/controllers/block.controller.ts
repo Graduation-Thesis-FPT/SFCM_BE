@@ -30,11 +30,14 @@ class BlockController {
   };
 
   getCell = async (req: Request, res: Response) => {
+    const warehouse = req.query.WAREHOUSE_CODE as string;
+    const blockcode = req.query.BLOCK_CODE as string;
+
     new OK({
       message: SUCCESS_MESSAGE.GET_CELL_SUCCESS,
-      metadata: await BlockService.getAllCell(),
+      metadata: await BlockService.getAllCell(warehouse, blockcode),
     }).send(res);
-  }
+  };
 }
 
 export default new BlockController();
