@@ -1,31 +1,40 @@
 import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
 import { BadRequestError } from '../core/error.response';
-import { EquipmentType } from '../models/equipment-type.model';
 import { checkDuplicatedID } from '../utils';
+import { Method } from '../models/method.model';
 
-const validateInsertMethod = (data: EquipmentType) => {
+const validateInsertMethod = (data: Method) => {
   const methodSchema = Joi.object({
-    METHOD_CODE: Joi.string().trim().required().messages({
-      'any.required': 'Mã trang thiết bị không được để trống #thêm',
+    METHOD_CODE: Joi.string().uppercase().trim().required().messages({
+      'any.required': 'Mã phương án không được để trống #thêm',
     }),
     METHOD_NAME: Joi.string().trim().required().messages({
-      'any.required': 'Loại trang thiết bị không được để trống #thêm',
+      'any.required': 'Tên phương án không được để trống #thêm',
     }),
-    IS_IN_OUT: Joi.string().trim(),
-    IS_SERVICE: Joi.number().optional(),
+    IS_IN_OUT: Joi.string().trim().valid('I', 'O').required().messages({
+      'any.required': 'Trạng thái ra vào không được trống',
+      'any.only': 'Trạng thái ra vào chỉ chấp nhận I hoặc O #thêm',
+    }),
+    IS_SERVICE: Joi.boolean(),
   });
 
   return methodSchema.validate(data);
 };
 
-const validateUpdateMethod = (data: EquipmentType) => {
+const validateUpdateMethod = (data: Method) => {
   const methodSchema = Joi.object({
     METHOD_CODE: Joi.string().required().messages({
       'any.required': 'Loại trang thiết bị không được để trống #cập nhật',
     }),
-    METHOD_NAME: Joi.optional(),
-    IS_IN_OUT: Joi.optional(),
+    METHOD_NAME: Joi.string().trim().optional(),
+    IS_IN_OUT: Joi.string()
+      .trim()
+      .valid('I', 'O')
+      .messages({
+        'any.only': 'Trạng thái ra vào chỉ chấp nhận I hoặc O #thêm',
+      })
+      .optional(),
     IS_SERVICE: Joi.optional(),
   });
 
