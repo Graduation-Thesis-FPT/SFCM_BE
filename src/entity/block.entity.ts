@@ -1,10 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 import Model from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('BS_BLOCK')
 export class Block extends Model {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   BLOCK_CODE: string;
 
   @Column()

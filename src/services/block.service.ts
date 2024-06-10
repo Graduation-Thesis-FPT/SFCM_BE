@@ -48,8 +48,8 @@ class BlockService {
 
     if (updateData.length) {
       let cellArrStatus = await checkCellStatus(updateData.map(e=> e.BLOCK_CODE));
-
-      if (cellArrStatus) {
+      console.log(cellArrStatus)
+      if (cellArrStatus.length) {
         throw new BadRequestError(
           `Không thể cập nhật mã dãy ${cellArrStatus.map(e => e.BLOCK_CODE).join(', ')} đang hoạt động`,
         );
@@ -59,7 +59,6 @@ class BlockService {
         blockInfo.UPDATE_BY = createBy.ROWGUID;
         blockInfo.UPDATE_DATE = new Date();
       }
-
       updatedBlock = await updateBlock(updateData);
     }
 

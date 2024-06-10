@@ -23,4 +23,13 @@ export class Cell extends Model {
 
   @Column({ default: 0 })
   STATUS: number;
+
+  @Column()
+  CELL_LENGTH: number;
+
+  @Column()
+  CELL_WIDTH: number;
+
+  @Column()
+  CELL_HEIGHT: number;
 }

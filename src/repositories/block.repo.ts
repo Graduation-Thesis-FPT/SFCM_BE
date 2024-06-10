@@ -26,9 +26,12 @@ const createBlockandCell = async (blockListInfo: Block[], statusCreateBlock: boo
         arrayCell.push({
           WAREHOUSE_CODE: blockInfo.WAREHOUSE_CODE,
           BLOCK_CODE: blockInfo.BLOCK_CODE,
-          TIER_ORDERED: o,
-          SLOT_ORDERED: j,
+          TIER_ORDERED: o + 1,
+          SLOT_ORDERED: j + 1,
           STATUS: 0,
+          CELL_LENGTH: 1,
+          CELL_WIDTH: 2,
+          CELL_HEIGHT: 3,
           CREATE_BY: blockInfo.CREATE_BY,
           CREATE_DATE: blockInfo.CREATE_DATE,
           UPDATE_BY: blockInfo.UPDATE_BY,
@@ -37,19 +40,21 @@ const createBlockandCell = async (blockListInfo: Block[], statusCreateBlock: boo
       }
     }
   }
-  await cellRepository.save(arrayCell);
+
+  let newBlock: Block[] = [];
   if (statusCreateBlock) {
-    const newBlock = await blockRepository.save(blockListInfo);
-    return newBlock;
+    newBlock = await blockRepository.save(blockListInfo);
   }
-  return [];
+  await cellRepository.save(arrayCell);
+  return newBlock;
 }
 
 const checkCellStatus = async (blockListID: string[]) => {
   const cellArrStatus = await cellRepository
-    .createQueryBuilder()
-    .select(["BLOCK_CODE","WAREHOUSE_CODE"])
+    .createQueryBuilder('cell')
+    .select(["cell.BLOCK_CODE", "cell.WAREHOUSE_CODE"])
     .where("BLOCK_CODE IN (:...ids)", { ids: blockListID })
+    .where('STATUS =:status', { status: 1 })
     .getMany();
 
   return cellArrStatus;
@@ -62,7 +67,7 @@ const deleteBlockMany = async (blockListId: string[], statusDeleteBlock: boolean
   await cellRepository
     .createQueryBuilder()
     .delete()
-    .where("BLOCK_CODE IN (...ids)", { ids: blockListId })
+    .where("BLOCK_CODE IN (:...ids)", { ids: blockListId })
     .from('BS_CELL')
     .execute();
   return true;
