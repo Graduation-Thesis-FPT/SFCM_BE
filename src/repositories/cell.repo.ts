@@ -1,15 +1,15 @@
 import mssqlConnection from '../db/mssql.connect';
-import { Cell as CellEntity } from '../entity/block.entity';
+import { Cell as CellEntity } from '../entity/cell.entity';
 import { Cell } from '../models/block.model';
 import { warehouseRepository } from './warehouse.repo';
 
 export const cellRepository = mssqlConnection.getRepository(CellEntity);
 
 const createCell = async (cellListInfo: Cell[]) => {
-  const block = cellRepository.create(cellListInfo);
+  const cell = cellRepository.create(cellListInfo);
 
-  const newBlock = await cellRepository.save(block);
-  return newBlock;
+  const newCell = await cellRepository.save(cell);
+  return newCell;
 };
 
 const updateCell = async (cellListInfo: Cell[]) => {
@@ -36,10 +36,10 @@ const getAllCell = async () => {
   });
 };
 
-const findCellById = async (blockId: string) => {
+const findCellById = async (cellId: string) => {
   return await cellRepository
-    .createQueryBuilder('block')
-    .where('block.ROWGUID = :blockId', { blockId: blockId })
+    .createQueryBuilder('cell')
+    .where('cell.ROWGUID = :cellId', { cellId: cellId })
     .getOne();
 };
 

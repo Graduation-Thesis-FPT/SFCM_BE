@@ -11,12 +11,14 @@ const isValidInfor = async (requestData: object) => {
   }
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => any) => {
   return (req: Request, res: Response, next: NextFunction) => {
     fn(req, res, next).catch(next);
   };
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const removeUndefinedProperty = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key: string) => {
     if (obj[key] === null || obj[key] === undefined) {
@@ -43,4 +45,19 @@ const isValidID = (id: string) => {
   return true;
 };
 
-export { removeUndefinedProperty, asyncHandler, isValidInfor, getInfoData, isValidID };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const checkDuplicatedID = (data: any, key: string, tag: string) => {
+  const uniqueData = _.uniqBy(data, key);
+  if (uniqueData.length !== data.length) {
+    throw new BadRequestError(`Duplicate ${key} in ${tag} operation`);
+  }
+};
+
+export {
+  removeUndefinedProperty,
+  asyncHandler,
+  isValidInfor,
+  getInfoData,
+  isValidID,
+  checkDuplicatedID,
+};

@@ -4,10 +4,11 @@ import { Role } from '../entity/role.entity';
 import { Permission } from '../entity/permission.entity';
 import { Menu } from '../entity/menu.entity';
 import { WareHouse } from '../entity/warehouse.entity';
-import { Block } from '../entity/block.entity';
 import { Gate } from '../entity/gate.entity';
 import { EquipmentType } from '../entity/equipment-type.entity';
 import { Equipment } from '../entity/equipment.entity';
+import { MethodEntity } from '../entity/method.entity';
+import { Cell } from '../entity/cell.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -15,7 +16,18 @@ const mssqlConnection = new DataSource({
   username: process.env.DB_USER_NAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [User, Role, Permission, Menu, WareHouse, Block, Gate, EquipmentType, Equipment],
+  entities: [
+    User,
+    Role,
+    Permission,
+    Menu,
+    WareHouse,
+    Cell,
+    Gate,
+    EquipmentType,
+    Equipment,
+    MethodEntity,
+  ],
   options: {
     encrypt: false,
   },

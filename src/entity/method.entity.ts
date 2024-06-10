@@ -1,8 +1,8 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 import Model from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
-@Entity('BS_WAREHOUSE')
+@Entity('BS_METHOD')
 export class MethodEntity extends Model {
   @PrimaryColumn()
   @IsNotEmpty()
@@ -16,12 +16,5 @@ export class MethodEntity extends Model {
   IS_IN_OUT: string;
 
   @Column()
-  IS_SERVICE : number;
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  trimString() {
-    this.METHOD_CODE = this.METHOD_CODE.trim();
-    this.METHOD_NAME = this.METHOD_NAME.trim();
-  }
+  IS_SERVICE: number;
 }

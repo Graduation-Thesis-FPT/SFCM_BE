@@ -4,11 +4,12 @@ import userRoute from './user/index';
 import roleRoute from './role/index';
 import permissionRoute from './permission/index';
 import menuRouter from './menu/index';
-import blockRouter from './block/index';
+// import cellRouter from './cell/index';
 import warehouseRouter from './warehouse/index';
 import gateRouter from './gate/index';
 import equipmentTypeRouter from './equipment-type/index';
 import equipmentRouter from './equipment/index';
+import methodRouter from './method/index';
 
 const routes = Router();
 
@@ -20,7 +21,7 @@ routes.use('/api/v1/permission', permissionRoute);
 routes.use('/api/v1/menu', menuRouter);
 
 // Warehouse design
-routes.use('/api/v1/block', blockRouter);
+// routes.use('/api/v1/block', cellRouter);
 routes.use('/api/v1/warehouse', warehouseRouter);
 
 // gate
@@ -30,4 +31,6 @@ routes.use('/api/v1/gate', gateRouter);
 routes.use('/api/v1/equipment-type', equipmentTypeRouter);
 routes.use('/api/v1/equipment', equipmentRouter);
 
+// method
+routes.use('/api/v1/method', methodRouter);
 export default routes;
