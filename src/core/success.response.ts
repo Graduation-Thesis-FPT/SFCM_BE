@@ -6,13 +6,13 @@ interface SuccessResponseOptions {
   message: string;
   statusCode?: number;
   reasonStatusCode?: string;
-  metadata: object | void;
+  metadata: object | void | boolean;
 }
 
 class SuccessResponse {
   message: string;
   statusCode: number;
-  metadata: object | void;
+  metadata: object | void | boolean;
 
   constructor({
     message,

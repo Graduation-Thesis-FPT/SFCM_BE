@@ -10,6 +10,7 @@ import gateRouter from './gate/index';
 import equipmentTypeRouter from './equipment-type/index';
 import equipmentRouter from './equipment/index';
 import methodRouter from './method/index';
+import blockRouter from './block/index'
 
 const routes = Router();
 
@@ -33,4 +34,7 @@ routes.use('/api/v1/equipment', equipmentRouter);
 
 // method
 routes.use('/api/v1/method', methodRouter);
+
+//block
+routes.use('/api/v1/block', blockRouter)
 export default routes;

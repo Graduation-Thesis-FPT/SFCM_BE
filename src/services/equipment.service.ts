@@ -11,7 +11,7 @@ import {
   getAllEquipment,
   updateEquipment,
 } from '../repositories/equipment.repo';
-import { findCellById } from '../repositories/cell.repo';
+// import { findCellById } from '../repositories/cell.repo';
 import { isValidID } from '../utils';
 
 class EquipmentService {
@@ -40,11 +40,11 @@ class EquipmentService {
           throw new BadRequestError(`Mã dãy không hợp lệ`);
         }
 
-        const isValidBlock = await findCellById(equipmentInfo.REF_ROWGUID);
+        // const isValidBlock = await findCellById(equipmentInfo.REF_ROWGUID);
 
-        if (!isValidBlock) {
-          throw new BadRequestError(`Cell ID không tồn tại`);
-        }
+        // if (!isValidBlock) {
+        //   throw new BadRequestError(`Cell ID không tồn tại`);
+        // }
 
         equipmentInfo.CREATE_BY = createBy.ROWGUID;
         equipmentInfo.UPDATE_BY = createBy.ROWGUID;
