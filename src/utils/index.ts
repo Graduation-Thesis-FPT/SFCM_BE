@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { validate } from 'class-validator';
 import _ from 'lodash';
 import { BadRequestError } from '../core/error.response';
+import { dbColumns } from '../constants';
 
 const isValidInfor = async (requestData: object) => {
   const errors = await validate(requestData);
@@ -49,7 +50,7 @@ const isValidID = (id: string) => {
 const checkDuplicatedID = (data: any, key: string, tag: string) => {
   const uniqueData = _.uniqBy(data, key);
   if (uniqueData.length !== data.length) {
-    throw new BadRequestError(`Trùng mã ${key} trong khi ${tag}`);
+    throw new BadRequestError(`Trùng mã ${dbColumns[key]} trong khi ${tag}`);
   }
 };
 

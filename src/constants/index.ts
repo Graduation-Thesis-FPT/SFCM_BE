@@ -144,3 +144,25 @@ export const REASON_PHRASES = {
   USE_PROXY: 'USE_PROXY',
   MISDIRECTED_REQUEST: 'MISDIRECTED_REQUEST',
 };
+
+export const dbColumns: any = {
+  //warehouse
+  WAREHOUSE_CODE: 'Mã kho',
+  BLOCK_CODE: 'Mã dãy',
+  BLOCK_NAME: 'Tên dãy',
+  TIER_COUNT: 'Số tầng',
+  SLOT_COUNT: 'Số ô',
+  BLOCK_WIDTH: 'Chiều rộng (m)',
+  BLOCK_HEIGHT: 'Chiều cao (m)',
+  BLOCK_LENGTH: 'Chiều dài (m)',
+  //equidment
+  EQU_TYPE: 'Mã thiết bị',
+  EQU_TYPE_NAME: 'Tên thiết bị',
+  EQU_CODE: 'Mã thiết bị *',
+  EQU_CODE_NAME: 'Tên thiết bị',
+  //method
+  METHOD_CODE: 'Mã phương án *',
+  METHOD_NAME: 'Tên phương án *',
+  IS_IN_OUT: 'Trạng thái',
+  IS_SERVICE: 'Dịch vụ',
+};
