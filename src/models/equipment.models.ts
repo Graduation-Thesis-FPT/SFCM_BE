@@ -2,8 +2,7 @@ export interface Equipment {
   EQU_CODE: string;
   EQU_TYPE: string;
   EQU_CODE_NAME: string;
-  REF_ROWGUID: string;
-  BLOCK: string;
+  BLOCK_CODE: string;
   CREATE_BY?: string;
   CREATE_DATE?: Date;
   UPDATE_BY?: string;

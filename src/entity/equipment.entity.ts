@@ -18,9 +18,5 @@ export class Equipment extends Model {
 
   @Column()
   @IsNotEmpty()
-  REF_ROWGUID: string;
-
-  @Column()
-  @IsNotEmpty()
-  BLOCK: string;
+  BLOCK_CODE: string;
 }

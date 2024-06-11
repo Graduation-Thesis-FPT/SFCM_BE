@@ -2,8 +2,8 @@ import { Router } from 'express';
 import { asyncHandler } from '../../utils';
 import { authentication } from '../../auth/authUtils';
 import { grantPermission } from '../../middlewares';
-// import { validateEquipTypeRequest } from '../../helpers/equipmentValidator';
 import equipmentController from '../../controllers/equipment.controller';
+import { validateEquipmentRequest } from '../../helpers/equipmentValidator';
 
 const router = Router();
 
@@ -12,7 +12,7 @@ router.use(authentication);
 router.post(
   '',
   asyncHandler(grantPermission),
-  // validateEquipTypeRequest,
+  validateEquipmentRequest,
   asyncHandler(equipmentController.createAndUpdateEquipment),
 );
 router.delete('', asyncHandler(grantPermission), asyncHandler(equipmentController.deleteEquipment));

@@ -6,12 +6,11 @@ import EquipmentService from '../services/equipment.service';
 class EquipmentController {
   createAndUpdateEquipment = async (req: Request, res: Response) => {
     const createBy = res.locals.user;
-    const equipTypeList = res.locals.requestData;
+    const equipmentList = res.locals.requestData;
 
-    const data = req.body;
     new CREATED({
       message: SUCCESS_MESSAGE.SAVE_EQUIPMENT_SUCCESS,
-      metadata: await EquipmentService.createAndUpdateEquipment(data, createBy),
+      metadata: await EquipmentService.createAndUpdateEquipment(equipmentList, createBy),
     }).send(res);
   };
 
