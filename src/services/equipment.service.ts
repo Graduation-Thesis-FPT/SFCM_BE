@@ -6,13 +6,13 @@ import { Equipment, EquipmentListInfo } from '../models/equipment.models';
 import {
   createEquipment,
   deleteEquipmentMany,
+  findEquipment,
   findEquipmentByCode,
   findOneEquipment,
   getAllEquipment,
   updateEquipment,
 } from '../repositories/equipment.repo';
-// import { findCellById } from '../repositories/cell.repo';
-import { isValidID } from '../utils';
+import { manager } from '../repositories/index.repo';
 
 class EquipmentService {
   static createAndUpdateEquipment = async (equipmentInfo: EquipmentListInfo, createBy: User) => {
@@ -21,53 +21,65 @@ class EquipmentService {
 
     let newCreatedEquipment: Equipment[] = [];
     let newUpdatedEquipment;
-    if (insertData) {
-      for (const equipmentInfo of insertData) {
-        const isEquipmentCodeExist = await findOneEquipment(equipmentInfo.EQU_CODE);
-        if (isEquipmentCodeExist) {
-          throw new BadRequestError(`Mã thiết bị ${equipmentInfo.EQU_CODE} đã tồn`);
+    await manager.transaction(async transactionEntityManager => {
+      if (insertData) {
+        for (const equipmentInfo of insertData) {
+          const isEquipmentCodeExist = await findOneEquipment(
+            equipmentInfo.EQU_CODE,
+            transactionEntityManager,
+          );
+          if (isEquipmentCodeExist) {
+            throw new BadRequestError(`Mã thiết bị ${equipmentInfo.EQU_CODE} đã tồn tại`);
+          }
+
+          const isValidEquipmentType = await findEquipTypeByCode(
+            equipmentInfo.EQU_TYPE,
+            transactionEntityManager,
+          );
+
+          if (!isValidEquipmentType) {
+            throw new BadRequestError(
+              `Mã loại trang thiết bị ${equipmentInfo.EQU_TYPE} không hợp lệ`,
+            );
+          }
+
+          equipmentInfo.CREATE_BY = createBy.ROWGUID;
+          equipmentInfo.UPDATE_BY = createBy.ROWGUID;
+          equipmentInfo.UPDATE_DATE = new Date();
         }
 
-        // const isValidEquipmentType = await findEquipTypeByCode(equipmentInfo.EQU_TYPE);
-
-        // if (!isValidEquipmentType) {
-        //   throw new BadRequestError(`Mã loại trang thiết bị không hợp lệ`);
-        // }
-
-        const isValidRowId = isValidID(equipmentInfo.REF_ROWGUID);
-
-        if (!isValidRowId) {
-          throw new BadRequestError(`Mã dãy không hợp lệ`);
-        }
-
-        // const isValidBlock = await findCellById(equipmentInfo.REF_ROWGUID);
-
-        // if (!isValidBlock) {
-        //   throw new BadRequestError(`Cell ID không tồn tại`);
-        // }
-
-        equipmentInfo.CREATE_BY = createBy.ROWGUID;
-        equipmentInfo.UPDATE_BY = createBy.ROWGUID;
-        equipmentInfo.UPDATE_DATE = new Date();
+        newCreatedEquipment = await createEquipment(insertData, transactionEntityManager);
       }
 
-      newCreatedEquipment = await createEquipment(insertData);
-    }
+      if (updateData) {
+        for (const equipmentInfo of updateData) {
+          const equipment = await findEquipmentByCode(
+            equipmentInfo.EQU_CODE,
+            transactionEntityManager,
+          );
+          if (!equipment) {
+            throw new BadRequestError(ERROR_MESSAGE.EQUIPTYPE_NOT_EXIST_UPDATE);
+          }
 
-    if (updateData) {
-      for (const equipmentInfo of updateData) {
-        const equipment = await findEquipmentByCode(equipmentInfo.EQU_CODE);
-        if (!equipment) {
-          throw new BadRequestError(ERROR_MESSAGE.EQUIPTYPE_NOT_EXIST);
+          const isValidEquipmentType = await findEquipTypeByCode(
+            equipmentInfo.EQU_TYPE,
+            transactionEntityManager,
+          );
+
+          if (!isValidEquipmentType) {
+            throw new BadRequestError(
+              `Mã loại trang thiết bị ${equipmentInfo.EQU_TYPE} không hợp lệ`,
+            );
+          }
+
+          equipmentInfo.CREATE_BY = createBy.ROWGUID;
+          equipmentInfo.UPDATE_BY = createBy.ROWGUID;
+          equipmentInfo.UPDATE_DATE = new Date();
         }
 
-        equipmentInfo.CREATE_BY = createBy.ROWGUID;
-        equipmentInfo.UPDATE_BY = createBy.ROWGUID;
-        equipmentInfo.UPDATE_DATE = new Date();
+        newUpdatedEquipment = await updateEquipment(updateData, transactionEntityManager);
       }
-
-      newUpdatedEquipment = await updateEquipment(updateData);
-    }
+    });
 
     return {
       newCreatedEquipment,
@@ -77,7 +89,7 @@ class EquipmentService {
 
   static deleteEquipment = async (equipmentCodeList: string[]) => {
     for (const equipment of equipmentCodeList) {
-      const equip = await findEquipmentByCode(equipment.trim());
+      const equip = await findEquipment(equipment.trim());
       if (!equip) {
         throw new BadRequestError(`Equipment with ID ${equipment} not exist!`);
       }

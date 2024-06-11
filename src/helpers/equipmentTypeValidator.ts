@@ -35,7 +35,7 @@ const validateUpdateEquipType = (data: EquipmentType) => {
 const validateEquipTypeRequest = (req: Request, res: Response, next: NextFunction) => {
   const { insert, update } = req.body;
 
-  if (insert.length === 0 && update.length === 0) {
+  if (insert?.length === 0 && update?.length === 0) {
     throw new BadRequestError();
   }
 

@@ -10,7 +10,7 @@ import gateRouter from './gate/index';
 import equipmentTypeRouter from './equipment-type/index';
 import equipmentRouter from './equipment/index';
 import methodRouter from './method/index';
-import blockRouter from './block/index'
+import blockRouter from './block/index';
 import itemTypeRouter from './item-type/index'
 import unitRouter from './unit/index'
 
@@ -39,7 +39,7 @@ routes.use('/api/v1/equipment', equipmentRouter);
 routes.use('/api/v1/method', methodRouter);
 
 //block
-routes.use('/api/v1/block', blockRouter)
+routes.use('/api/v1/block', blockRouter);
 
 //item-type
 routes.use('/api/v1/item-type', itemTypeRouter)
