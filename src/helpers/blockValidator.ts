@@ -107,7 +107,7 @@ const validateBlockRequest = (req: Request, res: Response, next: NextFunction) =
       updateData.push(value);
     }
   }
-  checkDuplicatedID(insert, ['BLOCK_CODE', 'BLOCK_NAME'], 'Thêm mới');
+  if (insert) checkDuplicatedID(insert, ['BLOCK_CODE', 'BLOCK_NAME'], 'Thêm mới');
 
   res.locals.requestData = { insert: insertData, update: updateData };
   next();

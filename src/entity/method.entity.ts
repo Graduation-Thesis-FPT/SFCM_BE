@@ -16,5 +16,5 @@ export class MethodEntity extends Model {
   IS_IN_OUT: string;
 
   @Column()
-  IS_SERVICE: number;
+  IS_SERVICE: boolean;
 }

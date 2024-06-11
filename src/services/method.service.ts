@@ -4,7 +4,12 @@ import { User } from '../entity/user.entity';
 import { Method, MethodInfoList } from '../models/method.model';
 import { manager } from '../repositories/index.repo';
 import { MethodEntity } from '../entity/method.entity';
-import { deleteMethodMany, findMethodByCode, getMethodCode } from '../repositories/method.repo';
+import {
+  deleteMethodMany,
+  findMethodByCode,
+  findMethodByName,
+  getMethodCode,
+} from '../repositories/method.repo';
 
 class MethodService {
   static createAndUpdateMethod = async (methodInfoList: MethodInfoList, createBy: User) => {
@@ -18,11 +23,19 @@ class MethodService {
     await manager.transaction(async transactionalEntityManager => {
       if (insertData) {
         for (const methodInfo of insertData) {
-          const method = await transactionalEntityManager.findOne(MethodEntity, {
+          const methodCode = await transactionalEntityManager.findOne(MethodEntity, {
             where: { METHOD_CODE: methodInfo.METHOD_CODE },
           });
-          if (method) {
-            throw new BadRequestError(`method code ${methodInfo.METHOD_CODE} is existed`);
+          if (methodCode) {
+            throw new BadRequestError(`Mã phương án ${methodInfo.METHOD_CODE} đã tồn tại`);
+          }
+
+          const methodName = await findMethodByName(
+            methodInfo.METHOD_NAME,
+            transactionalEntityManager,
+          );
+          if (methodName) {
+            throw new BadRequestError(`Tên phương án ${methodInfo.METHOD_NAME} đã tồn tại`);
           }
 
           methodInfo.METHOD_CODE = methodInfo.METHOD_CODE;
@@ -70,7 +83,7 @@ class MethodService {
     for (const method of methodCodeList) {
       const methodFound = await findMethodByCode(method.trim());
       if (!methodFound) {
-        throw new BadRequestError(`Method with code ${method} not exist!`);
+        throw new BadRequestError(`Mã phương án ${method} không tồn tại!`);
       }
     }
 

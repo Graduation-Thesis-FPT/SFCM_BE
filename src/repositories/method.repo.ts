@@ -1,3 +1,4 @@
+import { EntityManager } from 'typeorm';
 import mssqlConnection from '../db/mssql.connect';
 import { MethodEntity } from '../entity/method.entity';
 import { Method } from '../models/method.model';
@@ -34,4 +35,17 @@ const updateMethod = async (updateList: Method[]) => {
   return true;
 };
 
-export { findMethodByCode, getMethodCode, deleteMethodMany, createMethod, updateMethod };
+const findMethodByName = async (methodName: string, transactionalEntityManager: EntityManager) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(MethodEntity, 'method')
+    .where('method.METHOD_NAME = :methodName', { methodName: methodName })
+    .getOne();
+};
+export {
+  findMethodByCode,
+  getMethodCode,
+  deleteMethodMany,
+  createMethod,
+  updateMethod,
+  findMethodByName,
+};

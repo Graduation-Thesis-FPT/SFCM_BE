@@ -67,8 +67,8 @@ const validateEquipTypeRequest = (req: Request, res: Response, next: NextFunctio
     }
   }
 
-  checkDuplicatedID(insert, ['EQU_TYPE', 'EQU_TYPE_NAME'], 'thêm mới');
-  checkDuplicatedID(update, ['EQU_TYPE', 'EQU_TYPE_NAME'], 'cập nhật');
+  if (insert) checkDuplicatedID(insert, ['EQU_TYPE', 'EQU_TYPE_NAME'], 'thêm mới');
+  if (update) checkDuplicatedID(update, ['EQU_TYPE', 'EQU_TYPE_NAME'], 'cập nhật');
 
   res.locals.requestData = { insert: insertData, update: updateData };
   next();
