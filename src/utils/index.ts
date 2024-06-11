@@ -47,11 +47,13 @@ const isValidID = (id: string) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const checkDuplicatedID = (data: any, key: string, tag: string) => {
-  const uniqueData = _.uniqBy(data, key);
-  if (uniqueData.length !== data.length) {
-    throw new BadRequestError(`Trùng mã ${dbColumns[key]} trong khi ${tag}`);
-  }
+const checkDuplicatedID = (data: any, key: string[], tag: string) => {
+  key.forEach(key => {
+    const uniqueData = _.uniqBy(data, key);
+    if (uniqueData.length !== data.length) {
+      throw new BadRequestError(`Trùng ${dbColumns[key]} trong khi ${tag}`);
+    }
+  });
 };
 
 export {

@@ -28,11 +28,11 @@ class EquipmentService {
           throw new BadRequestError(`Mã thiết bị ${equipmentInfo.EQU_CODE} đã tồn`);
         }
 
-        const isValidEquipmentType = await findEquipTypeByCode(equipmentInfo.EQU_TYPE);
+        // const isValidEquipmentType = await findEquipTypeByCode(equipmentInfo.EQU_TYPE);
 
-        if (!isValidEquipmentType) {
-          throw new BadRequestError(`Mã loại trang thiết bị không hợp lệ`);
-        }
+        // if (!isValidEquipmentType) {
+        //   throw new BadRequestError(`Mã loại trang thiết bị không hợp lệ`);
+        // }
 
         const isValidRowId = isValidID(equipmentInfo.REF_ROWGUID);
 

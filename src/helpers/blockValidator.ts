@@ -64,7 +64,7 @@ const validateUpdateBlock = (data: Block) => {
         'number.positive': 'BLOCK_HEIGHT phải là số dương',
       })
       .optional(),
-      BLOCK_LENGTH: Joi.number()
+    BLOCK_LENGTH: Joi.number()
       .positive()
       .messages({
         'number.positive': 'BLOCK_LENGTH phải là số dương',
@@ -77,7 +77,9 @@ const validateUpdateBlock = (data: Block) => {
 
 const validateBlockRequest = (req: Request, res: Response, next: NextFunction) => {
   const { insert, update } = req.body;
-  checkDuplicatedID(insert, 'BLOCK_CODE', 'Thêm mới');
+  if (insert.length === 0 && update.length === 0) {
+    throw new BadRequestError();
+  }
   const insertData = [];
   const updateData = [];
   if (insert) {
@@ -105,6 +107,8 @@ const validateBlockRequest = (req: Request, res: Response, next: NextFunction) =
       updateData.push(value);
     }
   }
+  checkDuplicatedID(insert, ['BLOCK_CODE', 'BLOCK_NAME'], 'Thêm mới');
+
   res.locals.requestData = { insert: insertData, update: updateData };
   next();
 };

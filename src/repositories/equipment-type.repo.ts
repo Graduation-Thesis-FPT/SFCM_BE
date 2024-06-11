@@ -1,3 +1,4 @@
+import { EntityManager } from 'typeorm';
 import mssqlConnection from '../db/mssql.connect';
 import { EquipmentType as EquipmentTypeEntity } from '../entity/equipment-type.entity';
 // import { EquipType as EquipTypeEntity } from '../entity/equipment-type.entity';
@@ -5,27 +6,45 @@ import { EquipmentType } from '../models/equipment-type.model';
 
 export const equipTypeRepository = mssqlConnection.getRepository(EquipmentTypeEntity);
 
-const isDuplicateEquipType = async (equtName: string) => {
-  return await equipTypeRepository
-    .createQueryBuilder('equt')
+const isDuplicateEquipType = async (
+  equtName: string,
+  transactionalEntityManager: EntityManager,
+) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(EquipmentTypeEntity, 'equt')
     .where('equt.EQU_TYPE_NAME = :equtName', { equtName: equtName })
     .getOne();
 };
 
-const createEquipType = async (equipTypeListInfo: EquipmentType[]) => {
+const createEquipType = async (
+  equipTypeListInfo: EquipmentType[],
+  transactionalEntityManager: EntityManager,
+) => {
   const gate = equipTypeRepository.create(equipTypeListInfo);
 
-  const newGate = await equipTypeRepository.save(gate);
+  const newGate = await transactionalEntityManager.save(gate);
   return newGate;
 };
 
-const updateEquipType = async (equipTypeListInfo: EquipmentType[]) => {
+const updateEquipType = async (
+  equipTypeListInfo: EquipmentType[],
+  transactionalEntityManager: EntityManager,
+) => {
   return await Promise.all(
-    equipTypeListInfo.map(equipType => equipTypeRepository.update(equipType.EQU_TYPE, equipType)),
+    equipTypeListInfo.map(equipType =>
+      transactionalEntityManager.update(EquipmentTypeEntity, equipType.EQU_TYPE, equipType),
+    ),
   );
 };
 
-const findEquipTypeByCode = async (equtCode: string) => {
+const findEquipTypeByCode = async (equtCode: string, transactionalEntityManager: EntityManager) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(EquipmentTypeEntity, 'equt')
+    .where('equt.EQU_TYPE = :equtCode', { equtCode: equtCode })
+    .getOne();
+};
+
+const findEquipType = async (equtCode: string) => {
   return await equipTypeRepository
     .createQueryBuilder('equt')
     .where('equt.EQU_TYPE = :equtCode', { equtCode: equtCode })
@@ -51,4 +70,5 @@ export {
   findEquipTypeByCode,
   deleteEquipTypeMany,
   getAllEquipType,
+  findEquipType,
 };

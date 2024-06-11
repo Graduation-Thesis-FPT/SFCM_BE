@@ -44,8 +44,9 @@ const validateUpdateMethod = (data: Method) => {
 const validateMethodRequest = (req: Request, res: Response, next: NextFunction) => {
   const { insert, update } = req.body;
 
-  checkDuplicatedID(insert, 'METHOD_CODE', 'add');
-  checkDuplicatedID(update, 'METHOD_CODE', 'update');
+  if (insert.length === 0 && update.length === 0) {
+    throw new BadRequestError();
+  }
 
   const insertData = [];
   const updateData = [];
@@ -74,6 +75,9 @@ const validateMethodRequest = (req: Request, res: Response, next: NextFunction) 
       updateData.push(value);
     }
   }
+
+  checkDuplicatedID(insert, ['METHOD_CODE', 'METHOD_NAME'], 'thêm mới');
+  checkDuplicatedID(update, ['METHOD_CODE', 'METHOD_NAME'], 'cập nhật');
   res.locals.requestData = { insert: insertData, update: updateData };
   next();
 };

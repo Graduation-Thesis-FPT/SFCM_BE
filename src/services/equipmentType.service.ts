@@ -4,12 +4,14 @@ import { User } from '../entity/user.entity';
 import {
   createEquipType,
   deleteEquipTypeMany,
+  findEquipType,
   findEquipTypeByCode,
   getAllEquipType,
   isDuplicateEquipType,
   updateEquipType,
 } from '../repositories/equipment-type.repo';
 import { EquipmentType, EquipmentTypeListInfo } from '../models/equipment-type.model';
+import { manager } from '../repositories/index.repo';
 
 class EquipTypeService {
   static createAndUpdateEquipType = async (equipInfo: EquipmentTypeListInfo, createBy: User) => {
@@ -18,35 +20,46 @@ class EquipTypeService {
 
     let newCreatedEquipType: EquipmentType[] = [];
     let newUpdatedEquipType;
-    if (insertData) {
-      for (const equipInfo of insertData) {
-        const isDuplicate = await isDuplicateEquipType(equipInfo.EQU_TYPE_NAME);
-        if (isDuplicate) {
-          throw new BadRequestError(`Trang thiết bị ${equipInfo.EQU_TYPE_NAME} (Đã tồn tại)`);
+    await manager.transaction(async transactionalEntityManager => {
+      if (insertData) {
+        for (const equipInfo of insertData) {
+          const gate = await findEquipTypeByCode(equipInfo.EQU_TYPE, transactionalEntityManager);
+          if (gate) {
+            throw new BadRequestError(ERROR_MESSAGE.EQUIPTYPE_IS_EXISTED);
+          }
+
+          const isDuplicate = await isDuplicateEquipType(
+            equipInfo.EQU_TYPE_NAME,
+            transactionalEntityManager,
+          );
+
+          if (isDuplicate) {
+            throw new BadRequestError(`Trang thiết bị ${equipInfo.EQU_TYPE_NAME} (Đã tồn tại)`);
+          }
+
+          equipInfo.CREATE_BY = createBy.ROWGUID;
+          equipInfo.UPDATE_BY = createBy.ROWGUID;
+          equipInfo.UPDATE_DATE = new Date();
         }
 
-        equipInfo.CREATE_BY = createBy.ROWGUID;
-        equipInfo.UPDATE_BY = createBy.ROWGUID;
-        equipInfo.UPDATE_DATE = new Date();
+        newCreatedEquipType = await createEquipType(insertData, transactionalEntityManager);
       }
 
-      newCreatedEquipType = await createEquipType(insertData);
-    }
+      if (updateData) {
+        for (const equipInfo of updateData) {
+          const gate = await findEquipTypeByCode(equipInfo.EQU_TYPE, transactionalEntityManager);
+          if (!gate) {
+            throw new BadRequestError(ERROR_MESSAGE.EQUIPTYPE_NOT_EXIST);
+          }
 
-    if (updateData) {
-      for (const equipInfo of updateData) {
-        const gate = await findEquipTypeByCode(equipInfo.EQU_TYPE);
-        if (!gate) {
-          throw new BadRequestError(ERROR_MESSAGE.EQUIPTYPE_NOT_EXIST);
+          equipInfo.CREATE_BY = createBy.ROWGUID;
+          equipInfo.UPDATE_BY = createBy.ROWGUID;
+          equipInfo.UPDATE_DATE = new Date();
         }
 
-        equipInfo.CREATE_BY = createBy.ROWGUID;
-        equipInfo.UPDATE_BY = createBy.ROWGUID;
-        equipInfo.UPDATE_DATE = new Date();
+        newUpdatedEquipType = await updateEquipType(updateData, transactionalEntityManager);
       }
-
-      newUpdatedEquipType = await updateEquipType(updateData);
-    }
+    });
 
     return {
       newCreatedEquipType,
@@ -56,7 +69,7 @@ class EquipTypeService {
 
   static deleteEquipType = async (equipTypeCodeList: string[]) => {
     for (const equipType of equipTypeCodeList) {
-      const equip = await findEquipTypeByCode(equipType.trim());
+      const equip = await findEquipType(equipType.trim());
       if (!equip) {
         throw new BadRequestError(`EquipType with ID ${equipType} not exist!`);
       }
