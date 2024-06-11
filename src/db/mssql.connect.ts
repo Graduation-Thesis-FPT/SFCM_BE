@@ -10,6 +10,8 @@ import { Equipment } from '../entity/equipment.entity';
 import { MethodEntity } from '../entity/method.entity';
 import { Cell } from '../entity/cell.entity';
 import { Block } from '../entity/block.entity';
+import { ItemType } from '../entity/item-type.entity';
+import { UnitType } from '../entity/unit.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -28,7 +30,9 @@ const mssqlConnection = new DataSource({
     EquipmentType,
     Equipment,
     MethodEntity,
-    Block
+    Block,
+    ItemType,
+    UnitType
   ],
   options: {
     encrypt: false,
