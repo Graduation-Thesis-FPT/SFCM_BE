@@ -11,6 +11,9 @@ import equipmentTypeRouter from './equipment-type/index';
 import equipmentRouter from './equipment/index';
 import methodRouter from './method/index';
 import blockRouter from './block/index'
+import itemTypeRouter from './item-type/index'
+import unitRouter from './unit/index'
+
 
 const routes = Router();
 
@@ -37,4 +40,11 @@ routes.use('/api/v1/method', methodRouter);
 
 //block
 routes.use('/api/v1/block', blockRouter)
+
+//item-type
+routes.use('/api/v1/item-type', itemTypeRouter)
+
+//unit
+routes.use('/api/v1/unit', unitRouter)
+
 export default routes;
