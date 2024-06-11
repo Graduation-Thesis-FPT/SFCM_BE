@@ -9,7 +9,7 @@ const validateItemType = (data: ItemType) => {
     ITEM_TYPE_CODE: Joi.string().uppercase().trim().required().messages({
       'any.required': `Mã loại hàng không được để trống`,
     }),
-    ItemType_NAME: Joi.string().uppercase().trim().required().messages({
+    ITEM_TYPE_NAME: Joi.string().uppercase().trim().required().messages({
       'any.required': 'Tên Loại hàng không được để trống',
     }),
   });
