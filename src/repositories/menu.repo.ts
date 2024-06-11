@@ -9,6 +9,7 @@ const getMenuByRoleCode = async (roleCode: string) => {
     .createQueryBuilder('SA_MENU', 'sm')
     .leftJoinAndSelect('SA_PERMISSION', 'sp', 'sm.MENU_CODE = sp.MENU_CODE')
     .where('ROLE_CODE = :role', { role: roleCode })
+    .andWhere('sm.IS_VISIBLE = 1')
     .andWhere('IS_VIEW = 1')
     .orWhere('PARENT_CODE is null')
     .orderBy('sm.ORDER_BY', 'ASC')
