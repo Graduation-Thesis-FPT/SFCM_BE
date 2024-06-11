@@ -184,4 +184,7 @@ export const dbColumns: any = {
   METHOD_NAME: 'Tên phương án *',
   IS_IN_OUT: 'Trạng thái',
   IS_SERVICE: 'Dịch vụ',
+  //gate
+  GATE_CODE: 'Mã cổng',
+  GATE_NAME: 'Tên cổng',
 };

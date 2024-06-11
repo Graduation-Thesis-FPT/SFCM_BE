@@ -6,7 +6,7 @@ import { checkDuplicatedID } from '../utils';
 
 const validateInsertEquipType = (data: EquipmentType) => {
   const gateSchema = Joi.object({
-    EQU_TYPE: Joi.string().trim().max(10).required().messages({
+    EQU_TYPE: Joi.string().uppercase().trim().max(10).required().messages({
       'any.required': 'Loại trang thiết bị không được để trống #thêm',
       'string.max': 'Loại trang thiết phải nhỏ hơn hoặc bằng 10 ký tự #thêm',
     }),
