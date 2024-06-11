@@ -8,7 +8,7 @@ class WarehouseController {
     const createBy = res.locals.user;
     const warehouseList = res.locals.requestData;
     new CREATED({
-      message: SUCCESS_MESSAGE.CREATE_WAREHOUSE_SUCCESS,
+      message: SUCCESS_MESSAGE.SAVE_WAREHOUSE_SUCCESS,
       metadata: await WarehouseService.createAndUpdateWarehouse(warehouseList, createBy),
     }).send(res);
   };
