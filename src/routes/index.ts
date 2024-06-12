@@ -11,9 +11,9 @@ import equipmentTypeRouter from './equipment-type/index';
 import equipmentRouter from './equipment/index';
 import methodRouter from './method/index';
 import blockRouter from './block/index';
-import itemTypeRouter from './item-type/index'
-import unitRouter from './unit/index'
-
+import itemTypeRouter from './item-type/index';
+import unitRouter from './unit/index';
+import customerTypeRouter from './customer-type/index';
 
 const routes = Router();
 
@@ -42,9 +42,12 @@ routes.use('/api/v1/method', methodRouter);
 routes.use('/api/v1/block', blockRouter);
 
 //item-type
-routes.use('/api/v1/item-type', itemTypeRouter)
+routes.use('/api/v1/item-type', itemTypeRouter);
 
 //unit
-routes.use('/api/v1/unit', unitRouter)
+routes.use('/api/v1/unit', unitRouter);
+
+// customer
+routes.use('/api/v1/customer-type', customerTypeRouter);
 
 export default routes;

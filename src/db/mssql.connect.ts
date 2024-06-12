@@ -12,6 +12,7 @@ import { Cell } from '../entity/cell.entity';
 import { Block } from '../entity/block.entity';
 import { ItemType } from '../entity/item-type.entity';
 import { UnitType } from '../entity/unit.entity';
+import { CustomerType } from '../entity/customer-type.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -32,7 +33,8 @@ const mssqlConnection = new DataSource({
     MethodEntity,
     Block,
     ItemType,
-    UnitType
+    UnitType,
+    CustomerType,
   ],
   options: {
     encrypt: false,
