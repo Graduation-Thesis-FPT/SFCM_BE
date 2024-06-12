@@ -191,4 +191,11 @@ export const dbColumns: any = {
   //gate
   GATE_CODE: 'Mã cổng',
   GATE_NAME: 'Tên cổng',
+
+  // customer type
+  CUSTOMER_TYPE_CODE: 'Mã loại khách hàng',
+  CUSTOMER_TYPE_NAME: 'Tên loại khách hàng',
+
+  // customer
+  CUSTOMER_CODE: 'Mã khách hàng',
 };

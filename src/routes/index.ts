@@ -14,6 +14,7 @@ import blockRouter from './block/index';
 import itemTypeRouter from './item-type/index';
 import unitRouter from './unit/index';
 import customerTypeRouter from './customer-type/index';
+import customerRouter from './customer/index';
 
 const routes = Router();
 
@@ -49,5 +50,6 @@ routes.use('/api/v1/unit', unitRouter);
 
 // customer
 routes.use('/api/v1/customer-type', customerTypeRouter);
+routes.use('/api/v1/customer', customerRouter);
 
 export default routes;
