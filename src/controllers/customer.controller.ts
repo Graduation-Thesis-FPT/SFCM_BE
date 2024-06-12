@@ -1,18 +1,16 @@
 import { Request, Response } from 'express';
 import { CREATED, OK, SuccessResponse } from '../core/success.response';
 import { SUCCESS_MESSAGE } from '../constants';
-import CustomerTypeService from '../services/customerType.service';
 import CustomerService from '../services/customer.service';
 
 class CustomerController {
   createAndUpdateCustomer = async (req: Request, res: Response) => {
     const createBy = res.locals.user;
-    const customerTypeList = res.locals.requestData;
+    const customerList = res.locals.requestData;
 
-    const data = req.body;
     new CREATED({
       message: SUCCESS_MESSAGE.SAVE_CUSTOMERTYPE_SUCCESS,
-      metadata: await CustomerService.createAndUpdateCustomer(data, createBy),
+      metadata: await CustomerService.createAndUpdateCustomer(customerList, createBy),
     }).send(res);
   };
 
