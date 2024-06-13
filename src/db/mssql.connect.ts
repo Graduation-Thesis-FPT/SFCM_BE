@@ -14,6 +14,7 @@ import { ItemType } from '../entity/item-type.entity';
 import { UnitType } from '../entity/unit.entity';
 import { CustomerType } from '../entity/customer-type.entity';
 import { Customer } from '../entity/customer.entity';
+import { Vessel } from '../entity/vessel.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -37,6 +38,7 @@ const mssqlConnection = new DataSource({
     UnitType,
     CustomerType,
     Customer,
+    Vessel,
   ],
   options: {
     encrypt: false,
