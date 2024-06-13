@@ -5,6 +5,7 @@ import { Block } from '../models/block.model';
 import { warehouseRepository } from './warehouse.repo';
 import { Cell } from '../models/cell.model';
 import { boolean } from 'joi';
+import { EntityManager } from 'typeorm';
 
 export const blockRepository = mssqlConnection.getRepository(BlockEntity);
 export const cellRepository = mssqlConnection.getRepository(CellEntity);
@@ -109,6 +110,13 @@ const getAllCell = async (WAREHOUSE_CODE: string = '', BLOCK_CODE: string = '') 
   });
 };
 
+const findBlockByCode = async (blockCode: string, transactionEntityManager: EntityManager) => {
+  return await transactionEntityManager
+    .createQueryBuilder(BlockEntity, 'block')
+    .where('block.BLOCK_CODE = :blockCode', { blockCode: blockCode })
+    .getOne();
+};
+
 export {
   createBlockandCell,
   checkDuplicateBlock,
@@ -118,4 +126,5 @@ export {
   isValidWarehouseCode,
   updateBlock,
   getAllCell,
+  findBlockByCode,
 };

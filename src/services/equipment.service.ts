@@ -13,6 +13,7 @@ import {
   updateEquipment,
 } from '../repositories/equipment.repo';
 import { manager } from '../repositories/index.repo';
+import { findBlockByCode } from '../repositories/block.repo';
 
 class EquipmentService {
   static createAndUpdateEquipment = async (equipmentInfo: EquipmentListInfo, createBy: User) => {
@@ -43,6 +44,16 @@ class EquipmentService {
             );
           }
 
+          if (equipmentInfo.BLOCK_CODE) {
+            const blockList = equipmentInfo.BLOCK_CODE.split(',');
+            for (const block of blockList) {
+              const result = await findBlockByCode(block.trim(), transactionEntityManager);
+              if (!result) {
+                throw new BadRequestError(`Dãy ${block} không tồn tại`);
+              }
+            }
+          }
+
           equipmentInfo.CREATE_BY = createBy.ROWGUID;
           equipmentInfo.UPDATE_BY = createBy.ROWGUID;
           equipmentInfo.UPDATE_DATE = new Date();
@@ -70,6 +81,16 @@ class EquipmentService {
             throw new BadRequestError(
               `Mã loại trang thiết bị ${equipmentInfo.EQU_TYPE} không hợp lệ`,
             );
+          }
+
+          if (equipmentInfo.BLOCK_CODE) {
+            const blockList = equipmentInfo.BLOCK_CODE.split(',');
+            for (const block of blockList) {
+              const result = await findBlockByCode(block.trim(), transactionEntityManager);
+              if (!result) {
+                throw new BadRequestError(`Dãy ${block} không hợp lệ`);
+              }
+            }
           }
 
           equipmentInfo.CREATE_BY = createBy.ROWGUID;
