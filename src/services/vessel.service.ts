@@ -67,8 +67,8 @@ class VesselService {
     return await deleteVesselMany(customerCodeList);
   };
 
-  static getAllVessel = async () => {
-    return await getAllVessel();
+  static getAllVessel = async (rule: { fromDate: Date; toDate: Date }) => {
+    return await getAllVessel(rule);
   };
 }
 export default VesselService;

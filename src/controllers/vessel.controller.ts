@@ -23,9 +23,15 @@ class VesselController {
   };
 
   getVessel = async (req: Request, res: Response) => {
+    let rule = null;
+    if (req.query.from && req.query.to) {
+      const fromDate = new Date(req.query?.from as string);
+      const toDate = new Date(req.query?.to as string);
+      rule = { fromDate, toDate };
+    }
     new OK({
       message: SUCCESS_MESSAGE.GET_VESSEL_SUCCESS,
-      metadata: await VesselService.getAllVessel(),
+      metadata: await VesselService.getAllVessel(rule),
     }).send(res);
   };
 }
