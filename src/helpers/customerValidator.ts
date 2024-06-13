@@ -22,6 +22,9 @@ const validateInsertCustomer = (data: Customer) => {
     EMAIL: Joi.string().trim().email().messages({
       'string.email': 'Email phải hợp lệ',
     }),
+    IS_ACTIVE: Joi.boolean().required().messages({
+      'any.required': 'Trạng thái không được để trống #thêm',
+    }),
   });
 
   return customerSchema.validate(data);
@@ -36,6 +39,7 @@ const validateUpdateCustomer = (data: Customer) => {
     CUSTOMER_TYPE_CODE: Joi.string().trim().optional(),
     ADDRESS: Joi.string().trim().optional(),
     TAX_CODE: Joi.string().trim().optional(),
+    IS_ACTIVE: Joi.boolean().optional(),
     EMAIL: Joi.string()
       .trim()
       .email()
