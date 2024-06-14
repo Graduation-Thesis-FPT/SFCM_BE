@@ -10,6 +10,7 @@ import {
   getAllVessel,
   updateVessel,
 } from '../repositories/vessel.repo';
+import { generateKeyVessel } from '../utils';
 
 class VesselService {
   static createAndUpdateVessel = async (vesselInfo: VesselList, createBy: User) => {
@@ -25,6 +26,12 @@ class VesselService {
           if (vessel) {
             throw new BadRequestError(`Mã tàu ${vessel.VOYAGEKEY} đã tồn tại`);
           }
+
+          vesselInfo.VOYAGEKEY = generateKeyVessel(
+            vesselInfo.VESSEL_NAME,
+            vesselInfo.INBOUND_VOYAGE,
+            vesselInfo.ETA,
+          );
 
           vesselInfo.CREATE_BY = createBy.ROWGUID;
           vesselInfo.UPDATE_BY = createBy.ROWGUID;

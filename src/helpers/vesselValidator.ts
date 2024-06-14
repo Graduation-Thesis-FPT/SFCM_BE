@@ -6,9 +6,6 @@ import { Method } from '../models/method.model';
 
 const validateInsertVessel = (data: Method) => {
   const methodSchema = Joi.object({
-    VOYAGEKEY: Joi.string().uppercase().trim().required().messages({
-      'any.required': 'Mã tàu không được để trống #thêm',
-    }),
     VESSEL_NAME: Joi.string().trim().required().messages({
       'any.required': 'Tên tàu không được để trống #thêm',
     }),
@@ -87,8 +84,8 @@ const validateVesselRequest = (req: Request, res: Response, next: NextFunction) 
     }
   }
 
-  if (insert) checkDuplicatedID(insert, ['VOYAGEKEY'], 'thêm mới');
-  if (update) checkDuplicatedID(update, ['VOYAGEKEY'], 'cập nhật');
+  // if (insert) checkDuplicatedID(insert, ['VOYAGEKEY'], 'thêm mới');
+  // if (update) checkDuplicatedID(update, ['VOYAGEKEY'], 'cập nhật');
   res.locals.requestData = { insert: insertData, update: updateData };
   next();
 };
