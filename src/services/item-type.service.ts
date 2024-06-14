@@ -4,22 +4,22 @@ import { User } from '../entity/user.entity';
 import {
   getItemType,
   deleteItemtype,
-  finditemTypeByCode,
   createitemType,
   updateitemType,
+  findItemType,
 } from '../repositories/item-type.repo';
 import { ItemTypeInfo } from '../models/item-type.model';
 
 class ItemTypeService {
   static createAndUpdateItemType = async (itemTypeListInfo: ItemTypeInfo, createBy: User) => {
-    let insertData = itemTypeListInfo.insert;
-    let updateData = itemTypeListInfo.update;
+    const insertData = itemTypeListInfo.insert;
+    const updateData = itemTypeListInfo.update;
 
     let createdItemType;
     let updatedItemType;
     if (insertData.length) {
       for (const data of insertData) {
-        const checkExist = await finditemTypeByCode(data.ITEM_TYPE_CODE);
+        const checkExist = await findItemType(data.ITEM_TYPE_CODE);
 
         if (checkExist) {
           throw new BadRequestError(ERROR_MESSAGE.ITEM_TYPE_EXIST);
@@ -29,12 +29,12 @@ class ItemTypeService {
         data.UPDATE_DATE = new Date();
         data.CREATE_DATE = new Date();
       }
+      createdItemType = await createitemType(insertData);
     }
-    createdItemType = await createitemType(insertData);
 
     if (updateData.length) {
       for (const data of updateData) {
-        const checkExist = await finditemTypeByCode(data.ITEM_TYPE_CODE);
+        const checkExist = await findItemType(data.ITEM_TYPE_CODE);
 
         if (!checkExist) {
           throw new BadRequestError(ERROR_MESSAGE.ITEM_TYPE_EXIST);
@@ -54,7 +54,7 @@ class ItemTypeService {
 
   static deleteItemType = async (ItemTypeCodeList: string[]) => {
     for (const ItemTypeCode of ItemTypeCodeList) {
-      const ItemType = await finditemTypeByCode(ItemTypeCode);
+      const ItemType = await findItemType(ItemTypeCode);
       if (!ItemType) {
         throw new BadRequestError(`ItemType with ID ${ItemType.ITEM_TYPE_CODE} not exist!`);
       }

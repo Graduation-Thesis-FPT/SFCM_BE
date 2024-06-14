@@ -1,7 +1,6 @@
 import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
 import { BadRequestError } from '../core/error.response';
-import { checkDuplicatedID } from '../utils';
 import { Method } from '../models/method.model';
 
 const validateInsertVessel = (data: Method) => {

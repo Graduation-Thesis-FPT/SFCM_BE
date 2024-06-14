@@ -1,3 +1,4 @@
+import { EntityManager } from 'typeorm';
 import mssqlConnection from '../db/mssql.connect';
 import { ItemType as ItemTypeEntity } from '../entity/item-type.entity';
 import { ItemType } from '../models/item-type.model';
@@ -16,9 +17,12 @@ const deleteItemtype = async (itemTypeListId: string[]) => {
   return await itemTypeRepository.delete(itemTypeListId);
 };
 
-const finditemTypeByCode = async (ITEM_TYPE_CODE: string) => {
-  return await itemTypeRepository
-    .createQueryBuilder('item')
+const findItemTypeByCode = async (
+  ITEM_TYPE_CODE: string,
+  transactionEntityManager: EntityManager,
+) => {
+  return await transactionEntityManager
+    .createQueryBuilder(ItemTypeEntity, 'item')
     .where('item.ITEM_TYPE_CODE = :ITEM_TYPE_CODE', { ITEM_TYPE_CODE: ITEM_TYPE_CODE })
     .getOne();
 };
@@ -35,4 +39,18 @@ const updateitemType = async (itemTypeList: ItemType[]) => {
   return true;
 };
 
-export { getItemType, deleteItemtype, finditemTypeByCode, createitemType, updateitemType };
+const findItemType = async (ITEM_TYPE_CODE: string) => {
+  return await itemTypeRepository
+    .createQueryBuilder('item')
+    .where('item.ITEM_TYPE_CODE = :ITEM_TYPE_CODE', { ITEM_TYPE_CODE: ITEM_TYPE_CODE })
+    .getOne();
+};
+
+export {
+  getItemType,
+  deleteItemtype,
+  findItemTypeByCode,
+  createitemType,
+  updateitemType,
+  findItemType,
+};

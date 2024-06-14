@@ -16,6 +16,7 @@ import unitRouter from './unit/index';
 import customerTypeRouter from './customer-type/index';
 import customerRouter from './customer/index';
 import vesselRouter from './vessel/index';
+import containerRouter from './container/index';
 
 const routes = Router();
 
@@ -55,4 +56,7 @@ routes.use('/api/v1/customer', customerRouter);
 
 // vessel
 routes.use('/api/v1/vessel', vesselRouter);
+
+// container
+routes.use('/api/v1/container', containerRouter);
 export default routes;
