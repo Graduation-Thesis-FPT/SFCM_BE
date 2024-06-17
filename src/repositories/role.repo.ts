@@ -11,6 +11,9 @@ const getAllRole = async (): Promise<RoleEntity[]> => {
       ROLE_NAME: true,
       UPDATE_DATE: true,
     },
+    order: {
+      ROLE_CODE: 'ASC',
+    },
   });
 };
 
