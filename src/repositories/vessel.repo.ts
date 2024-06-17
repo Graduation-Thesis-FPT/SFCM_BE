@@ -47,10 +47,10 @@ const deleteVesselMany = async (vesselCode: string[]) => {
 };
 
 const getAllVessel = async (rule: { fromDate: Date; toDate: Date }) => {
+  let filterObj = {};
+  if (rule?.fromDate && rule?.toDate) filterObj = { ETA: Between(rule?.fromDate, rule?.toDate) };
   return await vesselRepository.find({
-    where: {
-      ETA: Between(rule.fromDate, rule.toDate),
-    },
+    where: filterObj,
     order: {
       UPDATE_DATE: 'DESC',
     },
