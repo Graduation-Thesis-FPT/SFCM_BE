@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { asyncHandler } from '../../utils';
 import { authentication } from '../../auth/authUtils';
 import containerController from '../../controllers/container.controller';
-import { validateContainerRequest } from '../../helpers/containerValidator';
+import { validateContainerRequest } from '../../middlewares/helpers/containerValidator';
 
 const router = Router();
 

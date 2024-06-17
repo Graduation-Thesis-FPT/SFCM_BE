@@ -1,5 +1,4 @@
 import { DataSource } from 'typeorm';
-import { User } from '../entity/user.entity';
 import { Role } from '../entity/role.entity';
 import { Permission } from '../entity/permission.entity';
 import { Menu } from '../entity/menu.entity';
@@ -16,6 +15,7 @@ import { CustomerType } from '../entity/customer-type.entity';
 import { Customer } from '../entity/customer.entity';
 import { Vessel } from '../entity/vessel.entity';
 import { ContainerEntity } from '../entity/container.entity';
+import { User } from '../entity/user.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',

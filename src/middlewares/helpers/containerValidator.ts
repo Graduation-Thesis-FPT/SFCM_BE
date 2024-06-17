@@ -1,10 +1,9 @@
 import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
-import { BadRequestError } from '../core/error.response';
-import { checkDuplicatedID } from '../utils';
-import { Method } from '../models/method.model';
+import { Container } from '../../models/container.model';
+import { BadRequestError } from '../../core/error.response';
 
-const validateInsertContainer = (data: Method) => {
+const validateInsertContainer = (data: Container) => {
   const methodSchema = Joi.object({
     VOYAGEKEY: Joi.string().trim().required().messages({
       'any.required': 'Mã tàu không được để trống #thêm',
@@ -34,7 +33,7 @@ const validateInsertContainer = (data: Method) => {
   return methodSchema.validate(data);
 };
 
-const validateUpdateContainer = (data: Method) => {
+const validateUpdateContainer = (data: Container) => {
   const methodSchema = Joi.object({
     ROWGUID: Joi.string().trim().required().guid({ version: 'uuidv4' }).messages({
       'any.required': 'Mã container không được để trống #cập nhật',

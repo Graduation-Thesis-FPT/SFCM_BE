@@ -1,9 +1,9 @@
 import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
-import { BadRequestError } from '../core/error.response';
-import { Method } from '../models/method.model';
+import { Vessel } from '../../models/vessel.model';
+import { BadRequestError } from '../../core/error.response';
 
-const validateInsertVessel = (data: Method) => {
+const validateInsertVessel = (data: Vessel) => {
   const methodSchema = Joi.object({
     VESSEL_NAME: Joi.string().trim().required().messages({
       'any.required': 'Tên tàu không được để trống #thêm',
@@ -11,27 +11,23 @@ const validateInsertVessel = (data: Method) => {
     INBOUND_VOYAGE: Joi.string().trim().required().messages({
       'any.required': 'Chuyến nhập không được để trống #thêm',
     }),
-    OUTBOUND_VOYAGE: Joi.string().trim().required().messages({
-      'any.required': 'Chuyến xuất không được để trống #thêm',
-    }),
+    OUTBOUND_VOYAGE: Joi.string().trim().allow(''),
     ETA: Joi.date().required().messages({
       'any.required': 'Ngày tàu đến không được để trống #thêm',
+      'date.base': 'Ngày tàu đến phải là một ngày hợp lệ #thêm',
     }),
-    ETD: Joi.date().required().messages({
-      'any.required': 'Ngày tàu đi không được để trống #thêm',
+    ETD: Joi.date().allow('').optional().messages({
+      'date.base': 'Ngày tàu đi phải là một ngày hợp lệ #thêm',
+      'string.empty': 'Ngày tàu đi có thể để trống #thêm',
     }),
-    CallSign: Joi.string().trim().required().messages({
-      'any.required': 'CallSign không được để trống #thêm',
-    }),
-    IMO: Joi.string().trim().required().messages({
-      'any.required': 'IMO không được để trống #thêm',
-    }),
+    CallSign: Joi.string().trim().allow('').optional(),
+    IMO: Joi.string().trim().allow('').optional(),
   });
 
   return methodSchema.validate(data);
 };
 
-const validateUpdateVessel = (data: Method) => {
+const validateUpdateVessel = (data: Vessel) => {
   const methodSchema = Joi.object({
     VOYAGEKEY: Joi.string().uppercase().trim().required().messages({
       'any.required': 'Mã tàu không được để trống #thêm',
@@ -62,7 +58,6 @@ const validateVesselRequest = (req: Request, res: Response, next: NextFunction) 
       const { error, value } = validateInsertVessel(vesselInfo);
 
       if (error) {
-        // console.log(error.details);
         throw new BadRequestError(error.message);
       }
 
@@ -75,7 +70,6 @@ const validateVesselRequest = (req: Request, res: Response, next: NextFunction) 
       const { error, value } = validateUpdateVessel(vesselInfo);
 
       if (error) {
-        // console.log(error.details);
         throw new BadRequestError(error.message);
       }
 
@@ -83,8 +77,6 @@ const validateVesselRequest = (req: Request, res: Response, next: NextFunction) 
     }
   }
 
-  // if (insert) checkDuplicatedID(insert, ['VOYAGEKEY'], 'thêm mới');
-  // if (update) checkDuplicatedID(update, ['VOYAGEKEY'], 'cập nhật');
   res.locals.requestData = { insert: insertData, update: updateData };
   next();
 };

@@ -1,6 +1,5 @@
-import { EntityManager, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+import { Between, EntityManager } from 'typeorm';
 import mssqlConnection from '../db/mssql.connect';
-import { Customer as CustomerEntity } from '../entity/customer.entity';
 import { Vessel as VesselEntity } from '../entity/vessel.entity';
 import { Vessel } from '../models/vessel.model';
 
@@ -48,12 +47,10 @@ const deleteVesselMany = async (vesselCode: string[]) => {
 };
 
 const getAllVessel = async (rule: { fromDate: Date; toDate: Date }) => {
-  const filterRule = {
-    ETA: MoreThanOrEqual(rule?.fromDate),
-    ETD: LessThanOrEqual(rule?.toDate),
-  };
   return await vesselRepository.find({
-    where: rule ? filterRule : {},
+    where: {
+      ETA: Between(rule.fromDate, rule.toDate),
+    },
     order: {
       UPDATE_DATE: 'DESC',
     },

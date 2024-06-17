@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { asyncHandler } from '../../utils';
 import { authentication } from '../../auth/authUtils';
 import vesselController from '../../controllers/vessel.controller';
-import { validateVesselRequest } from '../../helpers/vesselValidator';
+import { validateVesselRequest } from '../../middlewares/helpers/vesselValidator';
 
 const router = Router();
 

@@ -22,16 +22,28 @@ class VesselService {
     await manager.transaction(async transactionalEntityManager => {
       if (insertData) {
         for (const vesselInfo of insertData) {
-          const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY, transactionalEntityManager);
-          if (vessel) {
-            throw new BadRequestError(`Mã tàu ${vessel.VOYAGEKEY} đã tồn tại`);
-          }
-
           vesselInfo.VOYAGEKEY = generateKeyVessel(
             vesselInfo.VESSEL_NAME,
             vesselInfo.INBOUND_VOYAGE,
             vesselInfo.ETA,
           );
+          const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY, transactionalEntityManager);
+          if (vessel) {
+            throw new BadRequestError(`Mã tàu ${vessel.VOYAGEKEY} đã tồn tại`);
+          }
+
+          if (vesselInfo.ETA && vesselInfo.ETD) {
+            const etaDate = new Date(vesselInfo.ETA);
+            const etdDate = new Date(vesselInfo.ETD);
+            if (etaDate >= etdDate) {
+              throw new BadRequestError(`Ngày đến phải nhỏ hơn ngày rời`);
+            }
+          }
+
+          if (vesselInfo.ETD === '') vesselInfo.ETD = null;
+          if (vesselInfo.CallSign === '') vesselInfo.CallSign = null;
+          if (vesselInfo.IMO === '') vesselInfo.IMO = null;
+          if (vesselInfo.OUTBOUND_VOYAGE === '') vesselInfo.OUTBOUND_VOYAGE = null;
 
           vesselInfo.CREATE_BY = createBy.ROWGUID;
           vesselInfo.UPDATE_BY = createBy.ROWGUID;

@@ -1,14 +1,15 @@
 import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
-import { BadRequestError } from '../core/error.response';
-import { Equipment } from '../models/equipment.models';
-import { checkDuplicatedID } from '../utils';
+import { checkDuplicatedID } from '../../utils';
+import { Equipment } from '../../models/equipment.models';
+import { BadRequestError } from '../../core/error.response';
 
 const validateInsertEquipment = (data: Equipment) => {
   const equipmentSchema = Joi.object({
     EQU_CODE: Joi.string().uppercase().trim().max(10).required().messages({
       'any.required': 'Mã trang thiết bị không được để trống #thêm',
       'string.max': 'Mã trang thiết phải nhỏ hơn hoặc bằng 10 ký tự #thêm',
+      'string.empty': 'Mã trang thiết bị không được để trống #thêm',
     }),
     EQU_TYPE: Joi.string().trim().required().messages({
       'any.required': 'Loại trang thiết bị không được để trống #thêm',

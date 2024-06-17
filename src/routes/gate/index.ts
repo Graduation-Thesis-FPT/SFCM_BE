@@ -3,7 +3,7 @@ import { asyncHandler } from '../../utils';
 import { authentication } from '../../auth/authUtils';
 import { grantPermission } from '../../middlewares';
 import gateController from '../../controllers/gate.controller';
-import { validateGateRequest } from '../../helpers/gateValidator';
+import { validateGateRequest } from '../../middlewares/helpers/gateValidator';
 
 const router = Router();
 

@@ -1,8 +1,8 @@
 import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
-import { BadRequestError } from '../core/error.response';
-import { checkDuplicatedID } from '../utils';
-import { CustomerType } from '../models/customer-type.model';
+import { CustomerType } from '../../models/customer-type.model';
+import { checkDuplicatedID } from '../../utils';
+import { BadRequestError } from '../../core/error.response';
 
 const validateInsertCustomerType = (data: CustomerType) => {
   const customerTypeSchema = Joi.object({

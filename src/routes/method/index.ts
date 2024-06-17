@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { asyncHandler } from '../../utils';
 import { authentication } from '../../auth/authUtils';
 import methodController from '../../controllers/method.controller';
-import { validateMethodRequest } from '../../helpers/methodValidator';
+import { validateMethodRequest } from '../../middlewares/helpers/methodValidator';
 
 const router = Router();
 

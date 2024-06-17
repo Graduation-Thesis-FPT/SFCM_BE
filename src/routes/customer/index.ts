@@ -3,7 +3,7 @@ import { asyncHandler } from '../../utils';
 import { authentication } from '../../auth/authUtils';
 import { grantPermission } from '../../middlewares';
 import customerController from '../../controllers/customer.controller';
-import { validateCustomerRequest } from '../../helpers/customerValidator';
+import { validateCustomerRequest } from '../../middlewares/helpers/customerValidator';
 
 const router = Router();
 

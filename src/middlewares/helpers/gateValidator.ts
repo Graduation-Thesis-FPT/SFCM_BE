@@ -1,8 +1,8 @@
 import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
-import { BadRequestError } from '../core/error.response';
-import { Gate } from '../models/gate.model';
-import { checkDuplicatedID } from '../utils';
+import { checkDuplicatedID } from '../../utils';
+import { Gate } from '../../models/gate.model';
+import { BadRequestError } from '../../core/error.response';
 
 const validateInsertGate = (data: Gate) => {
   const gateSchema = Joi.object({

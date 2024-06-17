@@ -1,8 +1,8 @@
 import Joi from 'joi';
-import { Block } from '../models/block.model';
 import { NextFunction, Request, Response } from 'express';
-import { BadRequestError } from '../core/error.response';
-import { checkDuplicatedID } from '../utils';
+import { checkDuplicatedID } from '../../utils';
+import { BadRequestError } from '../../core/error.response';
+import { Block } from '../../models/block.model';
 
 const validateInsertBlock = (data: Block) => {
   const blockSchema = Joi.object({

@@ -1,8 +1,8 @@
 import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
-import { BadRequestError } from '../core/error.response';
-import { checkDuplicatedID } from '../utils';
-import { Method } from '../models/method.model';
+import { Method } from '../../models/method.model';
+import { checkDuplicatedID } from '../../utils';
+import { BadRequestError } from '../../core/error.response';
 
 const validateInsertMethod = (data: Method) => {
   const methodSchema = Joi.object({

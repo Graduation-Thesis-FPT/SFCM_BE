@@ -1,8 +1,8 @@
 import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
-import { BadRequestError } from '../core/error.response';
-import { checkDuplicatedID } from '../utils';
-import { Customer } from '../models/customer.model';
+import { Customer } from '../../models/customer.model';
+import { checkDuplicatedID } from '../../utils';
+import { BadRequestError } from '../../core/error.response';
 
 const validateInsertCustomer = (data: Customer) => {
   const customerSchema = Joi.object({

@@ -1,8 +1,8 @@
 import Joi from 'joi';
-import { ItemType } from '../models/item-type.model';
 import { NextFunction, Request, Response } from 'express';
-import { BadRequestError } from '../core/error.response';
-import { checkDuplicatedID } from '../utils';
+import { checkDuplicatedID } from '../../utils';
+import { BadRequestError } from '../../core/error.response';
+import { ItemType } from '../../models/item-type.model';
 
 const validateItemType = (data: ItemType) => {
   const blockSchema = Joi.object({

@@ -4,7 +4,7 @@ export interface Vessel {
   INBOUND_VOYAGE: string;
   OUTBOUND_VOYAGE: string;
   ETA: Date;
-  ETD: Date;
+  ETD: Date | string;
   CallSign: string;
   IMO: string;
   CREATE_BY?: string;

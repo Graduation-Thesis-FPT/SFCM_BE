@@ -3,7 +3,7 @@ import { asyncHandler } from '../../utils';
 import { authentication } from '../../auth/authUtils';
 import unitController from '../../controllers/unit.controller';
 import { grantPermission } from '../../middlewares';
-import { validateUnitRequest } from '../../helpers/unitValidator';
+import { validateUnitRequest } from '../../middlewares/helpers/unitValidator';
 
 const router = Router();
 
