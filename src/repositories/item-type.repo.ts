@@ -27,14 +27,21 @@ const findItemTypeByCode = async (
     .getOne();
 };
 
-const createitemType = async (itemTypeList: ItemType[]) => {
-  const newitemType = await itemTypeRepository.save(itemTypeList);
+const createItemType = async (
+  itemTypeList: ItemType[],
+  transactionEntityManager: EntityManager,
+) => {
+  const itemType = itemTypeRepository.create(itemTypeList);
+  const newitemType = await transactionEntityManager.save(itemType);
   return newitemType;
 };
 
-const updateitemType = async (itemTypeList: ItemType[]) => {
+const updateItemType = async (
+  itemTypeList: ItemType[],
+  transactionEntityManager: EntityManager,
+) => {
   for await (const data of itemTypeList) {
-    await itemTypeRepository.update({ ITEM_TYPE_CODE: data.ITEM_TYPE_CODE }, data);
+    await transactionEntityManager.update(ItemTypeEntity, data.ITEM_TYPE_CODE, data);
   }
   return true;
 };
@@ -50,7 +57,7 @@ export {
   getItemType,
   deleteItemtype,
   findItemTypeByCode,
-  createitemType,
-  updateitemType,
+  createItemType,
+  updateItemType,
   findItemType,
 };

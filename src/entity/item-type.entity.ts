@@ -1,4 +1,4 @@
-import {  Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 import Model from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
@@ -11,5 +11,4 @@ export class ItemType extends Model {
   @Column()
   @IsNotEmpty()
   ITEM_TYPE_NAME: string;
-
 }

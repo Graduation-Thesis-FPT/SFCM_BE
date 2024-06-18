@@ -20,6 +20,13 @@ const validateItemType = (data: ItemType) => {
 const validateItemTypeRequest = (req: Request, res: Response, next: NextFunction) => {
   const { insert, update } = req.body;
 
+  if (insert?.length === 0 && update?.length === 0) {
+    throw new BadRequestError();
+  }
+
+  const insertData = [];
+  const updateData = [];
+
   if (insert) {
     for (const data of insert) {
       const { error, value } = validateItemType(data);
@@ -28,6 +35,7 @@ const validateItemTypeRequest = (req: Request, res: Response, next: NextFunction
         console.log(error.details);
         throw new BadRequestError(error.message);
       }
+      insertData.push(value);
     }
   }
 
@@ -39,10 +47,11 @@ const validateItemTypeRequest = (req: Request, res: Response, next: NextFunction
         console.log(error.details);
         throw new BadRequestError(error.message);
       }
+      updateData.push(value);
     }
   }
   if (insert) checkDuplicatedID(insert, ['ITEM_TYPE_CODE', 'ITEM_TYPE_NAME'], 'Thêm mới');
-  res.locals.requestData = req.body;
+  res.locals.requestData = { insert: insertData, update: updateData };
   next();
 };
 

@@ -211,4 +211,8 @@ export const dbColumns: any = {
 
   // vessel
   VOYAGEKEY: 'Mã tàu',
+
+  //
+  ITEM_TYPE_CODE: 'mã loại hàng hóa',
+  ITEM_TYPE_NAME: 'tên loại hàng hóa',
 };
