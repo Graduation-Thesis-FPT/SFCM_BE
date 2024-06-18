@@ -1,0 +1,69 @@
+import { EntityManager } from 'typeorm';
+import mssqlConnection from '../db/mssql.connect';
+import { Package as PackageEntity } from '../entity/package.entity';
+import { Package } from '../models/packageMnfLd.model';
+import { ContainerEntity } from '../entity/container.entity';
+
+export const containerRepository = mssqlConnection.getRepository(ContainerEntity);
+export const packageRepository = mssqlConnection.getRepository(PackageEntity);
+
+// check them dieu kien insert update
+const check4AddnUpdate = async (pack: Package) => {
+  const checkExist = await packageRepository.find({
+    where: {
+      REF_CONTAINER: pack.REF_CONTAINER,
+      HOUSE_BILL: pack.HOUSE_BILL,
+    },
+  });
+  if (!checkExist.length) return false;
+  return true;
+};
+
+const check4UpdatenDelete = async (refcont: string) => {
+  const isSuccess = await containerRepository.find({
+    where: { ROWGUID: refcont, STATUSOFGOOD: false },
+  });
+  if (!isSuccess.length) return false;
+  return true;
+};
+/// here
+const createPackage = async (
+  packageListInfo: Package[],
+  transactionalEntityManager: EntityManager,
+) => {
+  const packagee = packageRepository.create(packageListInfo);
+  return transactionalEntityManager.save(packagee);
+};
+
+const updatePackage = async (
+  packageListInfo: Package[],
+  transactionalEntityManager: EntityManager,
+) => {
+  return await Promise.all(
+    packageListInfo.map(packageData => {
+      transactionalEntityManager.update(PackageEntity, packageData.ROWGUID, packageData);
+    }),
+  );
+};
+
+const getPackage = async (refContainer: string) => {
+  return await packageRepository.find({
+    order: {
+      UPDATE_DATE: 'DESC',
+    },
+    where: { REF_CONTAINER: refContainer },
+  });
+};
+
+const deletePackage = async (packgeListId: string[]) => {
+  return await packageRepository.delete(packgeListId);
+};
+
+export {
+  check4UpdatenDelete,
+  check4AddnUpdate,
+  createPackage,
+  updatePackage,
+  getPackage,
+  deletePackage,
+};
