@@ -17,6 +17,5 @@ export class Equipment extends Model {
   EQU_CODE_NAME: string;
 
   @Column()
-  @IsNotEmpty()
-  BLOCK_CODE: string;
+  WAREHOUSE_CODE: string;
 }

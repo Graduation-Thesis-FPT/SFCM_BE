@@ -13,7 +13,7 @@ import {
   updateEquipment,
 } from '../repositories/equipment.repo';
 import { manager } from '../repositories/index.repo';
-import { findBlockByCode } from '../repositories/block.repo';
+import { findWarehouseByCode } from '../repositories/warehouse.repo';
 
 class EquipmentService {
   static createAndUpdateEquipment = async (equipmentInfo: EquipmentListInfo, createBy: User) => {
@@ -44,13 +44,13 @@ class EquipmentService {
             );
           }
 
-          if (equipmentInfo.BLOCK_CODE) {
-            const blockList = equipmentInfo.BLOCK_CODE.split(',');
-            for (const block of blockList) {
-              const result = await findBlockByCode(block.trim(), transactionEntityManager);
-              if (!result) {
-                throw new BadRequestError(`Dãy ${block} không tồn tại`);
-              }
+          if (equipmentInfo.WAREHOUSE_CODE) {
+            const isValidWareHouseCode = await findWarehouseByCode(
+              equipmentInfo.WAREHOUSE_CODE,
+              transactionEntityManager,
+            );
+            if (!isValidWareHouseCode) {
+              throw new BadRequestError(`Mã kho không hợp lệ`);
             }
           }
 
@@ -83,13 +83,13 @@ class EquipmentService {
             );
           }
 
-          if (equipmentInfo.BLOCK_CODE) {
-            const blockList = equipmentInfo.BLOCK_CODE.split(',');
-            for (const block of blockList) {
-              const result = await findBlockByCode(block.trim(), transactionEntityManager);
-              if (!result) {
-                throw new BadRequestError(`Dãy ${block} không hợp lệ`);
-              }
+          if (equipmentInfo.WAREHOUSE_CODE) {
+            const isValidWareHouseCode = await findWarehouseByCode(
+              equipmentInfo.WAREHOUSE_CODE,
+              transactionEntityManager,
+            );
+            if (!isValidWareHouseCode) {
+              throw new BadRequestError(`Mã kho không hợp lệ`);
             }
           }
 

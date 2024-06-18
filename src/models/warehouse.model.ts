@@ -2,7 +2,7 @@ export interface WareHouse {
   WAREHOUSE_CODE: string;
   WAREHOUSE_NAME: string;
   ACREAGE: number;
-  STATUS : boolean;
+  STATUS: boolean;
   CREATE_BY?: string;
   CREATE_DATE?: Date;
   UPDATE_BY?: string;

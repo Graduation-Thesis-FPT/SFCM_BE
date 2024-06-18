@@ -18,7 +18,7 @@ const validateInsertEquipment = (data: Equipment) => {
       'any.required': 'Tên trang thiết bị không được để trống #thêm',
       'string.max': 'Tên trang thiết bị không được quá 50 ký tự #thêm',
     }),
-    BLOCK_CODE: Joi.string().trim(),
+    WAREHOUSE_CODE: Joi.string().trim().empty('').default(null),
   });
 
   return equipmentSchema.validate(data);
@@ -34,7 +34,7 @@ const validateUpdateEquipment = (data: Equipment) => {
     EQU_CODE_NAME: Joi.string().trim().max(50).messages({
       'string.max': 'Tên trang thiết bị không được quá 50 ký tự #thêm',
     }),
-    BLOCK_CODE: Joi.string().trim(),
+    WAREHOUSE_CODE: Joi.string().trim().empty('').default(null),
   });
 
   return equipmentSchema.validate(data);

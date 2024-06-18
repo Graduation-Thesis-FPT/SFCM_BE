@@ -57,9 +57,9 @@ const checkDuplicatedID = (data: any, key: string[], tag: string) => {
 };
 
 const generateKeyVessel = (vesselName: string, inboundVoyage: string, etaDate: Date) => {
-  return (
-    vesselName.slice(0, 4) + inboundVoyage + etaDate.toISOString().slice(0, 10).split('-').join('')
-  );
+  const vesselCode =
+    vesselName.slice(0, 4) + inboundVoyage + etaDate.toISOString().slice(0, 10).split('-').join('');
+  return vesselCode.toUpperCase();
 };
 
 export {
