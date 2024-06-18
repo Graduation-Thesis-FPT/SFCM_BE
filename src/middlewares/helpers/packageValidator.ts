@@ -1,0 +1,65 @@
+import Joi from 'joi';
+import { NextFunction, Request, Response } from 'express';
+import { Package } from '../../models/packageMnfLd.model';
+import { BadRequestError } from '../../core/error.response';
+
+const validateData = (data: Package) => {
+  const methodSchema = Joi.object({
+    HOUSE_BILL: Joi.string().trim().uppercase().required().messages({
+      'any.required': 'Số House Bill không được để trống',
+    }),
+    ITEM_TYPE_CODE: Joi.string().trim().required().messages({
+      'any.required': 'Loại hàng hóa không được để trống',
+    }),
+    UNIT_CODE: Joi.string().trim().required().messages({
+      'any.required': 'Đơn vị tính hàng hóa không được để trống',
+    }),
+    CARGO_PIECE: Joi.string().trim().required().messages({
+      'any.required': 'Số lượng hàng hóa không được để trống',
+    }),
+    CBM: Joi.string().trim().required().messages({
+      'any.required': 'Số khối hàng hóa không được để trống',
+    }),
+  });
+
+  return methodSchema.validate(data);
+};
+
+const validatePackageRequest = (req: Request, res: Response, next: NextFunction) => {
+  const { insert, update } = req.body;
+
+  if (insert?.length === 0 && update?.length === 0) {
+    throw new BadRequestError();
+  }
+
+  const insertData = [];
+  const updateData = [];
+  if (insert) {
+    for (const data of insert) {
+      const { error, value } = validateData(data);
+
+      if (error) {
+        throw new BadRequestError(error.message);
+      }
+
+      insertData.push(value);
+    }
+  }
+
+  if (update) {
+    for (const data of update) {
+      const { error, value } = validateData(data);
+
+      if (error) {
+        throw new BadRequestError(error.message);
+      }
+
+      updateData.push(value);
+    }
+  }
+
+  res.locals.requestData = { insert: insertData, update: updateData };
+  next();
+};
+
+export { validatePackageRequest };
