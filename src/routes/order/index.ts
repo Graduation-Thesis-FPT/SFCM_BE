@@ -7,5 +7,6 @@ const router = Router();
 
 // router.use(authentication);
 router.get('', asyncHandler(orderController.genOrderNo));
+router.get('/draft-no', asyncHandler(orderController.genDraftNo));
 
 export default router;

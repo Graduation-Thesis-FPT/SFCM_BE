@@ -4,7 +4,7 @@ import { SUCCESS_MESSAGE } from '../constants';
 import MethodService from '../services/method.service';
 import fs from 'fs';
 import path from 'path';
-import { createfakeOrderData, findMaxOrderNo } from '../repositories/order.repo';
+import { createfakeOrderData, findMaxDraftNo, findMaxOrderNo } from '../repositories/order.repo';
 import moment from 'moment';
 // const data = [
 //   {
@@ -74,6 +74,38 @@ class orderController {
     const key = methodCode.toUpperCase() + formattedDate + order_no;
     res.json({
       data: key,
+    });
+  };
+
+  genDraftNo = async (req: Request, res: Response) => {
+    const draftStr = 'DR/';
+    const year = moment(new Date()).format('YYYY');
+    const draftNum = '0000000';
+    const initValue = '1';
+    let draft_no;
+
+    const filePath = path.join(__dirname, `../helpers/draft_no/draft_no_${year}.txt`);
+
+    const max = await findMaxDraftNo();
+    console.log(max);
+    if (!fs.existsSync(filePath)) {
+      if (max.maxDraftNo) {
+        fs.writeFileSync(filePath, max.maxDraftNo.toString());
+        draft_no = max.maxDraftNo;
+      } else {
+        fs.writeFileSync(filePath, initValue);
+        draft_no = initValue;
+      }
+    } else {
+      draft_no = Number.parseInt(fs.readFileSync(filePath, 'utf-8')) + 1;
+      draft_no = draft_no.toString();
+      fs.writeFileSync(filePath, draft_no.toString());
+    }
+
+    const key = draftStr + year + '/' + (draftNum + draft_no).slice(-7);
+
+    res.json({
+      key,
     });
   };
 

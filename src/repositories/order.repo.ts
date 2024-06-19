@@ -24,4 +24,13 @@ const findMaxOrderNo = async () => {
   return maxLastFourDigits;
 };
 
-export { createfakeOrderData, findOrder, findMaxOrderNo };
+const findMaxDraftNo = async () => {
+  const maxDraftNo = await orderRepository
+    .createQueryBuilder('order')
+    .select('Max(CAST(order.DRAFT_NO as int))', 'maxDraftNo')
+    .where('YEAR(order.CREATE_DATE) = YEAR(GETDATE())')
+    .getRawOne();
+  return maxDraftNo;
+};
+
+export { createfakeOrderData, findOrder, findMaxOrderNo, findMaxDraftNo };
