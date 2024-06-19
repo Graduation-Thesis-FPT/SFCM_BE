@@ -8,9 +8,6 @@ export class Package extends Model {
   ROWGUID: string;
 
   @Column()
-  BILLOFLADING: string;   
-
-  @Column()
   HOUSE_BILL: string;
 
   @Column()
@@ -23,7 +20,7 @@ export class Package extends Model {
   UNIT_CODE: string;
 
   @Column()
-  CARGO_PIECE: string;
+  CARGO_PIECE: number;
 
   @Column()
   CBM: number;

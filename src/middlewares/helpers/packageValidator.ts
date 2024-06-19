@@ -6,19 +6,23 @@ import { BadRequestError } from '../../core/error.response';
 const validateData = (data: Package) => {
   const methodSchema = Joi.object({
     HOUSE_BILL: Joi.string().trim().uppercase().required().messages({
-      'any.required': 'Số House Bill không được để trống',
+      'string.empty': 'Số House Bill không được để trống',
     }),
+    LOT_NO: Joi.string().trim().allow('').optional(),
+    DECLARE_NO: Joi.string().trim().allow('').optional(),
+    REF_CONTAINER: Joi.string().trim().allow('').optional(),
+    NOTE: Joi.string().trim().allow('').optional(),
     ITEM_TYPE_CODE: Joi.string().trim().required().messages({
-      'any.required': 'Loại hàng hóa không được để trống',
+      'string.empty': 'Loại hàng hóa không được để trống',
     }),
     UNIT_CODE: Joi.string().trim().required().messages({
-      'any.required': 'Đơn vị tính hàng hóa không được để trống',
+      'string.empty': 'Đơn vị tính hàng hóa không được để trống',
     }),
-    CARGO_PIECE: Joi.string().trim().required().messages({
-      'any.required': 'Số lượng hàng hóa không được để trống',
+    CARGO_PIECE: Joi.number().positive().required().messages({
+      'string.empty': 'Số lượng hàng hóa không được để trống',
     }),
-    CBM: Joi.string().trim().required().messages({
-      'any.required': 'Số khối hàng hóa không được để trống',
+    CBM: Joi.number().required().messages({
+      'string.base' : 'Số khối phải là số chứ không phải String Phú ơi, nhìn database kìa!!!!!!'
     }),
   });
 
