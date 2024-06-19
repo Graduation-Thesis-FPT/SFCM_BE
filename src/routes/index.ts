@@ -18,6 +18,7 @@ import customerRouter from './customer/index';
 import vesselRouter from './vessel/index';
 import containerRouter from './container/index';
 import packageRouter from './package/index';
+import orderRouter from './order/index';
 
 const routes = Router();
 
@@ -63,5 +64,8 @@ routes.use('/api/v1/container', containerRouter);
 
 //package
 routes.use('/api/v1/package', packageRouter);
+
+// order
+routes.use('/api/v1/order', orderRouter);
 
 export default routes;
