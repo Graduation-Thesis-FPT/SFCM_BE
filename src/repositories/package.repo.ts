@@ -1,4 +1,4 @@
-import { EntityManager } from 'typeorm';
+import { EntityManager, Not } from 'typeorm';
 import mssqlConnection from '../db/mssql.connect';
 import { Package as PackageEntity } from '../entity/package.entity';
 import { Package } from '../models/packageMnfLd.model';
@@ -9,11 +9,13 @@ export const packageRepository = mssqlConnection.getRepository(PackageEntity);
 
 // check them dieu kien insert update
 const check4AddnUpdate = async (pack: Package) => {
+  let whereObj: any = {
+    REF_CONTAINER: pack.REF_CONTAINER,
+    HOUSE_BILL: pack.HOUSE_BILL,
+  };
+  pack.ROWGUID ? (whereObj['ROWGUID'] = pack.ROWGUID) : '';
   const checkExist = await packageRepository.find({
-    where: {
-      REF_CONTAINER: pack.REF_CONTAINER,
-      HOUSE_BILL: pack.HOUSE_BILL,
-    },
+    where: whereObj,
   });
   if (!checkExist.length) return false;
   return true;
@@ -40,9 +42,9 @@ const updatePackage = async (
   transactionalEntityManager: EntityManager,
 ) => {
   return await Promise.all(
-    packageListInfo.map(packageData => {
-      transactionalEntityManager.update(PackageEntity, packageData.ROWGUID, packageData);
-    }),
+    packageListInfo.map(packageData =>
+      transactionalEntityManager.update(PackageEntity, packageData.ROWGUID, packageData),
+    ),
   );
 };
 
