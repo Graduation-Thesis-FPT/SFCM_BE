@@ -1,11 +1,10 @@
 export interface Package {
     ROWGUID?: string;
-    BILLOFLADING : string,
     HOUSE_BILL : string,
     LOT_NO : string,
     ITEM_TYPE_CODE : string,
     UNIT_CODE : string,
-    CARGO_PIECE : string,
+    CARGO_PIECE : number,
     CBM : number,
     DECLARE_NO : string,
     REF_CONTAINER : string,
