@@ -10,7 +10,9 @@ const validateData = (data: Package) => {
     }),
     LOT_NO: Joi.string().trim().allow('').optional(),
     DECLARE_NO: Joi.string().trim().allow('').optional(),
-    REF_CONTAINER: Joi.string().trim().allow('').optional(),
+    REF_CONTAINER: Joi.string().trim().required().messages({
+      'string.empty': 'REF_CONTAINER không được để trống',
+    }),
     NOTE: Joi.string().trim().allow('').optional(),
     ITEM_TYPE_CODE: Joi.string().trim().required().messages({
       'string.empty': 'Loại hàng hóa không được để trống',
