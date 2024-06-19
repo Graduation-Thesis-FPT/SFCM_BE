@@ -23,7 +23,7 @@ class packageController {
   };
 
   getpackage = async (req: Request, res: Response) => {
-   const refcont = req.body;
+   const refcont = req.query.REF_CONTAINER as string;
     new OK({
       message: SUCCESS_MESSAGE.GET_PACKAGE_SUCCESS,
       metadata: await PackageService.getPackage(refcont),
