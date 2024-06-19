@@ -9,6 +9,7 @@ const validateData = (data: Package) => {
       'string.empty': 'Số House Bill không được để trống',
     }),
     LOT_NO: Joi.string().trim().allow('').optional(),
+    ROWGUID: Joi.string().trim().allow('').optional(),
     DECLARE_NO: Joi.string().trim().allow('').optional(),
     REF_CONTAINER: Joi.string().trim().required().messages({
       'string.empty': 'REF_CONTAINER không được để trống',
