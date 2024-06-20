@@ -19,6 +19,7 @@ import vesselRouter from './vessel/index';
 import containerRouter from './container/index';
 import packageRouter from './package/index';
 import orderRouter from './order/index';
+import tariffRouter from './tariff-code/index';
 
 const routes = Router();
 
@@ -67,5 +68,8 @@ routes.use('/api/v1/package', packageRouter);
 
 // order
 routes.use('/api/v1/order', orderRouter);
+
+// tariff code
+routes.use('/api/v1/tariff-code', tariffRouter);
 
 export default routes;
