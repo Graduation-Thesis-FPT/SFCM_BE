@@ -30,15 +30,19 @@ const validateInsertVessel = (data: Vessel) => {
 const validateUpdateVessel = (data: Vessel) => {
   const methodSchema = Joi.object({
     VOYAGEKEY: Joi.string().uppercase().trim().required().messages({
-      'any.required': 'Mã tàu không được để trống #thêm',
+      'any.required': 'Mã tàu không được để trống #cập nhật',
     }),
     VESSEL_NAME: Joi.string().trim().optional(),
     INBOUND_VOYAGE: Joi.string().trim().optional(),
-    OUTBOUND_VOYAGE: Joi.string().trim().optional(),
-    ETA: Joi.date().optional(),
-    ETD: Joi.date().optional(),
-    CallSign: Joi.string().trim().optional(),
-    IMO: Joi.string().trim().optional(),
+    OUTBOUND_VOYAGE: Joi.string().trim().optional().allow(''),
+    ETA: Joi.date().optional().messages({
+      'date.base': 'Ngày tàu đến phải là một ngày hợp lệ #cập nhật',
+    }),
+    ETD: Joi.date().optional().allow('').messages({
+      'date.base': 'Ngày tàu đi phải là một ngày hợp lệ #cập nhật',
+    }),
+    CallSign: Joi.string().trim().allow('').optional(),
+    IMO: Joi.string().trim().allow('').optional(),
   });
 
   return methodSchema.validate(data);

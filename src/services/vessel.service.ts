@@ -19,6 +19,18 @@ class VesselService {
 
     let newCreatedVessel: Vessel[] = [];
     let newUpdatedVessel;
+
+    const processVesselInfo = (vesselInfo: Vessel) => {
+      if (vesselInfo.ETD === '') vesselInfo.ETD = null;
+      if (vesselInfo.CallSign === '') vesselInfo.CallSign = null;
+      if (vesselInfo.IMO === '') vesselInfo.IMO = null;
+      if (vesselInfo.OUTBOUND_VOYAGE === '') vesselInfo.OUTBOUND_VOYAGE = null;
+
+      vesselInfo.CREATE_BY = createBy.ROWGUID;
+      vesselInfo.UPDATE_BY = createBy.ROWGUID;
+      vesselInfo.UPDATE_DATE = new Date();
+    };
+
     await manager.transaction(async transactionalEntityManager => {
       if (insertData) {
         for (const vesselInfo of insertData) {
@@ -39,17 +51,8 @@ class VesselService {
               throw new BadRequestError(`Ngày đến phải nhỏ hơn ngày rời`);
             }
           }
-
-          if (vesselInfo.ETD === '') vesselInfo.ETD = null;
-          if (vesselInfo.CallSign === '') vesselInfo.CallSign = null;
-          if (vesselInfo.IMO === '') vesselInfo.IMO = null;
-          if (vesselInfo.OUTBOUND_VOYAGE === '') vesselInfo.OUTBOUND_VOYAGE = null;
-
-          vesselInfo.CREATE_BY = createBy.ROWGUID;
-          vesselInfo.UPDATE_BY = createBy.ROWGUID;
-          vesselInfo.UPDATE_DATE = new Date();
+          processVesselInfo(vesselInfo);
         }
-
         newCreatedVessel = await createVessel(insertData, transactionalEntityManager);
       }
 
@@ -60,9 +63,7 @@ class VesselService {
             throw new BadRequestError(`Mã tàu ${vesselInfo.VOYAGEKEY} không hợp lệ`);
           }
 
-          vesselInfo.CREATE_BY = createBy.ROWGUID;
-          vesselInfo.UPDATE_BY = createBy.ROWGUID;
-          vesselInfo.UPDATE_DATE = new Date();
+          processVesselInfo(vesselInfo);
         }
 
         newUpdatedVessel = await updateVessel(updateData, transactionalEntityManager);
