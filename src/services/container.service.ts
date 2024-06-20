@@ -11,6 +11,7 @@ import {
   filterContainer,
   findContainer,
   findContainerByRowid,
+  isUniqueContainer,
   updateContainer,
 } from '../repositories/container.repo';
 
@@ -21,9 +22,31 @@ class ContainerService {
 
     let newCreatedContainer: Container[] = [];
     let newUpdatedContainer;
+
+    const processContainer = (containerInfo: Container) => {
+      if (containerInfo.BILLOFLADING === '') containerInfo.BILLOFLADING = null;
+      if (containerInfo.SEALNO === '') containerInfo.SEALNO = null;
+      if (containerInfo.COMMODITYDESCRIPTION === '') containerInfo.COMMODITYDESCRIPTION = null;
+      containerInfo.CREATE_BY = createBy.ROWGUID;
+      containerInfo.UPDATE_BY = createBy.ROWGUID;
+      containerInfo.UPDATE_DATE = new Date();
+    };
+
     await manager.transaction(async transactionEntityManager => {
       if (insertData) {
         for (const containerInfo of insertData) {
+          const isDuplicated = await isUniqueContainer(
+            containerInfo.VOYAGEKEY,
+            containerInfo.CNTRNO,
+            transactionEntityManager,
+          );
+
+          if (isDuplicated) {
+            throw new BadRequestError(
+              `Số container ${containerInfo.CNTRNO} đã tồn tại trên tàu ${containerInfo.VOYAGEKEY}`,
+            );
+          }
+
           const isContainerExist = await findVesselByCode(
             containerInfo.VOYAGEKEY,
             transactionEntityManager,
@@ -52,9 +75,7 @@ class ContainerService {
             throw new BadRequestError(`Mã loại khách hàng ${containerInfo.CONSIGNEE} không hợp lệ`);
           }
 
-          containerInfo.CREATE_BY = createBy.ROWGUID;
-          containerInfo.UPDATE_BY = createBy.ROWGUID;
-          containerInfo.UPDATE_DATE = new Date();
+          processContainer(containerInfo);
         }
 
         newCreatedContainer = await createContainer(insertData, transactionEntityManager);
@@ -68,6 +89,18 @@ class ContainerService {
           );
           if (!container) {
             throw new BadRequestError(`Mã container ${containerInfo.ROWGUID} không hợp lệ`);
+          }
+
+          const isDuplicated = await isUniqueContainer(
+            containerInfo.VOYAGEKEY,
+            containerInfo.CNTRNO,
+            transactionEntityManager,
+          );
+
+          if (isDuplicated) {
+            throw new BadRequestError(
+              `Không thể cập nhật số container ${containerInfo.CNTRNO} đã tồn tại trên tàu ${containerInfo.VOYAGEKEY}`,
+            );
           }
 
           const isValidItemTypeCode = await findItemTypeByCode(
@@ -90,9 +123,7 @@ class ContainerService {
             throw new BadRequestError(`Mã loại khách hàng ${containerInfo.CONSIGNEE} không hợp lệ`);
           }
 
-          containerInfo.CREATE_BY = createBy.ROWGUID;
-          containerInfo.UPDATE_BY = createBy.ROWGUID;
-          containerInfo.UPDATE_DATE = new Date();
+          processContainer(containerInfo);
         }
 
         newUpdatedContainer = await updateContainer(updateData, transactionEntityManager);

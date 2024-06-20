@@ -8,23 +8,21 @@ const validateInsertContainer = (data: Container) => {
     VOYAGEKEY: Joi.string().trim().required().messages({
       'any.required': 'Mã tàu không được để trống #thêm',
     }),
-    BILLOFLADING: Joi.string().trim().required().messages({
-      'any.required': 'Số bill không được để trống #thêm',
-    }),
-    SEALNO: Joi.string().trim().required().messages({
-      'any.required': 'Số seal không được để trống #thêm',
-    }),
-    CNTRNO: Joi.string().required().messages({
+    BILLOFLADING: Joi.string().trim().allow(''),
+    SEALNO: Joi.string().trim().allow(''),
+    CNTRNO: Joi.string().required().pattern(new RegExp('^[a-zA-Z]{4}[0-9]{7}$')).messages({
       'any.required': 'Số container không được để trống #thêm',
+      'string.pattern.base': 'Số container không hợp lệ #thêm',
     }),
-    CNTRSZTP: Joi.string().trim().required().messages({
+    CNTRSZTP: Joi.string().max(5).trim().required().messages({
       'any.required': 'Kích cỡ container không được để trống #thêm',
+      'string.max': 'Kích cỡ container chỉ tối đa 5 ký tự #thêm',
     }),
     STATUSOFGOOD: Joi.boolean(),
     ITEM_TYPE_CODE: Joi.string().trim().required().messages({
       'any.required': 'Mã loại hàng hóa không được để trống #thêm',
     }),
-    COMMODITYDESCRIPTION: Joi.string().trim(),
+    COMMODITYDESCRIPTION: Joi.string().trim().allow(''),
     CONSIGNEE: Joi.string().trim().required().messages({
       'any.required': 'Mã đại lý không được để trống #thêm',
     }),
@@ -39,16 +37,18 @@ const validateUpdateContainer = (data: Container) => {
       'any.required': 'Mã container không được để trống #cập nhật',
       'string.guid': 'Mã container phải là UUID hợp lệ #cập nhật',
     }),
-    VOYAGEKEY: Joi.string().trim().required().messages({
-      'any.required': 'Mã tàu không được để trống #cập nhật',
+    VOYAGEKEY: Joi.string().trim(),
+    BILLOFLADING: Joi.string().trim().optional().allow(''),
+    SEALNO: Joi.string().trim().optional().allow(''),
+    CNTRNO: Joi.string().pattern(new RegExp('^[a-zA-Z]{4}[0-9]{7}$')).optional().messages({
+      'string.pattern.base': 'Số container không hợp lệ #cập nhật',
     }),
-    BILLOFLADING: Joi.string().trim().optional(),
-    SEALNO: Joi.string().trim().optional(),
-    CNTRNO: Joi.string().optional(),
-    CNTRSZTP: Joi.string().optional(),
+    CNTRSZTP: Joi.string().max(5).optional().messages({
+      'string.max': 'Kích cỡ container chỉ tối đa 5 ký tự #cập nhật',
+    }),
     STATUSOFGOOD: Joi.boolean().optional(),
     ITEM_TYPE_CODE: Joi.string().trim().optional(),
-    COMMODITYDESCRIPTION: Joi.string().trim().optional(),
+    COMMODITYDESCRIPTION: Joi.string().trim().optional().allow(''),
     CONSIGNEE: Joi.string().trim().optional(),
   });
 
@@ -69,7 +69,6 @@ const validateContainerRequest = (req: Request, res: Response, next: NextFunctio
       const { error, value } = validateInsertContainer(containerInfo);
 
       if (error) {
-        // console.log(error.details);
         throw new BadRequestError(error.message);
       }
 
@@ -82,16 +81,12 @@ const validateContainerRequest = (req: Request, res: Response, next: NextFunctio
       const { error, value } = validateUpdateContainer(containerInfo);
 
       if (error) {
-        // console.log(error.details);
         throw new BadRequestError(error.message);
       }
 
       updateData.push(value);
     }
   }
-
-  // if (insert) checkDuplicatedID(insert, ['VOYAGEKEY'], 'thêm mới');
-  // if (update) checkDuplicatedID(update, ['VOYAGEKEY'], 'cập nhật');
   res.locals.requestData = { insert: insertData, update: updateData };
   next();
 };

@@ -1,7 +1,6 @@
 import { EntityManager } from 'typeorm';
 import mssqlConnection from '../db/mssql.connect';
 import { Equipment as EquipmentEntity } from '../entity/equipment.entity';
-import { Equipment } from '../models/equipment.models';
 import { Container } from '../models/container.model';
 import { ContainerEntity } from '../entity/container.entity';
 
@@ -66,6 +65,18 @@ const filterContainer = async (rule: any) => {
   });
 };
 
+const isUniqueContainer = async (
+  voyagekey: string,
+  cntrno: string,
+  transactionEntityManager: EntityManager,
+) => {
+  return await transactionEntityManager
+    .createQueryBuilder(ContainerEntity, 'container')
+    .where('container.VOYAGEKEY = :voyagekey', { voyagekey: voyagekey })
+    .andWhere('container.CNTRNO = :cntrno', { cntrno: cntrno })
+    .getOne();
+};
+
 export {
   createContainer,
   findOneEquipment,
@@ -74,4 +85,5 @@ export {
   filterContainer,
   deleteContainerMany,
   findContainer,
+  isUniqueContainer,
 };
