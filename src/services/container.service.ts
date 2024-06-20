@@ -91,6 +91,12 @@ class ContainerService {
             throw new BadRequestError(`Mã container ${containerInfo.ROWGUID} không hợp lệ`);
           }
 
+          if (!container.STATUSOFGOOD) {
+            throw new BadRequestError(
+              `Không thể cập nhật container ${container.CNTRNO}, container đã được làm lệnh`,
+            );
+          }
+
           const isDuplicated = await isUniqueContainer(
             containerInfo.VOYAGEKEY,
             containerInfo.CNTRNO,
@@ -141,6 +147,12 @@ class ContainerService {
       const container = await findContainer(rowId.trim());
       if (!container) {
         throw new BadRequestError(`Container with ID ${rowId} not exist!`);
+      }
+
+      if (!container.STATUSOFGOOD) {
+        throw new BadRequestError(
+          `Không thể xóa container ${container.CNTRNO}, container đã được làm lệnh`,
+        );
       }
     }
 
