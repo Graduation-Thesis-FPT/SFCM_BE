@@ -26,7 +26,11 @@ VALUES
 (NULL,'input-data',N'Dữ liệu đầu vào','FolderInput',1,300,NULL,'sql','sql'),
 ('input-data','vessel-info',N'Thông tin tàu chuyến',NULL,1,301,'VesselInfo','sql','sql'),
 ('input-data','manifest-loading-list',N'Kê khai hàng hóa',NULL,1,302,'ManifestLoadingList','sql','sql'),
-('input-data','goods-manifest',N'Bảng kê danh mục hàng hóa',NULL,1,303,'GoodsManifest','sql','sql')
+('input-data','goods-manifest',N'Bảng kê danh mục hàng hóa',NULL,1,303,'GoodsManifest','sql','sql'),
+(NULL,'tariff',N'Biểu cước','FolderTree',1,400,NULL,'sql','sql'),
+('tariff','tariff-code',N'Mã biểu cước',NULL,1,401,'TariffCode','sql','sql'),
+('tariff','standard-tariff',N'Biểu cước chuẩn',NULL,1,402,'StandardTariff','sql','sql'),
+('tariff','payment-method',N'Hình thức thanh toán',NULL,1,403,'PaymentMethod','sql','sql')
 
 INSERT INTO SA_PERMISSION (ROLE_CODE,MENU_CODE,IS_VIEW,IS_ADD_NEW,IS_MODIFY,IS_DELETE,CREATE_BY,UPDATE_BY)
 VALUES 
@@ -47,6 +51,9 @@ VALUES
 ('admin','vessel-info',1,1,1,1,'sql','sql'),
 ('admin','manifest-loading-list',1,1,1,1,'sql','sql'),
 ('admin','goods-manifest',1,1,1,1,'sql','sql'),
+('admin','tariff-code',1,1,1,1,'sql','sql'),
+('admin','standard-tariff',1,1,1,1,'sql','sql'),
+('admin','payment-method',1,1,1,1,'sql','sql'),
 ('procedure-staff','user',1,0,0,0,'sql','sql'),
 ('procedure-staff','permission',1,0,0,0,'sql','sql'),
 ('procedure-staff','warehouse-list',1,1,1,1,'sql','sql'),
