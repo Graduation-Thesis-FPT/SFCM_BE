@@ -13,7 +13,7 @@ const check4AddnUpdate = async (pack: Package) => {
     REF_CONTAINER: pack.REF_CONTAINER,
     HOUSE_BILL: pack.HOUSE_BILL,
   };
-  pack.ROWGUID ? (whereObj['ROWGUID'] = pack.ROWGUID) : '';
+  pack.ROWGUID ? (whereObj['ROWGUID'] = Not(pack.ROWGUID)) : '';
   const checkExist = await packageRepository.find({
     where: whereObj,
   });

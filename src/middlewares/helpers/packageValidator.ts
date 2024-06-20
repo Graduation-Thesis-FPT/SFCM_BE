@@ -25,7 +25,7 @@ const validateData = (data: Package) => {
       'string.empty': 'Số lượng hàng hóa không được để trống',
       'number.positive': 'Số lượng hàng hóa phải là số dương',
     }),
-    CBM: Joi.number().required().messages({
+    CBM: Joi.number().positive().required().messages({
       'string.base' : 'Số khối phải là số chứ không phải String Phú ơi, nhìn database kìa!!!!!!',
       'number.positive': 'Số khối phải là số dương',
 
