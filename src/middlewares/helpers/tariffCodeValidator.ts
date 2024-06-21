@@ -5,11 +5,13 @@ import { BadRequestError } from '../../core/error.response';
 
 const validateInsertTariffCode = (data: Vessel) => {
   const tariffCodeSchema = Joi.object({
-    TRF_CODE: Joi.string().trim().required().messages({
+    TRF_CODE: Joi.string().trim().uppercase().required().messages({
       'any.required': 'Mã biểu cước không được để trống #thêm',
+      'string.empty': 'Mã biểu cước không được để trống #thêm',
     }),
     TRF_DESC: Joi.string().trim().required().messages({
       'any.required': 'Mô tả mã biểu cước không được để trống #thêm',
+      'string.empty': 'Mô tả mã biểu cước không được để trống #thêm',
     }),
   });
 
@@ -20,8 +22,11 @@ const validateUpdateTariffCode = (data: Vessel) => {
   const tariffCodeSchema = Joi.object({
     TRF_CODE: Joi.string().trim().required().messages({
       'any.required': 'Mã biểu cước không được để trống #cập nhật',
+      'string.empty': 'Mã biểu cước không được để trống #cập nhật',
     }),
-    TRF_DESC: Joi.string().trim().optional(),
+    TRF_DESC: Joi.string().trim().optional().messages({
+      'string.empty': 'Mô tả mã biểu cước không được để trống #thêm',
+    }),
   });
 
   return tariffCodeSchema.validate(data);
