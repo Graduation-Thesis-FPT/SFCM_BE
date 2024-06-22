@@ -64,7 +64,7 @@ const getTariffByTemplate = async (tariffTemplate: string) => {
   return await tariffRepository
     .createQueryBuilder('tariff')
     .where('tariff.TRF_TEMP = :tariffTemplate', { tariffTemplate: tariffTemplate })
-    .getRawMany();
+    .getMany();
 };
 
 export {
