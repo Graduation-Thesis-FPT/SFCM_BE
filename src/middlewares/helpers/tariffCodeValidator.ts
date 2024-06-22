@@ -1,9 +1,9 @@
 import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
-import { Vessel } from '../../models/vessel.model';
 import { BadRequestError } from '../../core/error.response';
+import { TariffCode } from '../../models/tariff-code.model';
 
-const validateInsertTariffCode = (data: Vessel) => {
+const validateInsertTariffCode = (data: TariffCode) => {
   const tariffCodeSchema = Joi.object({
     TRF_CODE: Joi.string().trim().uppercase().required().messages({
       'any.required': 'Mã biểu cước không được để trống #thêm',
@@ -18,7 +18,7 @@ const validateInsertTariffCode = (data: Vessel) => {
   return tariffCodeSchema.validate(data);
 };
 
-const validateUpdateTariffCode = (data: Vessel) => {
+const validateUpdateTariffCode = (data: TariffCode) => {
   const tariffCodeSchema = Joi.object({
     TRF_CODE: Joi.string().trim().required().messages({
       'any.required': 'Mã biểu cước không được để trống #cập nhật',

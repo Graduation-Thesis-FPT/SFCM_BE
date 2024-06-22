@@ -1,29 +1,45 @@
 import { Request, Response } from 'express';
 import { CREATED, OK, SuccessResponse } from '../core/success.response';
 import { SUCCESS_MESSAGE } from '../constants';
-import TariffCodeService from '../services/tariff.service';
+import TariffService from '../services/tariff.service';
 
 class TariffController {
-  createTariffCode = async (req: Request, res: Response) => {
+  createAndUpdateTariff = async (req: Request, res: Response) => {
     const createBy = res.locals.user;
-    const tariffCodeList = res.locals.requestData;
+    const tariffList = res.locals.requestData;
     new CREATED({
-      message: SUCCESS_MESSAGE.SAVE_TARIFFCODE_SUCCESS,
-      metadata: await TariffCodeService.createAndUpdateTariffCode(tariffCodeList, createBy),
+      message: SUCCESS_MESSAGE.SAVE_TARIFF_SUCCESS,
+      metadata: await TariffService.createAndUpdateTariff(tariffList, createBy),
     }).send(res);
   };
 
-  deleteTariffCode = async (req: Request, res: Response) => {
+  deleteTariff = async (req: Request, res: Response) => {
     new SuccessResponse({
-      message: SUCCESS_MESSAGE.DELETE_TARIFFCODE_SUCCESS,
-      metadata: await TariffCodeService.deleteTariffCode(req.body.tariffCodeList),
+      message: SUCCESS_MESSAGE.DELETE_TARIFF_SUCCESS,
+      metadata: await TariffService.deleteTariff(req.body.tariffCodeList),
     }).send(res);
   };
 
-  getTariffCode = async (req: Request, res: Response) => {
+  getTariff = async (req: Request, res: Response) => {
     new OK({
-      message: SUCCESS_MESSAGE.GET_TARIFFCODE_SUCCESS,
-      metadata: await TariffCodeService.getAllTariffCode(),
+      message: SUCCESS_MESSAGE.GET_TARIFF_SUCCESS,
+      metadata: await TariffService.getAllTariff(),
+    }).send(res);
+  };
+
+  getAllTariffTemplate = async (req: Request, res: Response) => {
+    new OK({
+      message: SUCCESS_MESSAGE.GET_TARIFF_SUCCESS,
+      metadata: await TariffService.getTariffTemplate(),
+    }).send(res);
+  };
+
+  getTariffByTemplate = async (req: Request, res: Response) => {
+    const template = req.query.template as string;
+    console.log(template);
+    new OK({
+      message: SUCCESS_MESSAGE.GET_TARIFF_SUCCESS,
+      metadata: await TariffService.getTariffByTemplate(template),
     }).send(res);
   };
 }

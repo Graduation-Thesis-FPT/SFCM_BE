@@ -41,6 +41,14 @@ const findMethodByName = async (methodName: string, transactionalEntityManager: 
     .where('method.METHOD_NAME = :methodName', { methodName: methodName })
     .getOne();
 };
+
+const findMethodCode = async (methodCode: string, transactionalEntityManager: EntityManager) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(MethodEntity, 'method')
+    .where('method.METHOD_CODE = :methodCode', { methodCode: methodCode })
+    .getOne();
+};
+
 export {
   findMethodByCode,
   getMethodCode,
@@ -48,4 +56,5 @@ export {
   createMethod,
   updateMethod,
   findMethodByName,
+  findMethodCode,
 };

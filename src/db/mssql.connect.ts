@@ -19,6 +19,7 @@ import { User } from '../entity/user.entity';
 import { OrderEntity } from '../entity/order.entity';
 import { Package } from '../entity/package.entity';
 import { TariffCodeEntity } from '../entity/tariff-code.entity';
+import { TariffEntity } from '../entity/tariff.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -47,6 +48,7 @@ const mssqlConnection = new DataSource({
     Package,
     OrderEntity,
     TariffCodeEntity,
+    TariffEntity,
   ],
   options: {
     encrypt: false,
