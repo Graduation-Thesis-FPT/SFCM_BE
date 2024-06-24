@@ -13,6 +13,7 @@ import {
   getAllTariff,
   getTariffByTemplate,
   getTariffTemp,
+  isDuplicateTariff,
   isMatchTariff,
   updateTariff,
 } from '../repositories/tariff.repo';
@@ -166,6 +167,82 @@ class TariffService {
     return {
       createdTariff,
       updatedTariff,
+    };
+  };
+
+  static createTariff = async (tariffCodeListInfo: TariffList, createBy: User) => {
+    const insertData = tariffCodeListInfo.insert;
+
+    let createdTariff;
+
+    const processTariff = (data: Tariff) => {
+      if (data.TRF_DESC === '') data.TRF_DESC = null;
+
+      data.CREATE_BY = createBy.ROWGUID;
+      data.UPDATE_BY = createBy.ROWGUID;
+      data.UPDATE_DATE = new Date();
+      data.CREATE_DATE = new Date();
+    };
+
+    await manager.transaction(async transactionalEntityManager => {
+      if (insertData) {
+        for (const data of insertData) {
+          const checkExist = await findTariffCodeByCode(data.TRF_CODE, transactionalEntityManager);
+
+          if (!checkExist) {
+            throw new BadRequestError(`Mã biểu cước ${data.TRF_CODE} không hợp lệ`);
+          }
+
+          const checkItemTypeCodeExist = await findItemTypeByCode(
+            data.ITEM_TYPE_CODE,
+            transactionalEntityManager,
+          );
+
+          if (!checkItemTypeCodeExist) {
+            throw new BadRequestError(`Mã loại hàng hóa ${data.ITEM_TYPE_CODE} không tồn tại`);
+          }
+
+          const checkMethodCode = await findMethodCode(
+            data.METHOD_CODE,
+            transactionalEntityManager,
+          );
+          if (!checkMethodCode) {
+            throw new BadRequestError(`Mã phương án ${data.METHOD_CODE} không hợp lệ`);
+          }
+
+          if (data.FROM_DATE && data.TO_DATE) {
+            const from = new Date(data.FROM_DATE);
+            const to = new Date(data.TO_DATE);
+            if (from > to) {
+              throw new BadRequestError(`Ngày hiệu lực biểu cước phải nhỏ hơn ngày hết hạn`);
+            }
+          }
+
+          const from = moment(new Date(data.FROM_DATE)).format('DD/MM/YYYY');
+          const to = moment(new Date(data.TO_DATE)).format('DD/MM/YYYY');
+
+          data.TRF_TEMP = from + '-' + to + '-' + data.TRF_NAME;
+
+          if (data.TRF_CODE && data.METHOD_CODE && data.ITEM_TYPE_CODE) {
+            const foundMatchTariff = await isDuplicateTariff(
+              data.TRF_CODE,
+              data.METHOD_CODE,
+              data.ITEM_TYPE_CODE,
+              data.TRF_TEMP,
+            );
+
+            if (foundMatchTariff) {
+              throw new BadRequestError(`Mẫu biểu cước đã tồn tại`);
+            }
+          }
+
+          processTariff(data);
+        }
+      }
+      createdTariff = await createTariff(insertData, transactionalEntityManager);
+    });
+    return {
+      createdTariff,
     };
   };
 

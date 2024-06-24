@@ -20,12 +20,13 @@ router.get(
   asyncHandler(grantPermission),
   asyncHandler(tariffController.getTariffByTemplate),
 );
-router.post(
+router.patch(
   '',
   asyncHandler(grantPermission),
   validateTariffRequest,
   asyncHandler(tariffController.createAndUpdateTariff),
 );
+router.post('', validateTariffRequest, asyncHandler(tariffController.createTariff));
 router.delete('', asyncHandler(grantPermission), asyncHandler(tariffController.deleteTariff));
 
 export default router;
