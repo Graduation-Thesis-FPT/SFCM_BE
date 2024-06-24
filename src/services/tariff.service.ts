@@ -224,12 +224,7 @@ class TariffService {
           data.TRF_TEMP = from + '-' + to + '-' + data.TRF_NAME;
 
           if (data.TRF_CODE && data.METHOD_CODE && data.ITEM_TYPE_CODE) {
-            const foundMatchTariff = await isDuplicateTariff(
-              data.TRF_CODE,
-              data.METHOD_CODE,
-              data.ITEM_TYPE_CODE,
-              data.TRF_TEMP,
-            );
+            const foundMatchTariff = await isDuplicateTariff(data.TRF_TEMP);
 
             if (foundMatchTariff) {
               throw new BadRequestError(`Mẫu biểu cước đã tồn tại`);
