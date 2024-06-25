@@ -72,14 +72,14 @@ const validateUpdateTariff = (data: Tariff) => {
       'number.base': 'Thuế VAT phải là một số #cập nhật',
     }),
     INCLUDE_VAT: Joi.boolean(),
-    FROM_DATE: Joi.date().messages({
-      'string.empty': 'Ngày hiệu lực biểu cước không được để trống #cập nhật',
-      'date.base': 'Ngày hiệu lực biểu cước phải là một ngày hợp lệ #cập nhật',
-    }),
-    TO_DATE: Joi.date().messages({
-      'string.empty': 'Ngày hết hạn biểu cước không được để trống #cập nhật',
-      'date.base': 'Ngày hết hạn biểu cước phải là một ngày hợp lệ #cập nhật',
-    }),
+    // FROM_DATE: Joi.date().messages({
+    //   'string.empty': 'Ngày hiệu lực biểu cước không được để trống #cập nhật',
+    //   'date.base': 'Ngày hiệu lực biểu cước phải là một ngày hợp lệ #cập nhật',
+    // }),
+    // TO_DATE: Joi.date().messages({
+    //   'string.empty': 'Ngày hết hạn biểu cước không được để trống #cập nhật',
+    //   'date.base': 'Ngày hết hạn biểu cước phải là một ngày hợp lệ #cập nhật',
+    // }),
     TRF_NAME: Joi.string().trim().messages({
       'string.empty': 'Tên biểu cước không được để trống #cập nhật',
     }),

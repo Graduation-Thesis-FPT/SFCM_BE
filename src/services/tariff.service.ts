@@ -67,12 +67,10 @@ class TariffService {
             throw new BadRequestError(`Mã phương án ${data.METHOD_CODE} không hợp lệ`);
           }
 
-          if (data.FROM_DATE && data.TO_DATE) {
-            const from = new Date(data.FROM_DATE);
-            const to = new Date(data.TO_DATE);
-            if (from > to) {
-              throw new BadRequestError(`Ngày hiệu lực biểu cước phải nhỏ hơn ngày hết hạn`);
-            }
+          const from = data.FROM_DATE ? new Date(data.FROM_DATE) : null;
+          const to = data.TO_DATE ? new Date(data.TO_DATE) : null;
+          if (from > to) {
+            throw new BadRequestError(`Ngày hiệu lực biểu cước phải nhỏ hơn ngày hết hạn`);
           }
 
           processTariff(data);
@@ -84,7 +82,6 @@ class TariffService {
         const insert: Tariff[] = [];
         for (const data of updateData) {
           const tariff = await findTariffCodeById(data.ROWGUID, transactionalEntityManager);
-          console.log(tariff);
           if (!tariff) {
             throw new BadRequestError(`RowId ${data.ROWGUID} không hợp lệ`);
           }
@@ -121,28 +118,6 @@ class TariffService {
             }
           }
 
-          const from = data.FROM_DATE ? new Date(data.FROM_DATE) : null;
-          const to = data.TO_DATE ? new Date(data.TO_DATE) : null;
-          if (from && to) {
-            if (from > to) {
-              throw new BadRequestError(`Ngày hiệu lực biểu cước phải nhỏ hơn ngày hết hạn`);
-            }
-          }
-
-          if (to) {
-            if (to < new Date(tariff.FROM_DATE)) {
-              throw new BadRequestError(`Ngày hết hạn biểu cước phải lớn hơn ngày hiệu lực`);
-            }
-          }
-
-          if (from) {
-            console.log(from);
-            console.log(tariff.TO_DATE);
-            if (from > new Date(tariff.TO_DATE)) {
-              throw new BadRequestError(`Ngày hiệu lực biểu cước phải nhỏ hơn ngày hết hạn`);
-            }
-          }
-
           processTariff(data);
 
           if (data.TRF_CODE && data.METHOD_CODE && data.ITEM_TYPE_CODE) {
@@ -171,7 +146,7 @@ class TariffService {
     };
   };
 
-  static createTariff = async (tariffCodeListInfo: TariffList, createBy: User) => {
+  static createTariffTemplate = async (tariffCodeListInfo: TariffList, createBy: User) => {
     const insertData = tariffCodeListInfo.insert;
 
     let createdTariff;

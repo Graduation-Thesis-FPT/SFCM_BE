@@ -18,7 +18,7 @@ class TariffController {
     const tariffList = res.locals.requestData;
     new CREATED({
       message: SUCCESS_MESSAGE.SAVE_TARIFF_SUCCESS,
-      metadata: await TariffService.createTariff(tariffList, createBy),
+      metadata: await TariffService.createTariffTemplate(tariffList, createBy),
     }).send(res);
   };
 
