@@ -82,7 +82,7 @@ const validateUpdateTariff = (data: Tariff) => {
     }),
     TRF_NAME: Joi.string().trim().messages({
       'string.empty': 'Tên biểu cước không được để trống #cập nhật',
-    })
+    }),
   });
 
   return tariffSchema.validate(data);

@@ -81,6 +81,16 @@ const getTariffByTemplate = async (tariffTemplate: string) => {
     .getMany();
 };
 
+const getTariffDates = async () => {
+  return await tariffRepository
+    .createQueryBuilder('tariff')
+    .select('tariff.TRF_TEMP', 'TRF_TEMP')
+    .addSelect('MIN(tariff.FROM_DATE)', 'FROM_DATE')
+    .addSelect('MIN(tariff.TO_DATE)', 'TO_DATE')
+    .groupBy('tariff.TRF_TEMP')
+    .getRawMany();
+};
+
 export {
   findTariffCodeById,
   createTariff,
@@ -93,4 +103,5 @@ export {
   getTariffByTemplate,
   isDuplicateTariff,
   isDuplicateTariffTemp,
+  getTariffDates,
 };

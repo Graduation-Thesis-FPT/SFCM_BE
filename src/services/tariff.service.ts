@@ -12,6 +12,7 @@ import {
   findTariffCodeById,
   getAllTariff,
   getTariffByTemplate,
+  getTariffDates,
   getTariffTemp,
   isDuplicateTariff,
   isMatchTariff,
@@ -210,24 +211,31 @@ class TariffService {
             throw new BadRequestError(`Mã phương án ${data.METHOD_CODE} không hợp lệ`);
           }
 
-          if (data.FROM_DATE && data.TO_DATE) {
-            const from = new Date(data.FROM_DATE);
-            const to = new Date(data.TO_DATE);
-            if (from > to) {
-              throw new BadRequestError(`Ngày hiệu lực biểu cước phải nhỏ hơn ngày hết hạn`);
-            }
+          const from = data.FROM_DATE ? new Date(data.FROM_DATE) : null;
+          const to = data.TO_DATE ? new Date(data.TO_DATE) : null;
+          if (from > to) {
+            throw new BadRequestError(`Ngày hiệu lực biểu cước phải nhỏ hơn ngày hết hạn`);
           }
 
-          const from = moment(new Date(data.FROM_DATE)).format('DD/MM/YYYY');
-          const to = moment(new Date(data.TO_DATE)).format('DD/MM/YYYY');
+          const fromDate = moment(new Date(data.FROM_DATE)).format('DD/MM/YYYY');
+          const toDate = moment(new Date(data.TO_DATE)).format('DD/MM/YYYY');
 
-          data.TRF_TEMP = from + '-' + to + '-' + data.TRF_NAME;
+          data.TRF_TEMP = fromDate + '-' + toDate + '-' + data.TRF_NAME;
 
-          if (data.TRF_CODE && data.METHOD_CODE && data.ITEM_TYPE_CODE) {
-            const foundMatchTariff = await isDuplicateTariff(data.TRF_TEMP);
+          const foundMatchTariff = await isDuplicateTariff(data.TRF_TEMP);
 
-            if (foundMatchTariff) {
-              throw new BadRequestError(`Mẫu biểu cước đã tồn tại`);
+          if (foundMatchTariff) {
+            throw new BadRequestError(`Mẫu biểu cước đã tồn tại`);
+          }
+
+          const tariffTemplate = await getTariffDates();
+          if (tariffTemplate) {
+            for (const { FROM_DATE, TO_DATE } of tariffTemplate) {
+              if (from > FROM_DATE && from < TO_DATE) {
+                throw new BadRequestError(
+                  `Ngày ${fromDate} không hợp lệ đã tồn tại mẫu biểu cước có thời hạn từ ${moment(FROM_DATE).format('DD/MM/YYYY')} đến ${moment(TO_DATE).format('DD/MM/YYYY')}`,
+                );
+              }
             }
           }
 
