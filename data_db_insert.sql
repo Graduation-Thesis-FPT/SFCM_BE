@@ -7,10 +7,10 @@ VALUES ('admin',N'Quản trị viên','sql','sql'),
 
 INSERT INTO SA_MENU (PARENT_CODE,MENU_CODE,MENU_NAME,MENU_ICON,IS_VISIBLE,ORDER_BY,VIEW_PAGE,CREATE_BY,UPDATE_BY)
 VALUES 
-(NULL,'user-management',N'Quản lý người dùng','Users',1,100,NULL,'sql','sql'),
+(NULL,'user-management',N'Quản lý người dùng','UserRound',1,100,NULL,'sql','sql'),
 ('user-management','user',N'Người dùng',NULL,1,101,'User','sql','sql'),
 ('user-management','permission',N'Phân quyền',NULL,1,102,'Permission','sql','sql'),
-(NULL,'generic-list',N'Danh mục dùng chung','List',1,200,NULL,'sql','sql'),
+(NULL,'generic-list',N'Danh mục dùng chung','Layers',1,200,NULL,'sql','sql'),
 ('generic-list','warehouse-list',N'Danh mục kho',NULL,1,201,'WarehouseList','sql','sql'),
 ('generic-list','warehouse-design',N'Thiết kế kho',NULL,1,203,'WarehouseDesign','sql','sql'),
 ('generic-list','gate-list',N'Danh mục cổng',NULL,1,204,'GateList','sql','sql'),
@@ -27,10 +27,12 @@ VALUES
 ('input-data','vessel-info',N'Thông tin tàu chuyến',NULL,1,301,'VesselInfo','sql','sql'),
 ('input-data','manifest-loading-list',N'Kê khai hàng hóa',NULL,1,302,'ManifestLoadingList','sql','sql'),
 ('input-data','goods-manifest',N'Bảng kê danh mục hàng hóa',NULL,1,303,'GoodsManifest','sql','sql'),
-(NULL,'tariff',N'Biểu cước','FolderTree',1,400,NULL,'sql','sql'),
+(NULL,'tariff',N'Biểu cước','Calculator',1,400,NULL,'sql','sql'),
 ('tariff','tariff-code',N'Mã biểu cước',NULL,1,401,'TariffCode','sql','sql'),
 ('tariff','standard-tariff',N'Biểu cước chuẩn',NULL,1,402,'StandardTariff','sql','sql'),
-('tariff','payment-method',N'Hình thức thanh toán',NULL,1,403,'PaymentMethod','sql','sql')
+(NULL,'procedure',N'Thủ tục','Combine',1,500,NULL,'sql','sql'),
+('procedure','import-order',N'Lệnh nhập kho',NULL,1,501,'ImportOrder','sql','sql'),
+('procedure','export-order',N'Lệnh xuất kho',NULL,1,502,'ExportOrder','sql','sql')
 
 INSERT INTO SA_PERMISSION (ROLE_CODE,MENU_CODE,IS_VIEW,IS_ADD_NEW,IS_MODIFY,IS_DELETE,CREATE_BY,UPDATE_BY)
 VALUES 
@@ -53,7 +55,8 @@ VALUES
 ('admin','goods-manifest',1,1,1,1,'sql','sql'),
 ('admin','tariff-code',1,1,1,1,'sql','sql'),
 ('admin','standard-tariff',1,1,1,1,'sql','sql'),
-('admin','payment-method',1,1,1,1,'sql','sql'),
+('admin','import-order',1,1,1,1,'sql','sql'),
+('admin','export-order',1,1,1,1,'sql','sql'),
 ('procedure-staff','user',1,0,0,0,'sql','sql'),
 ('procedure-staff','permission',1,0,0,0,'sql','sql'),
 ('procedure-staff','warehouse-list',1,1,1,1,'sql','sql'),
