@@ -125,6 +125,7 @@ class TariffService {
               data.TRF_CODE,
               data.METHOD_CODE,
               data.ITEM_TYPE_CODE,
+              transactionalEntityManager,
             );
 
             if (!foundMatchTariff) {
@@ -206,7 +207,7 @@ class TariffService {
           const tariffTemplate = await getTariffDates();
           if (tariffTemplate) {
             for (const { FROM_DATE, TO_DATE } of tariffTemplate) {
-              if (from > FROM_DATE && from < TO_DATE) {
+              if (from >= FROM_DATE && from <= TO_DATE) {
                 throw new BadRequestError(
                   `Ngày ${fromDate} không hợp lệ đã tồn tại mẫu biểu cước có thời hạn từ ${moment(FROM_DATE).format('DD/MM/YYYY')} đến ${moment(TO_DATE).format('DD/MM/YYYY')}`,
                 );
