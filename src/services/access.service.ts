@@ -121,5 +121,40 @@ class AccessService {
       refreshToken: newRefreshToken,
     };
   };
+
+  static changePassword = async (user: User, userInfo: any) => {
+    const userWithPassword = await getUserWithPasswordById(user.ROWGUID);
+
+    const isMatch = await bcrypt.compare(userInfo.CURRENT_PASSWORD, userWithPassword.PASSWORD);
+
+    if (!isMatch) {
+      throw new BadRequestError(ERROR_MESSAGE.PASSWORD_IS_INCORRECT);
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashed = await bcrypt.hash(userInfo.PASSWORD, salt);
+
+    const updateResult = await updatePasswordById(user.ROWGUID, hashed);
+    if (!updateResult) {
+      throw new BadRequestError(ERROR_MESSAGE.UPDATE_PASSWORD_FAILED);
+    }
+
+    const newAccessToken = createNewAccessToken(user);
+    const newRefreshToken = createRefreshToken(user);
+    return {
+      userInfo: getInfoData(user, [
+        'ROWGUID',
+        'USER_NAME',
+        'FULLNAME',
+        'EMAIL',
+        'ADDRESS',
+        'BIRTHDAY',
+        'ROLE_CODE',
+        'ROLE_NAME',
+      ]),
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    };
+  };
 }
 export default AccessService;
