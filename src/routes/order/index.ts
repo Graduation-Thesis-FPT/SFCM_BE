@@ -6,7 +6,7 @@ import orderController from '../../controllers/order.controller';
 const router = Router();
 
 // router.use(authentication);
-router.get('', asyncHandler(orderController.genOrderNo));
-router.get('/draft-no', asyncHandler(orderController.genDraftNo));
+router.get('/getcont', asyncHandler(orderController.getContList));
+router.get('/getPackageData', asyncHandler(orderController.getManifestPackage));
 
 export default router;

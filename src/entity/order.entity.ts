@@ -11,12 +11,6 @@ export class OrderEntity extends Model {
   CUSTOMER_CODE: string;
 
   @Column()
-  ACC_TYPE: string;
-
-  @Column()
-  DELIVERY_ORDER: string;
-
-  @Column()
   BILLOFLADING: string;
 
   @Column()
@@ -43,9 +37,6 @@ export class OrderEntity extends Model {
 
   @Column()
   TOTAL_CBM: number;
-
-  @Column()
-  HOUSE_BILL: string;
 
   @Column()
   NOTE: string;
