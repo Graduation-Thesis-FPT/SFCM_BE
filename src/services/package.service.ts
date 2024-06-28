@@ -21,19 +21,14 @@ class PackageService {
     let newUpdated;
 
     await manager.transaction(async transactionalEntityManager => {
-      if (insertData.length) {
-        for (const data of insertData) {
-          const isExist = await check4AddnUpdate(data);
-          if (isExist) {
-            throw new BadRequestError(
-              `Số HouseBill ${data.HOUSE_BILL} đã tồn tại trong container!`,
-            );
-          }
-          data.CREATE_BY = createBy.ROWGUID;
-          data.UPDATE_BY = createBy.ROWGUID;
-          data.UPDATE_DATE = new Date();
+      for (const data of insertData) {
+        const isExist = await check4AddnUpdate(data);
+        if (isExist) {
+          throw new BadRequestError(`Số HouseBill ${data.HOUSE_BILL} đã tồn tại trong container!`);
         }
-        newCreated = await createPackage(insertData, transactionalEntityManager);
+        data.CREATE_BY = createBy.ROWGUID;
+        data.UPDATE_BY = createBy.ROWGUID;
+        data.UPDATE_DATE = new Date();
       }
 
       if (updateData.length) {
@@ -50,9 +45,13 @@ class PackageService {
           data.UPDATE_BY = createBy.ROWGUID;
           data.UPDATE_DATE = new Date();
         }
+        newUpdated = await updatePackage(updateData, transactionalEntityManager);
       }
-      newUpdated = await updatePackage(updateData, transactionalEntityManager);
+      if (insertData.length) {
+        newCreated = await createPackage(insertData, transactionalEntityManager);
+      }
     });
+
     return {
       newCreated,
       newUpdated,
