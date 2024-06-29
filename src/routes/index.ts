@@ -21,6 +21,7 @@ import packageRouter from './package/index';
 import orderRouter from './order/index';
 import tariffCodeRouter from './tariff-code/index';
 import tariffRouter from './tariff/index';
+import jobGateRouter from './job-gate/index';
 
 const routes = Router();
 
@@ -73,5 +74,8 @@ routes.use('/api/v1/order', orderRouter);
 // tariff code
 routes.use('/api/v1/tariff-code', tariffCodeRouter);
 routes.use('/api/v1/tariff', tariffRouter);
+
+// job gate
+routes.use('/api/v1/job-gate', jobGateRouter);
 
 export default routes;

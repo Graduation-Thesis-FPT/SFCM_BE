@@ -11,8 +11,8 @@ import {
 import { ItemTypeInfo } from '../models/item-type.model';
 import { manager } from '../repositories/index.repo';
 
-class ItemTypeService {
-  static createAndUpdateItemType = async (itemTypeListInfo: ItemTypeInfo, createBy: User) => {
+class JobGateService {
+  static createJobGate = async (itemTypeListInfo: ItemTypeInfo, createBy: User) => {
     const insertData = itemTypeListInfo.insert;
     const updateData = itemTypeListInfo.update;
 
@@ -76,4 +76,4 @@ class ItemTypeService {
     return await getItemType();
   };
 }
-export default ItemTypeService;
+export default JobGateService;
