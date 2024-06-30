@@ -27,6 +27,7 @@ VALUES
 (NULL,'tariff',N'Biểu cước','Calculator',1,400,NULL,'sql','sql'),
 ('tariff','tariff-code',N'Mã biểu cước',NULL,1,401,'TariffCode','sql','sql'),
 ('tariff','standard-tariff',N'Biểu cước chuẩn',NULL,1,402,'StandardTariff','sql','sql'),
+('tariff','discount-tariff',N'Biểu cước giảm giá',NULL,1,403,'DiscountTariff','sql','sql'),
 (NULL,'procedure',N'Thủ tục','Combine',1,500,NULL,'sql','sql'),
 ('procedure','import-order',N'Lệnh nhập kho',NULL,1,501,'ImportOrder','sql','sql'),
 ('procedure','export-order',N'Lệnh xuất kho',NULL,1,502,'ExportOrder','sql','sql')
@@ -48,6 +49,7 @@ VALUES
 ('admin','goods-manifest',1,1,1,1,'sql','sql'),
 ('admin','tariff-code',1,1,1,1,'sql','sql'),
 ('admin','standard-tariff',1,1,1,1,'sql','sql'),
+('admin','discount-tariff',1,1,1,1,'sql','sql'),
 ('admin','import-order',1,1,1,1,'sql','sql'),
 ('admin','export-order',1,1,1,1,'sql','sql'),
 ('procedure-staff','user',1,0,0,0,'sql','sql'),
