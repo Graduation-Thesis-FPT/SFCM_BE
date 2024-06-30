@@ -20,6 +20,7 @@ import { OrderEntity } from '../entity/order.entity';
 import { Package } from '../entity/package.entity';
 import { TariffCodeEntity } from '../entity/tariff-code.entity';
 import { TariffEntity } from '../entity/tariff.entity';
+import { TariffTempEntity } from '../entity/tariff-temp.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -49,6 +50,7 @@ const mssqlConnection = new DataSource({
     OrderEntity,
     TariffCodeEntity,
     TariffEntity,
+    TariffTempEntity,
   ],
   options: {
     encrypt: false,

@@ -75,7 +75,6 @@ const getTariffTemp = async () => {
   return await tariffRepository
     .createQueryBuilder('tariff')
     .select('tariff.TRF_TEMP', 'TRF_TEMP')
-    .distinct(true)
     .getRawMany();
 };
 
