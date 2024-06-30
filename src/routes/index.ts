@@ -21,6 +21,7 @@ import packageRouter from './package/index';
 import orderRouter from './order/index';
 import tariffCodeRouter from './tariff-code/index';
 import tariffRouter from './tariff/index';
+import tariffTempRouter from './tariff-temp/index';
 
 const routes = Router();
 
@@ -73,5 +74,6 @@ routes.use('/api/v1/order', orderRouter);
 // tariff code
 routes.use('/api/v1/tariff-code', tariffCodeRouter);
 routes.use('/api/v1/tariff', tariffRouter);
+routes.use('/api/v1/tariff-temp', tariffTempRouter);
 
 export default routes;
