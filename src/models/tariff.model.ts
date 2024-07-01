@@ -9,10 +9,7 @@ export interface Tariff extends Base {
   AMT_CBM: number;
   VAT: number;
   INCLUDE_VAT: boolean;
-  FROM_DATE: Date;
-  TO_DATE: Date;
-  TRF_NAME: string;
-  TRF_TEMP: string;
+  TRF_TEMP_CODE: string;
 }
 
 export interface TariffList {

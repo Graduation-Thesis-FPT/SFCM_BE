@@ -13,15 +13,6 @@ class TariffController {
     }).send(res);
   };
 
-  createTariff = async (req: Request, res: Response) => {
-    const createBy = res.locals.user;
-    const tariffList = res.locals.requestData;
-    new CREATED({
-      message: SUCCESS_MESSAGE.SAVE_TARIFF_SUCCESS,
-      metadata: await TariffService.createTariffTemplate(tariffList, createBy),
-    }).send(res);
-  };
-
   deleteTariff = async (req: Request, res: Response) => {
     new SuccessResponse({
       message: SUCCESS_MESSAGE.DELETE_TARIFF_SUCCESS,

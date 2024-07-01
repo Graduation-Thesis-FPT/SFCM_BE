@@ -21,10 +21,8 @@ class VesselService {
     let newUpdatedVessel;
 
     const processVesselInfo = (vesselInfo: Vessel) => {
-      if (vesselInfo.ETD === '') vesselInfo.ETD = null;
       if (vesselInfo.CallSign === '') vesselInfo.CallSign = null;
       if (vesselInfo.IMO === '') vesselInfo.IMO = null;
-      if (vesselInfo.OUTBOUND_VOYAGE === '') vesselInfo.OUTBOUND_VOYAGE = null;
 
       vesselInfo.CREATE_BY = createBy.ROWGUID;
       vesselInfo.UPDATE_BY = createBy.ROWGUID;
@@ -39,18 +37,11 @@ class VesselService {
             vesselInfo.INBOUND_VOYAGE,
             vesselInfo.ETA,
           );
-          const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY, transactionalEntityManager);
+          const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY);
           if (vessel) {
             throw new BadRequestError(`Mã tàu ${vessel.VOYAGEKEY} đã tồn tại`);
           }
 
-          if (vesselInfo.ETA && vesselInfo.ETD) {
-            const etaDate = new Date(vesselInfo.ETA);
-            const etdDate = new Date(vesselInfo.ETD);
-            if (etaDate >= etdDate) {
-              throw new BadRequestError(`Ngày đến phải nhỏ hơn ngày rời`);
-            }
-          }
           processVesselInfo(vesselInfo);
         }
         newCreatedVessel = await createVessel(insertData, transactionalEntityManager);
@@ -58,7 +49,7 @@ class VesselService {
 
       if (updateData) {
         for (const vesselInfo of updateData) {
-          const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY, transactionalEntityManager);
+          const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY);
           if (!vessel) {
             throw new BadRequestError(`Mã tàu ${vesselInfo.VOYAGEKEY} không hợp lệ`);
           }

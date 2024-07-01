@@ -28,9 +28,7 @@ class BlockService {
         if (!block) {
           throw new BadRequestError(ERROR_MESSAGE.INVALID_WAREHOUSE_CODE);
         }
-        const isDuplicateBlock = await checkDuplicateBlock(
-          blockInfo.BLOCK_CODE
-        );
+        const isDuplicateBlock = await checkDuplicateBlock(blockInfo.BLOCK_CODE);
         console.log(isDuplicateBlock);
         if (isDuplicateBlock) {
           throw new BadRequestError(
@@ -81,7 +79,7 @@ class BlockService {
     return await getAllBlock();
   };
 
-  static getAllCell = async (WAREHOUSE_CODE : string, BLOCK_CODE : string) => {
+  static getAllCell = async (WAREHOUSE_CODE: string, BLOCK_CODE: string) => {
     return await getAllCell(WAREHOUSE_CODE, BLOCK_CODE);
   };
 }

@@ -4,7 +4,7 @@ import { findTariffCodeByCode } from '../repositories/tariff-code.repo';
 import { manager } from '../repositories/index.repo';
 import { Tariff, TariffList } from '../models/tariff.model';
 import { findItemTypeByCode } from '../repositories/item-type.repo';
-import { findMethodCode } from '../repositories/method.repo';
+import { findMethodByCode } from '../repositories/method.repo';
 import {
   createTariff,
   deleteTariff,
@@ -12,13 +12,11 @@ import {
   findTariffCodeById,
   getAllTariff,
   getTariffByTemplate,
-  getTariffDates,
   getTariffTemp,
-  isDuplicateTariff,
   isMatchTariff,
   updateTariff,
 } from '../repositories/tariff.repo';
-import moment from 'moment';
+import { findTariffTemp } from '../repositories/tariff-temp.repo';
 
 class TariffService {
   static createAndUpdateTariff = async (tariffCodeListInfo: TariffList, createBy: User) => {
@@ -31,10 +29,6 @@ class TariffService {
     const processTariff = (data: Tariff) => {
       if (data.TRF_DESC === '') data.TRF_DESC = null;
 
-      const from = moment(new Date(data.FROM_DATE)).format('DD/MM/YYYY');
-      const to = moment(new Date(data.TO_DATE)).format('DD/MM/YYYY');
-
-      data.TRF_TEMP = from + '-' + to + '-' + data.TRF_NAME;
       data.CREATE_BY = createBy.ROWGUID;
       data.UPDATE_BY = createBy.ROWGUID;
       data.UPDATE_DATE = new Date();
@@ -44,33 +38,27 @@ class TariffService {
     await manager.transaction(async transactionalEntityManager => {
       if (insertData) {
         for (const data of insertData) {
-          const checkExist = await findTariffCodeByCode(data.TRF_CODE, transactionalEntityManager);
+          const checkExist = await findTariffCodeByCode(data.TRF_CODE);
 
           if (!checkExist) {
             throw new BadRequestError(`Mã biểu cước ${data.TRF_CODE} không hợp lệ`);
           }
 
-          const checkItemTypeCodeExist = await findItemTypeByCode(
-            data.ITEM_TYPE_CODE,
-            transactionalEntityManager,
-          );
+          const checkItemTypeCodeExist = await findItemTypeByCode(data.ITEM_TYPE_CODE);
 
           if (!checkItemTypeCodeExist) {
             throw new BadRequestError(`Mã loại hàng hóa ${data.ITEM_TYPE_CODE} không tồn tại`);
           }
 
-          const checkMethodCode = await findMethodCode(
-            data.METHOD_CODE,
-            transactionalEntityManager,
-          );
+          const checkMethodCode = await findMethodByCode(data.METHOD_CODE);
           if (!checkMethodCode) {
             throw new BadRequestError(`Mã phương án ${data.METHOD_CODE} không hợp lệ`);
           }
 
-          const from = data.FROM_DATE ? new Date(data.FROM_DATE) : null;
-          const to = data.TO_DATE ? new Date(data.TO_DATE) : null;
-          if (from > to) {
-            throw new BadRequestError(`Ngày hiệu lực biểu cước phải nhỏ hơn ngày hết hạn`);
+          const isValidTariffTemp = await findTariffTemp(data.TRF_TEMP_CODE);
+
+          if (!isValidTariffTemp) {
+            throw new BadRequestError(`Mã mẫu biểu cước ${data.TRF_TEMP_CODE} không hợp lệ`);
           }
 
           processTariff(data);
@@ -81,16 +69,13 @@ class TariffService {
       if (updateData) {
         const insert: Tariff[] = [];
         for (const data of updateData) {
-          const tariff = await findTariffCodeById(data.ROWGUID, transactionalEntityManager);
+          const tariff = await findTariffCodeById(data.ROWGUID);
           if (!tariff) {
             throw new BadRequestError(`RowId ${data.ROWGUID} không hợp lệ`);
           }
 
           if (data.TRF_CODE) {
-            const checkExist = await findTariffCodeByCode(
-              data.TRF_CODE,
-              transactionalEntityManager,
-            );
+            const checkExist = await findTariffCodeByCode(data.TRF_CODE);
 
             if (!checkExist) {
               throw new BadRequestError(`Mã biểu cước ${data.TRF_CODE} không hợp lệ`);
@@ -98,10 +83,7 @@ class TariffService {
           }
 
           if (data.ITEM_TYPE_CODE) {
-            const checkItemTypeCodeExist = await findItemTypeByCode(
-              data.ITEM_TYPE_CODE,
-              transactionalEntityManager,
-            );
+            const checkItemTypeCodeExist = await findItemTypeByCode(data.ITEM_TYPE_CODE);
 
             if (!checkItemTypeCodeExist) {
               throw new BadRequestError(`Mã loại hàng hóa ${data.ITEM_TYPE_CODE} không hợp lệ`);
@@ -109,10 +91,7 @@ class TariffService {
           }
 
           if (data.METHOD_CODE) {
-            const checkMethodCode = await findMethodCode(
-              data.METHOD_CODE,
-              transactionalEntityManager,
-            );
+            const checkMethodCode = await findMethodByCode(data.METHOD_CODE);
             if (!checkMethodCode) {
               throw new BadRequestError(`Mã phương án ${data.METHOD_CODE} không hợp lệ`);
             }
@@ -125,7 +104,6 @@ class TariffService {
               data.TRF_CODE,
               data.METHOD_CODE,
               data.ITEM_TYPE_CODE,
-              transactionalEntityManager,
             );
 
             if (!foundMatchTariff) {
@@ -144,84 +122,6 @@ class TariffService {
     return {
       createdTariff,
       updatedTariff,
-    };
-  };
-
-  static createTariffTemplate = async (tariffCodeListInfo: TariffList, createBy: User) => {
-    const insertData = tariffCodeListInfo.insert;
-
-    let createdTariff;
-
-    const processTariff = (data: Tariff) => {
-      if (data.TRF_DESC === '') data.TRF_DESC = null;
-
-      data.CREATE_BY = createBy.ROWGUID;
-      data.UPDATE_BY = createBy.ROWGUID;
-      data.UPDATE_DATE = new Date();
-      data.CREATE_DATE = new Date();
-    };
-
-    await manager.transaction(async transactionalEntityManager => {
-      if (insertData) {
-        for (const data of insertData) {
-          const checkExist = await findTariffCodeByCode(data.TRF_CODE, transactionalEntityManager);
-
-          if (!checkExist) {
-            throw new BadRequestError(`Mã biểu cước ${data.TRF_CODE} không hợp lệ`);
-          }
-
-          const checkItemTypeCodeExist = await findItemTypeByCode(
-            data.ITEM_TYPE_CODE,
-            transactionalEntityManager,
-          );
-
-          if (!checkItemTypeCodeExist) {
-            throw new BadRequestError(`Mã loại hàng hóa ${data.ITEM_TYPE_CODE} không tồn tại`);
-          }
-
-          const checkMethodCode = await findMethodCode(
-            data.METHOD_CODE,
-            transactionalEntityManager,
-          );
-          if (!checkMethodCode) {
-            throw new BadRequestError(`Mã phương án ${data.METHOD_CODE} không hợp lệ`);
-          }
-
-          const from = data.FROM_DATE ? new Date(data.FROM_DATE) : null;
-          const to = data.TO_DATE ? new Date(data.TO_DATE) : null;
-          if (from > to) {
-            throw new BadRequestError(`Ngày hiệu lực biểu cước phải nhỏ hơn ngày hết hạn`);
-          }
-
-          const fromDate = moment(new Date(data.FROM_DATE)).format('DD/MM/YYYY');
-          const toDate = moment(new Date(data.TO_DATE)).format('DD/MM/YYYY');
-
-          data.TRF_TEMP = fromDate + '-' + toDate + '-' + data.TRF_NAME;
-
-          const foundMatchTariff = await isDuplicateTariff(data.TRF_TEMP);
-
-          if (foundMatchTariff) {
-            throw new BadRequestError(`Mẫu biểu cước đã tồn tại`);
-          }
-
-          const tariffTemplate = await getTariffDates();
-          if (tariffTemplate) {
-            for (const { FROM_DATE, TO_DATE } of tariffTemplate) {
-              if (from >= FROM_DATE && from <= TO_DATE) {
-                throw new BadRequestError(
-                  `Ngày ${fromDate} không hợp lệ đã tồn tại mẫu biểu cước có thời hạn từ ${moment(FROM_DATE).format('DD/MM/YYYY')} đến ${moment(TO_DATE).format('DD/MM/YYYY')}`,
-                );
-              }
-            }
-          }
-
-          processTariff(data);
-        }
-      }
-      createdTariff = await createTariff(insertData, transactionalEntityManager);
-    });
-    return {
-      createdTariff,
     };
   };
 

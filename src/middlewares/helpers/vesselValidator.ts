@@ -11,14 +11,9 @@ const validateInsertVessel = (data: Vessel) => {
     INBOUND_VOYAGE: Joi.string().trim().required().messages({
       'any.required': 'Chuyến nhập không được để trống #thêm',
     }),
-    OUTBOUND_VOYAGE: Joi.string().trim().allow(''),
     ETA: Joi.date().required().messages({
       'any.required': 'Ngày tàu đến không được để trống #thêm',
       'date.base': 'Ngày tàu đến phải là một ngày hợp lệ #thêm',
-    }),
-    ETD: Joi.date().allow('').optional().messages({
-      'date.base': 'Ngày tàu đi phải là một ngày hợp lệ #thêm',
-      'string.empty': 'Ngày tàu đi có thể để trống #thêm',
     }),
     CallSign: Joi.string().trim().allow('').optional(),
     IMO: Joi.string().trim().allow('').optional(),
@@ -34,12 +29,8 @@ const validateUpdateVessel = (data: Vessel) => {
     }),
     VESSEL_NAME: Joi.string().trim().optional(),
     INBOUND_VOYAGE: Joi.string().trim().optional(),
-    OUTBOUND_VOYAGE: Joi.string().trim().optional().allow(''),
     ETA: Joi.date().optional().messages({
       'date.base': 'Ngày tàu đến phải là một ngày hợp lệ #cập nhật',
-    }),
-    ETD: Joi.date().optional().allow('').messages({
-      'date.base': 'Ngày tàu đi phải là một ngày hợp lệ #cập nhật',
     }),
     CallSign: Joi.string().trim().allow('').optional(),
     IMO: Joi.string().trim().allow('').optional(),

@@ -1,6 +1,5 @@
 import { EntityManager } from 'typeorm';
 import mssqlConnection from '../db/mssql.connect';
-import { Equipment as EquipmentEntity } from '../entity/equipment.entity';
 import { Container } from '../models/container.model';
 import { ContainerEntity } from '../entity/container.entity';
 
@@ -16,13 +15,6 @@ const createContainer = async (
   return newContainer;
 };
 
-const findOneEquipment = async (equimentCode: string, transactionEntityManager: EntityManager) => {
-  return await transactionEntityManager
-    .createQueryBuilder(EquipmentEntity, 'equipment')
-    .where('equipment.EQU_CODE = :equimentCode', { equimentCode: equimentCode })
-    .getOne();
-};
-
 const updateContainer = async (
   containerListInfo: Container[],
   transactionEntityManager: EntityManager,
@@ -34,12 +26,9 @@ const updateContainer = async (
   );
 };
 
-const findContainerByRowid = async (
-  containerCode: string,
-  transactionEntityManager: EntityManager,
-) => {
-  return await transactionEntityManager
-    .createQueryBuilder(ContainerEntity, 'container')
+const findContainerByRowid = async (containerCode: string) => {
+  return await containerRepository
+    .createQueryBuilder('container')
     .where('container.ROWGUID = :containerCode', { containerCode: containerCode })
     .getOne();
 };
@@ -65,13 +54,9 @@ const filterContainer = async (rule: any) => {
   });
 };
 
-const isUniqueContainer = async (
-  voyagekey: string,
-  cntrno: string,
-  transactionEntityManager: EntityManager,
-) => {
-  return await transactionEntityManager
-    .createQueryBuilder(ContainerEntity, 'container')
+const isUniqueContainer = async (voyagekey: string, cntrno: string) => {
+  return await containerRepository
+    .createQueryBuilder('container')
     .where('container.VOYAGEKEY = :voyagekey', { voyagekey: voyagekey })
     .andWhere('container.CNTRNO = :cntrno', { cntrno: cntrno })
     .getOne();
@@ -79,7 +64,6 @@ const isUniqueContainer = async (
 
 export {
   createContainer,
-  findOneEquipment,
   updateContainer,
   findContainerByRowid,
   filterContainer,

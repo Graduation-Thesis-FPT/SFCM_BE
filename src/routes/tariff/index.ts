@@ -9,11 +9,11 @@ const router = Router();
 
 router.use(authentication);
 router.get('', asyncHandler(grantPermission), asyncHandler(tariffController.getTariff));
-router.get(
-  '/template',
-  asyncHandler(grantPermission),
-  asyncHandler(tariffController.getAllTariffTemplate),
-);
+// router.get(
+//   '/template',
+//   asyncHandler(grantPermission),
+//   asyncHandler(tariffController.getAllTariffTemplate),
+// );
 
 router.get(
   '/filter',
@@ -26,7 +26,6 @@ router.patch(
   validateTariffRequest,
   asyncHandler(tariffController.createAndUpdateTariff),
 );
-router.post('', validateTariffRequest, asyncHandler(tariffController.createTariff));
 router.delete('', asyncHandler(grantPermission), asyncHandler(tariffController.deleteTariff));
 
 export default router;

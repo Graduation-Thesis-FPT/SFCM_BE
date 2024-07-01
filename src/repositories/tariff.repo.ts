@@ -5,9 +5,9 @@ import { Tariff } from '../models/tariff.model';
 
 export const tariffRepository = mssqlConnection.getRepository(TariffEntity);
 
-const findTariffCodeById = async (rowId: string, transactionEntityManager: EntityManager) => {
-  return await transactionEntityManager
-    .createQueryBuilder(TariffEntity, 'tariff')
+const findTariffCodeById = async (rowId: string) => {
+  return await tariffRepository
+    .createQueryBuilder('tariff')
     .where('tariff.ROWGUID = :rowId', { rowId: rowId })
     .getOne();
 };
@@ -43,14 +43,9 @@ const getAllTariff = async () => {
   });
 };
 
-const isMatchTariff = async (
-  tariffCode: string,
-  methodCode: string,
-  itemTypeCode: string,
-  transactionEntityManager: EntityManager,
-) => {
-  return await transactionEntityManager
-    .createQueryBuilder(TariffEntity, 'tariff')
+const isMatchTariff = async (tariffCode: string, methodCode: string, itemTypeCode: string) => {
+  return await tariffRepository
+    .createQueryBuilder('tariff')
     .where('tariff.TRF_CODE = :tariffCode', { tariffCode: tariffCode })
     .andWhere('tariff.METHOD_CODE = :methodCode', { methodCode: methodCode })
     .andWhere('tariff.ITEM_TYPE_CODE = :itemTypeCode', { itemTypeCode: itemTypeCode })
@@ -81,7 +76,7 @@ const getTariffTemp = async () => {
 const getTariffByTemplate = async (tariffTemplate: string) => {
   return await tariffRepository
     .createQueryBuilder('tariff')
-    .where('tariff.TRF_TEMP = :tariffTemplate', { tariffTemplate: tariffTemplate })
+    .where('tariff.TRF_TEMP_CODE = :tariffTemplate', { tariffTemplate: tariffTemplate })
     .getMany();
 };
 

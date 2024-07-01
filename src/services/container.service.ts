@@ -32,13 +32,12 @@ class ContainerService {
       containerInfo.UPDATE_DATE = new Date();
     };
 
-    await manager.transaction(async transactionEntityManager => {
+    await manager.transaction(async transactionalEntityManager => {
       if (insertData) {
         for (const containerInfo of insertData) {
           const isDuplicated = await isUniqueContainer(
             containerInfo.VOYAGEKEY,
             containerInfo.CNTRNO,
-            transactionEntityManager,
           );
 
           if (isDuplicated) {
@@ -47,18 +46,12 @@ class ContainerService {
             );
           }
 
-          const isContainerExist = await findVesselByCode(
-            containerInfo.VOYAGEKEY,
-            transactionEntityManager,
-          );
+          const isContainerExist = await findVesselByCode(containerInfo.VOYAGEKEY);
           if (!isContainerExist) {
             throw new BadRequestError(`Mã tàu ${containerInfo.VOYAGEKEY} không tồn tại`);
           }
 
-          const isValidItemTypeCode = await findItemTypeByCode(
-            containerInfo.ITEM_TYPE_CODE,
-            transactionEntityManager,
-          );
+          const isValidItemTypeCode = await findItemTypeByCode(containerInfo.ITEM_TYPE_CODE);
 
           if (!isValidItemTypeCode) {
             throw new BadRequestError(
@@ -66,10 +59,7 @@ class ContainerService {
             );
           }
 
-          const isValidCustomerCode = await findCustomerByCode(
-            containerInfo.CONSIGNEE,
-            transactionEntityManager,
-          );
+          const isValidCustomerCode = await findCustomerByCode(containerInfo.CONSIGNEE);
 
           if (!isValidCustomerCode) {
             throw new BadRequestError(`Mã loại khách hàng ${containerInfo.CONSIGNEE} không hợp lệ`);
@@ -78,15 +68,12 @@ class ContainerService {
           processContainer(containerInfo);
         }
 
-        newCreatedContainer = await createContainer(insertData, transactionEntityManager);
+        newCreatedContainer = await createContainer(insertData, transactionalEntityManager);
       }
 
       if (updateData) {
         for (const containerInfo of updateData) {
-          const container = await findContainerByRowid(
-            containerInfo.ROWGUID,
-            transactionEntityManager,
-          );
+          const container = await findContainerByRowid(containerInfo.ROWGUID);
           if (!container) {
             throw new BadRequestError(`Mã container ${containerInfo.ROWGUID} không hợp lệ`);
           }
@@ -97,22 +84,18 @@ class ContainerService {
             );
           }
 
-          const isDuplicated = await isUniqueContainer(
-            containerInfo.VOYAGEKEY,
-            containerInfo.CNTRNO,
-            transactionEntityManager,
-          );
+          // const isDuplicated = await isUniqueContainer(
+          //   containerInfo.VOYAGEKEY,
+          //   containerInfo.CNTRNO,
+          // );
 
-          if (isDuplicated) {
-            throw new BadRequestError(
-              `Không thể cập nhật số container ${containerInfo.CNTRNO} đã tồn tại trên tàu ${containerInfo.VOYAGEKEY}`,
-            );
-          }
+          // if (isDuplicated) {
+          //   throw new BadRequestError(
+          //     `Không thể cập nhật số container ${containerInfo.CNTRNO} đã tồn tại trên tàu ${containerInfo.VOYAGEKEY}`,
+          //   );
+          // }
 
-          const isValidItemTypeCode = await findItemTypeByCode(
-            containerInfo.ITEM_TYPE_CODE,
-            transactionEntityManager,
-          );
+          const isValidItemTypeCode = await findItemTypeByCode(containerInfo.ITEM_TYPE_CODE);
 
           if (!isValidItemTypeCode) {
             throw new BadRequestError(
@@ -120,10 +103,7 @@ class ContainerService {
             );
           }
 
-          const isValidCustomerCode = await findCustomerByCode(
-            containerInfo.CONSIGNEE,
-            transactionEntityManager,
-          );
+          const isValidCustomerCode = await findCustomerByCode(containerInfo.CONSIGNEE);
 
           if (!isValidCustomerCode) {
             throw new BadRequestError(`Mã loại khách hàng ${containerInfo.CONSIGNEE} không hợp lệ`);
@@ -132,7 +112,7 @@ class ContainerService {
           processContainer(containerInfo);
         }
 
-        newUpdatedContainer = await updateContainer(updateData, transactionEntityManager);
+        newUpdatedContainer = await updateContainer(updateData, transactionalEntityManager);
       }
     });
 

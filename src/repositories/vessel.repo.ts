@@ -26,9 +26,9 @@ const updateVessel = async (
   );
 };
 
-const findVesselByCode = async (vesselCode: string, transactionalEntityManager: EntityManager) => {
-  return await transactionalEntityManager
-    .createQueryBuilder(VesselEntity, 'vessel')
+const findVesselByCode = async (vesselCode: string) => {
+  return await vesselRepository
+    .createQueryBuilder('vessel')
     .where('vessel.VOYAGEKEY = :vesselCode', { vesselCode: vesselCode })
     .getOne();
 };

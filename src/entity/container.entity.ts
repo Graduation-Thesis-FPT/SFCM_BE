@@ -12,11 +12,9 @@ export class ContainerEntity extends Model {
   VOYAGEKEY: string;
 
   @Column()
-  @IsNotEmpty()
   BILLOFLADING: string;
 
   @Column()
-  @IsNotEmpty()
   SEALNO: string;
 
   @Column()

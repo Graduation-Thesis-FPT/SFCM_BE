@@ -34,19 +34,7 @@ export class TariffEntity extends Model {
   @Column()
   INCLUDE_VAT: boolean;
 
-  @Column()
   @IsNotEmpty()
-  FROM_DATE: Date;
-
   @Column()
-  @IsNotEmpty()
-  TO_DATE: Date;
-
-  @Column()
-  @IsNotEmpty()
-  TRF_NAME: string;
-
-  @Column()
-  @IsNotEmpty()
-  TRF_TEMP: string;
+  TRF_TEMP_CODE: string;
 }

@@ -15,13 +15,7 @@ export class Vessel extends Model {
   INBOUND_VOYAGE: string;
 
   @Column()
-  OUTBOUND_VOYAGE: string;
-
-  @Column()
   ETA: Date;
-
-  @Column()
-  ETD: Date;
 
   @Column()
   CallSign: string;

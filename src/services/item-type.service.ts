@@ -1,5 +1,4 @@
 import { BadRequestError } from '../core/error.response';
-import { ERROR_MESSAGE } from '../constants';
 import { User } from '../entity/user.entity';
 import {
   getItemType,
@@ -22,10 +21,7 @@ class ItemTypeService {
     await manager.transaction(async transactionEntityManager => {
       if (insertData.length) {
         for (const data of insertData) {
-          const checkExist = await findItemTypeByCode(
-            data.ITEM_TYPE_CODE,
-            transactionEntityManager,
-          );
+          const checkExist = await findItemTypeByCode(data.ITEM_TYPE_CODE);
 
           if (checkExist) {
             throw new BadRequestError(`Mã loại hàng hóa ${data.ITEM_TYPE_CODE} đã tồn tại`);
@@ -40,10 +36,7 @@ class ItemTypeService {
 
       if (updateData.length) {
         for (const data of updateData) {
-          const checkExist = await findItemTypeByCode(
-            data.ITEM_TYPE_CODE,
-            transactionEntityManager,
-          );
+          const checkExist = await findItemTypeByCode(data.ITEM_TYPE_CODE);
 
           if (!checkExist) {
             throw new BadRequestError(`Mã loại hàng hóa ${data.ITEM_TYPE_CODE} không tồn tại`);

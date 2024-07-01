@@ -5,12 +5,9 @@ import { TariffCode } from '../models/tariff-code.model';
 
 export const tariffCodeRepository = mssqlConnection.getRepository(TariffCodeEntity);
 
-const findTariffCodeByCode = async (
-  tariffCode: string,
-  transactionEntityManager: EntityManager,
-) => {
-  return await transactionEntityManager
-    .createQueryBuilder(TariffCodeEntity, 'tariffCode')
+const findTariffCodeByCode = async (tariffCode: string) => {
+  return await tariffCodeRepository
+    .createQueryBuilder('tariffCode')
     .where('tariffCode.TRF_CODE = :tariffCode', { tariffCode: tariffCode })
     .getOne();
 };

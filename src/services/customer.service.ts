@@ -22,10 +22,7 @@ class CustomerService {
     await manager.transaction(async transactionalEntityManager => {
       if (insertData) {
         for (const customerInfo of insertData) {
-          const customer = await findCustomerByCode(
-            customerInfo.CUSTOMER_CODE,
-            transactionalEntityManager,
-          );
+          const customer = await findCustomerByCode(customerInfo.CUSTOMER_CODE);
           if (customer) {
             throw new BadRequestError(`Mã khách hàng ${customer.CUSTOMER_CODE} đã tồn tại`);
           }
@@ -51,10 +48,7 @@ class CustomerService {
 
       if (updateData) {
         for (const customerInfo of updateData) {
-          const gate = await findCustomerByCode(
-            customerInfo.CUSTOMER_CODE,
-            transactionalEntityManager,
-          );
+          const gate = await findCustomerByCode(customerInfo.CUSTOMER_CODE);
           if (!gate) {
             throw new BadRequestError(`Mã khách hàng ${customerInfo.CUSTOMER_CODE} không tồn tại`);
           }

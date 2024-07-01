@@ -26,12 +26,9 @@ const updateCustomer = async (
   );
 };
 
-const findCustomerByCode = async (
-  customerCode: string,
-  transactionalEntityManager: EntityManager,
-) => {
-  return await transactionalEntityManager
-    .createQueryBuilder(CustomerEntity, 'cust')
+const findCustomerByCode = async (customerCode: string) => {
+  return await customerRepository
+    .createQueryBuilder('cust')
     .where('cust.CUSTOMER_CODE = :customerCode', { customerCode: customerCode })
     .getOne();
 };

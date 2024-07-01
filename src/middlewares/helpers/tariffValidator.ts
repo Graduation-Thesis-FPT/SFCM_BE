@@ -28,17 +28,9 @@ const validateInsertTariff = (data: Tariff) => {
       'number.positive': 'Thuế VAT phải là số dương #thêm',
     }),
     INCLUDE_VAT: Joi.boolean(),
-    FROM_DATE: Joi.date().required().messages({
-      'any.required': 'Ngày hiệu lực biểu cước không được để trống #thêm',
-      'date.base': 'Ngày hiệu lực biểu cước phải là một ngày hợp lệ #thêm',
-    }),
-    TO_DATE: Joi.date().required().messages({
-      'any.required': 'Ngày hết hạn biểu cước không được để trống #thêm',
-      'date.base': 'Ngày hết hạn biểu cước phải là một ngày hợp lệ #thêm',
-    }),
-    TRF_NAME: Joi.string().trim().required().messages({
-      'any.required': 'Tên biểu cước không được để trống #thêm',
-      'string.empty': 'Tên biểu cước không được để trống #thêm',
+    TRF_TEMP_CODE: Joi.string().required().trim().allow('').messages({
+      'any.required': 'Mã mẫu biểu cước không được để trống #thêm',
+      'string.empty': 'Mã mẫu biểu cước không được để trống #thêm',
     }),
   });
 
@@ -72,17 +64,6 @@ const validateUpdateTariff = (data: Tariff) => {
       'number.base': 'Thuế VAT phải là một số #cập nhật',
     }),
     INCLUDE_VAT: Joi.boolean(),
-    // FROM_DATE: Joi.date().messages({
-    //   'string.empty': 'Ngày hiệu lực biểu cước không được để trống #cập nhật',
-    //   'date.base': 'Ngày hiệu lực biểu cước phải là một ngày hợp lệ #cập nhật',
-    // }),
-    // TO_DATE: Joi.date().messages({
-    //   'string.empty': 'Ngày hết hạn biểu cước không được để trống #cập nhật',
-    //   'date.base': 'Ngày hết hạn biểu cước phải là một ngày hợp lệ #cập nhật',
-    // }),
-    TRF_NAME: Joi.string().trim().messages({
-      'string.empty': 'Tên biểu cước không được để trống #cập nhật',
-    }),
   });
 
   return tariffSchema.validate(data);
