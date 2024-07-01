@@ -20,12 +20,12 @@ const validateInsertTariff = (data: Tariff) => {
       'any.required': 'Mã loại hàng hóa không được để trống #thêm',
       'string.empty': 'Mã loại hàng hóa không được để trống #thêm',
     }),
-    AMT_CBM: Joi.number().positive().required().messages({
+    AMT_CBM: Joi.number().min(0).required().messages({
       'any.required': 'Tổng tiền không được để trống #thêm',
-      'number.positive': 'Tổng tiền phải là số dương #thêm',
+      'number.min': 'Tổng tiền phải là số dương #thêm',
     }),
-    VAT: Joi.number().positive().allow('').messages({
-      'number.positive': 'Thuế VAT phải là số dương #thêm',
+    VAT: Joi.number().min(0).allow('').messages({
+      'number.min': 'Thuế VAT phải là số dương #thêm',
     }),
     INCLUDE_VAT: Joi.boolean(),
     TRF_TEMP_CODE: Joi.string().required().trim().allow('').messages({
@@ -54,13 +54,13 @@ const validateUpdateTariff = (data: Tariff) => {
     ITEM_TYPE_CODE: Joi.string().trim().messages({
       'string.empty': 'Mã loại hàng hóa không được để trống #cập nhật',
     }),
-    AMT_CBM: Joi.number().positive().messages({
+    AMT_CBM: Joi.number().min(0).messages({
       'number.empty': 'Tổng tiền không được để trống #cập nhật',
-      'number.positive': 'Tổng tiền phải là số dương #cập nhật',
+      'number.min': 'Tổng tiền phải là số dương #cập nhật',
       'number.base': 'Tổng tiền phải là một số #cập nhật',
     }),
-    VAT: Joi.number().positive().allow('').messages({
-      'number.positive': 'Thuế VAT phải là số dương #cập nhật',
+    VAT: Joi.number().min(0).allow('').messages({
+      'number.min': 'Thuế VAT phải là số dương #cập nhật',
       'number.base': 'Thuế VAT phải là một số #cập nhật',
     }),
     INCLUDE_VAT: Joi.boolean(),
