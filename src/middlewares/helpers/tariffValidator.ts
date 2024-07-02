@@ -64,6 +64,9 @@ const validateUpdateTariff = (data: Tariff) => {
       'number.base': 'Thuế VAT phải là một số #cập nhật',
     }),
     INCLUDE_VAT: Joi.boolean(),
+    TRF_TEMP_CODE: Joi.string().trim().allow('').messages({
+      'string.empty': 'Mã mẫu biểu cước không được để trống #cập nhật',
+    }),
   });
 
   return tariffSchema.validate(data);

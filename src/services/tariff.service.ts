@@ -61,13 +61,24 @@ class TariffService {
             throw new BadRequestError(`Mã mẫu biểu cước ${data.TRF_TEMP_CODE} không hợp lệ`);
           }
 
+          const isMatch = await isMatchTariff(
+            data.TRF_CODE,
+            data.METHOD_CODE,
+            data.ITEM_TYPE_CODE,
+            data.TRF_TEMP_CODE,
+          );
+          if (isMatch) {
+            throw new BadRequestError(
+              `Biểu cước ${data.TRF_CODE} đã tồn tại trong mẫu ${data.TRF_TEMP_CODE}`,
+            );
+          }
+
           processTariff(data);
         }
       }
       createdTariff = await createTariff(insertData, transactionalEntityManager);
 
       if (updateData) {
-        const insert: Tariff[] = [];
         for (const data of updateData) {
           const tariff = await findTariffCodeById(data.ROWGUID);
           if (!tariff) {
@@ -97,26 +108,21 @@ class TariffService {
             }
           }
 
-          processTariff(data);
-
-          if (data.TRF_CODE && data.METHOD_CODE && data.ITEM_TYPE_CODE) {
-            const foundMatchTariff = await isMatchTariff(
-              data.TRF_CODE,
-              data.METHOD_CODE,
-              data.ITEM_TYPE_CODE,
+          const isMatch = await isMatchTariff(
+            data.TRF_CODE,
+            data.METHOD_CODE,
+            data.ITEM_TYPE_CODE,
+            data.TRF_TEMP_CODE,
+          );
+          if (isMatch) {
+            throw new BadRequestError(
+              `Biểu cước ${data.TRF_CODE} đã tồn tại trong mẫu ${data.TRF_TEMP_CODE}`,
             );
-
-            if (!foundMatchTariff) {
-              delete data.ROWGUID;
-              insert.push(data);
-            }
           }
+
+          processTariff(data);
         }
-        if (insert.length > 0) {
-          updatedTariff = await createTariff(insert, transactionalEntityManager);
-        } else {
-          updatedTariff = await updateTariff(updateData, transactionalEntityManager);
-        }
+        updatedTariff = await updateTariff(updateData, transactionalEntityManager);
       }
     });
     return {
