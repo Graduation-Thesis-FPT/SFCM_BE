@@ -14,6 +14,7 @@ import {
   getTariffByTemplate,
   getTariffTemp,
   isMatchTariff,
+  isMatchTariffUpdate,
   updateTariff,
 } from '../repositories/tariff.repo';
 import { findTariffTemp } from '../repositories/tariff-temp.repo';
@@ -108,16 +109,13 @@ class TariffService {
             }
           }
 
-          const isMatch = await isMatchTariff(
+          const isMatch = await isMatchTariffUpdate(
             data.TRF_CODE,
             data.METHOD_CODE,
             data.ITEM_TYPE_CODE,
-            data.TRF_TEMP_CODE,
           );
           if (isMatch) {
-            throw new BadRequestError(
-              `Biểu cước ${data.TRF_CODE} đã tồn tại trong mẫu ${data.TRF_TEMP_CODE}`,
-            );
+            throw new BadRequestError(`Biểu cước ${data.TRF_CODE} đã tồn tại trong mẫu`);
           }
 
           processTariff(data);

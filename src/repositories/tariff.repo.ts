@@ -58,6 +58,19 @@ const isMatchTariff = async (
     .getOne();
 };
 
+const isMatchTariffUpdate = async (
+  tariffCode: string,
+  methodCode: string,
+  itemTypeCode: string,
+) => {
+  return await tariffRepository
+    .createQueryBuilder('tariff')
+    .where('tariff.TRF_CODE = :tariffCode', { tariffCode: tariffCode })
+    .andWhere('tariff.METHOD_CODE = :methodCode', { methodCode: methodCode })
+    .andWhere('tariff.ITEM_TYPE_CODE = :itemTypeCode', { itemTypeCode: itemTypeCode })
+    .getOne();
+};
+
 const isDuplicateTariff = async (trfTemp: string) => {
   return await tariffRepository
     .createQueryBuilder('tariff')
@@ -109,4 +122,5 @@ export {
   isDuplicateTariff,
   isDuplicateTariffTemp,
   getTariffDates,
+  isMatchTariffUpdate,
 };
