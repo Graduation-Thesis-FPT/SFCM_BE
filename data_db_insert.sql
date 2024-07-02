@@ -67,4 +67,5 @@ VALUES
 
 INSERT INTO SA_USER (ROLE_CODE, USER_NAME,CREATE_BY,UPDATE_BY)
 VALUES ('admin','superadmin','sql','sql'),
-VALUES ('procedure-staff','vusiphu','sql','sql')
+('procedure-staff','vusiphu','sql','sql')
+
