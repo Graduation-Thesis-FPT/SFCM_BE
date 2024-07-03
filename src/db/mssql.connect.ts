@@ -10,7 +10,6 @@ import { MethodEntity } from '../entity/method.entity';
 import { Cell } from '../entity/cell.entity';
 import { Block } from '../entity/block.entity';
 import { ItemType } from '../entity/item-type.entity';
-import { UnitType } from '../entity/unit.entity';
 import { CustomerType } from '../entity/customer-type.entity';
 import { Customer } from '../entity/customer.entity';
 import { Vessel } from '../entity/vessel.entity';
@@ -23,6 +22,7 @@ import { TariffEntity } from '../entity/tariff.entity';
 import { TariffTempEntity } from '../entity/tariff-temp.entity';
 import { ConfigAttachSrvEntity } from '../entity/config-attach-srv.entity';
 import { DiscountTariffEntity } from '../entity/discount-tariff.entity';
+import { PackageUnit } from '../entity/packge-unit.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -43,7 +43,7 @@ const mssqlConnection = new DataSource({
     MethodEntity,
     Block,
     ItemType,
-    UnitType,
+    PackageUnit,
     CustomerType,
     Customer,
     Vessel,
