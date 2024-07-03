@@ -12,7 +12,7 @@ import equipmentRouter from './equipment/index';
 import methodRouter from './method/index';
 import blockRouter from './block/index';
 import itemTypeRouter from './item-type/index';
-import unitRouter from './unit/index';
+import packageUnitRouter from './package-unit/index';
 import customerTypeRouter from './customer-type/index';
 import customerRouter from './customer/index';
 import vesselRouter from './vessel/index';
@@ -54,8 +54,8 @@ routes.use('/api/v1/block', blockRouter);
 //item-type
 routes.use('/api/v1/item-type', itemTypeRouter);
 
-//unit
-routes.use('/api/v1/unit', unitRouter);
+//package-unit
+routes.use('/api/v1/package-unit', packageUnitRouter);
 
 // customer
 routes.use('/api/v1/customer-type', customerTypeRouter);
