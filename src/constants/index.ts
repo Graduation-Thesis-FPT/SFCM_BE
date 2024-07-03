@@ -214,26 +214,28 @@ export const dbColumns: any = {
   //equidment
   EQU_TYPE: 'Mã thiết bị',
   EQU_TYPE_NAME: 'Tên thiết bị',
-  EQU_CODE: 'Mã thiết bị *',
+  EQU_CODE: 'Mã thiết bị',
   EQU_CODE_NAME: 'Tên thiết bị',
   //method
-  METHOD_CODE: 'Mã phương án *',
-  METHOD_NAME: 'Tên phương án *',
-  IS_IN_OUT: 'Trạng thái',
-  IS_SERVICE: 'Dịch vụ',
+  METHOD_CODE: 'mã phương án',
+  METHOD_NAME: 'tên phương án',
+  IS_IN_OUT: 'trạng thái',
+  IS_SERVICE: 'dịch vụ',
   //gate
-  GATE_CODE: 'Mã cổng',
-  GATE_NAME: 'Tên cổng',
+  GATE_CODE: 'mã cổng',
+  GATE_NAME: 'tên cổng',
+  //package-unit
+  PACKAGE_UNIT_CODE: 'mã đơn vị',
 
   // customer type
-  CUSTOMER_TYPE_CODE: 'Mã loại khách hàng',
-  CUSTOMER_TYPE_NAME: 'Tên loại khách hàng',
+  CUSTOMER_TYPE_CODE: 'mã loại khách hàng',
+  CUSTOMER_TYPE_NAME: 'tên loại khách hàng',
 
   // customer
-  CUSTOMER_CODE: 'Mã khách hàng',
+  CUSTOMER_CODE: 'mã khách hàng',
 
   // vessel
-  VOYAGEKEY: 'Mã tàu',
+  VOYAGEKEY: 'mã tàu',
 
   //
   ITEM_TYPE_CODE: 'mã loại hàng hóa',

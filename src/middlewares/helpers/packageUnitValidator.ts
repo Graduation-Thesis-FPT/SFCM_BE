@@ -41,7 +41,7 @@ const validatePackageUnitRequest = (req: Request, res: Response, next: NextFunct
       }
     }
   }
-  if (insert) checkDuplicatedID(insert, ['PACKAGE_UNIT_CODE', 'PACKAGE_UNIT_NAME'], 'Thêm mới');
+  if (insert) checkDuplicatedID(insert, ['PACKAGE_UNIT_CODE'], 'Thêm mới');
 
   res.locals.requestData = req.body;
   next();

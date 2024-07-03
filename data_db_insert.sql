@@ -16,7 +16,7 @@ VALUES
 ('generic-list','equipment-list',N'Danh mục thiết bị',NULL,1,205,'EquipmentList','sql','sql'),
 ('generic-list','method-list',N'Danh mục phương án',NULL,1,206,'MethodList','sql','sql'),
 ('generic-list','item-type',N'Danh mục loại hàng hóa',NULL,1,207,'ItemType','sql','sql'),
-('generic-list','unit-list',N'Danh mục đơn vị tính',NULL,1,208,'UnitList','sql','sql'),
+('generic-list','package-unit-list',N'Danh mục đơn vị ',NULL,1,208,'PackageUnitList','sql','sql'),
 ('generic-list','customer-type',N'Danh mục loại khách hàng',NULL,1,209,'CustomerType','sql','sql'),
 ('generic-list','customer-list',N'Danh mục khách hàng',NULL,1,210,'CustomerList','sql','sql'),
 (NULL,'input-data',N'Dữ liệu đầu vào','FolderInput',1,300,NULL,'sql','sql'),
@@ -40,7 +40,7 @@ VALUES
 ('admin','warehouse-design',1,1,1,1,'sql','sql'),
 ('admin','method-list',1,1,1,1,'sql','sql'),
 ('admin','item-type',1,1,1,1,'sql','sql'),
-('admin','unit-list',1,1,1,1,'sql','sql'),
+('admin','package-unit-list',1,1,1,1,'sql','sql'),
 ('admin','customer-type',1,1,1,1,'sql','sql'),
 ('admin','customer-list',1,1,1,1,'sql','sql'),
 ('admin','vessel-info',1,1,1,1,'sql','sql'),
@@ -58,7 +58,7 @@ VALUES
 ('procedure-staff','warehouse-design',1,1,1,1,'sql','sql'),
 ('procedure-staff','method-list',1,1,1,1,'sql','sql'),
 ('procedure-staff','item-type',1,1,1,1,'sql','sql'),
-('procedure-staff','unit-list',1,1,1,1,'sql','sql'),
+('procedure-staff','package-unit-list',1,1,1,1,'sql','sql'),
 ('procedure-staff','customer-type',1,1,1,1,'sql','sql'),
 ('procedure-staff','customer-list',1,1,1,1,'sql','sql')
 
