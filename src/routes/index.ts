@@ -23,6 +23,7 @@ import tariffCodeRouter from './tariff-code/index';
 import tariffRouter from './tariff/index';
 import tariffTempRouter from './tariff-temp/index';
 import configAttachSrvRouter from './config-attach-srv/index';
+import discountTariffRouter from './discount-tariff/index';
 
 const routes = Router();
 
@@ -78,5 +79,8 @@ routes.use('/api/v1/tariff', tariffRouter);
 routes.use('/api/v1/tariff-temp', tariffTempRouter);
 
 routes.use('/api/v1/config-attach-srv', configAttachSrvRouter);
+
+// discount tariff
+routes.use('/api/v1/discount-tariff', discountTariffRouter);
 
 export default routes;

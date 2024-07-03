@@ -22,6 +22,7 @@ import { TariffCodeEntity } from '../entity/tariff-code.entity';
 import { TariffEntity } from '../entity/tariff.entity';
 import { TariffTempEntity } from '../entity/tariff-temp.entity';
 import { ConfigAttachSrvEntity } from '../entity/config-attach-srv.entity';
+import { DiscountTariffEntity } from '../entity/discount-tariff.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -53,6 +54,7 @@ const mssqlConnection = new DataSource({
     TariffEntity,
     TariffTempEntity,
     ConfigAttachSrvEntity,
+    DiscountTariffEntity,
   ],
   options: {
     encrypt: false,

@@ -22,9 +22,7 @@ const validateInsertCustomer = (data: Customer) => {
     EMAIL: Joi.string().trim().email().messages({
       'string.email': 'Email phải hợp lệ',
     }),
-    IS_ACTIVE: Joi.boolean().required().messages({
-      'any.required': 'Trạng thái không được để trống #thêm',
-    }),
+    IS_ACTIVE: Joi.boolean(),
   });
 
   return customerSchema.validate(data);

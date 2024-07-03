@@ -8,6 +8,7 @@ const validateInsertCustomerType = (data: CustomerType) => {
   const customerTypeSchema = Joi.object({
     CUSTOMER_TYPE_CODE: Joi.string().uppercase().trim().required().messages({
       'any.required': 'Mã loại khách hàng không được để trống #thêm',
+      'string.empty': 'Mã loại khách hàng không được để trống #thêm',
     }),
     CUSTOMER_TYPE_NAME: Joi.string().trim().required().messages({
       'any.required': 'Tên loại khách hàng không được để trống #thêm',
