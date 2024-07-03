@@ -28,16 +28,14 @@ const validateInsertDiscountTariff = (data: DiscountTariff) => {
     TRF_DESC: Joi.string().trim().allow('').messages({
       'string.empty': 'Mô tả mã biểu cước không được để trống #thêm',
     }),
-    AMT_CBM: Joi.number().min(0).positive().required().messages({
+    AMT_CBM: Joi.number().min(0).required().messages({
       'any.required': 'Tổng tiền không được để trống #thêm',
       'number.min': 'Tổng tiền phải là số dương #thêm',
       'number.base': 'Tổng tiền phải là một số #thêm',
-      'number.positive': 'Tổng tiền phải là số dương #thêm',
     }),
-    VAT: Joi.number().min(0).positive().allow('').messages({
-      'number.min': 'Thuế VAT phải là số dương #thêm',
-      'number.base': 'Thuế VAT phải là một số #thêm',
-      'number.positive': 'Thuế VAT phải là số dương #thêm',
+    VAT: Joi.number().min(0).allow('').messages({
+      'number.min': 'VAT phải là số dương #thêm',
+      'number.base': 'VAT phải là một số #thêm',
     }),
     INCLUDE_VAT: Joi.boolean(),
   });
@@ -71,8 +69,8 @@ const validateUpdateDiscountTariff = (data: DiscountTariff) => {
       'number.base': 'Tổng tiền phải là một số #cập nhật',
     }),
     VAT: Joi.number().min(0).allow('').messages({
-      'number.min': 'Thuế VAT phải là số dương #cập nhật',
-      'number.base': 'Thuế VAT phải là một số #cập nhật',
+      'number.min': 'VAT phải là số dương #cập nhật',
+      'number.base': 'VAT phải là một số #cập nhật',
     }),
     INCLUDE_VAT: Joi.boolean(),
   });

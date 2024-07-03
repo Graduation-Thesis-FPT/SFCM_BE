@@ -25,7 +25,7 @@ const validateInsertTariff = (data: Tariff) => {
       'number.min': 'Tổng tiền phải là số dương #thêm',
     }),
     VAT: Joi.number().min(0).allow('').messages({
-      'number.min': 'Thuế VAT phải là số dương #thêm',
+      'number.min': 'VAT phải là số dương #thêm',
     }),
     INCLUDE_VAT: Joi.boolean(),
     TRF_TEMP_CODE: Joi.string().required().trim().allow('').messages({
@@ -60,8 +60,8 @@ const validateUpdateTariff = (data: Tariff) => {
       'number.base': 'Tổng tiền phải là một số #cập nhật',
     }),
     VAT: Joi.number().min(0).allow('').messages({
-      'number.min': 'Thuế VAT phải là số dương #cập nhật',
-      'number.base': 'Thuế VAT phải là một số #cập nhật',
+      'number.min': 'VAT phải là số dương #cập nhật',
+      'number.base': 'VAT phải là một số #cập nhật',
     }),
     INCLUDE_VAT: Joi.boolean(),
   });
