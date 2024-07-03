@@ -29,7 +29,7 @@ class TariffCodeService {
     await manager.transaction(async transactionalEntityManager => {
       if (insertData) {
         for (const data of insertData) {
-          const checkExist = await findTariffCodeByCode(data.TRF_CODE);
+          const checkExist = await findTariffCodeByCode(data.TRF_CODE, transactionalEntityManager);
 
           if (checkExist) {
             throw new BadRequestError(`Mã biểu cước ${data.TRF_CODE} đã tồn tại`);
@@ -42,7 +42,7 @@ class TariffCodeService {
 
       if (updateData) {
         for (const data of updateData) {
-          const checkExist = await findTariffCodeByCode(data.TRF_CODE);
+          const checkExist = await findTariffCodeByCode(data.TRF_CODE, transactionalEntityManager);
 
           if (!checkExist) {
             throw new BadRequestError(`Mã biểu cước ${data.TRF_CODE} không hợp lệ`);

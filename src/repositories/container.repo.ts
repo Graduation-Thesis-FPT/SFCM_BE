@@ -26,9 +26,12 @@ const updateContainer = async (
   );
 };
 
-const findContainerByRowid = async (containerCode: string) => {
-  return await containerRepository
-    .createQueryBuilder('container')
+const findContainerByRowid = async (
+  containerCode: string,
+  transactionalEntityManager: EntityManager,
+) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(ContainerEntity, 'container')
     .where('container.ROWGUID = :containerCode', { containerCode: containerCode })
     .getOne();
 };
@@ -54,12 +57,34 @@ const filterContainer = async (rule: any) => {
   });
 };
 
-const isUniqueContainer = async (voyagekey: string, cntrno: string) => {
-  return await containerRepository
-    .createQueryBuilder('container')
+const isUniqueContainer = async (
+  voyagekey: string,
+  cntrno: string,
+  transactionalEntityManager: EntityManager,
+) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(ContainerEntity, 'container')
+    .leftJoin('DT_VESSEL_VISIT', 'sp', 'sm.VOYAGEKEY = sp.VOYAGEKEY')
     .where('container.VOYAGEKEY = :voyagekey', { voyagekey: voyagekey })
     .andWhere('container.CNTRNO = :cntrno', { cntrno: cntrno })
     .getOne();
+};
+
+const isDuplicateContainer = async (
+  voyageKey: string,
+  cntrNo: string,
+  transactionalEntityManager: EntityManager,
+) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(ContainerEntity, 'container') // Assuming 'container' maps to DT_CNTR_MNF_LD
+    .select('container.VOYAGEKEY', 'VOYAGEKEY')
+    .addSelect('container.CNTRNO', 'CNTRNO')
+    .leftJoin('DT_VESSEL_VISIT', 'vesselVisit', 'container.VOYAGEKEY = vesselVisit.VOYAGEKEY')
+    .addSelect('vesselVisit.VESSEL_NAME', 'VESSEL_NAME')
+    .addSelect('vesselVisit.ETA', 'ETA')
+    .where('container.VOYAGEKEY = :voyageKey', { voyageKey })
+    .andWhere('container.CNTRNO = :cntrNo', { cntrNo })
+    .getRawMany(); // To get a flat structure similar to SQL query result
 };
 
 export {
@@ -70,4 +95,5 @@ export {
   deleteContainerMany,
   findContainer,
   isUniqueContainer,
+  isDuplicateContainer,
 };

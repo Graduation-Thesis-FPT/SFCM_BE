@@ -17,6 +17,7 @@ const validateInsertContainer = (data: Container) => {
     CNTRSZTP: Joi.string().max(5).trim().required().messages({
       'any.required': 'Kích cỡ container không được để trống #thêm',
       'string.max': 'Kích cỡ container chỉ tối đa 5 ký tự #thêm',
+      'string.empty': 'Kích cỡ container không được để trống #thêm',
     }),
     STATUSOFGOOD: Joi.boolean(),
     ITEM_TYPE_CODE: Joi.string().trim().required().messages({

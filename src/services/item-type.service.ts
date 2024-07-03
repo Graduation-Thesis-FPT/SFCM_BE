@@ -21,7 +21,10 @@ class ItemTypeService {
     await manager.transaction(async transactionEntityManager => {
       if (insertData.length) {
         for (const data of insertData) {
-          const checkExist = await findItemTypeByCode(data.ITEM_TYPE_CODE);
+          const checkExist = await findItemTypeByCode(
+            data.ITEM_TYPE_CODE,
+            transactionEntityManager,
+          );
 
           if (checkExist) {
             throw new BadRequestError(`Mã loại hàng hóa ${data.ITEM_TYPE_CODE} đã tồn tại`);
@@ -36,15 +39,16 @@ class ItemTypeService {
 
       if (updateData.length) {
         for (const data of updateData) {
-          const checkExist = await findItemTypeByCode(data.ITEM_TYPE_CODE);
+          const checkExist = await findItemTypeByCode(
+            data.ITEM_TYPE_CODE,
+            transactionEntityManager,
+          );
 
           if (!checkExist) {
             throw new BadRequestError(`Mã loại hàng hóa ${data.ITEM_TYPE_CODE} không tồn tại`);
           }
-          data.CREATE_BY = createBy.ROWGUID;
           data.UPDATE_BY = createBy.ROWGUID;
           data.UPDATE_DATE = new Date();
-          data.CREATE_DATE = new Date();
         }
         updatedItemType = await updateItemType(updateData, transactionEntityManager);
       }

@@ -48,9 +48,10 @@ const isMatchTariff = async (
   methodCode: string,
   itemTypeCode: string,
   templateCode: string,
+  transactionalEntityManager: EntityManager,
 ) => {
-  return await tariffRepository
-    .createQueryBuilder('tariff')
+  return await transactionalEntityManager
+    .createQueryBuilder(TariffEntity, 'tariff')
     .where('tariff.TRF_CODE = :tariffCode', { tariffCode: tariffCode })
     .andWhere('tariff.METHOD_CODE = :methodCode', { methodCode: methodCode })
     .andWhere('tariff.ITEM_TYPE_CODE = :itemTypeCode', { itemTypeCode: itemTypeCode })

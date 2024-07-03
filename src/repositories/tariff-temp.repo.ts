@@ -37,9 +37,12 @@ const deleteTariffTemp = async (tariffTempCode: string[]) => {
   return await tariffTempCodeRepository.delete(tariffTempCode);
 };
 
-const findTariffTemp = async (tariffTempCode: string) => {
-  return await tariffTempCodeRepository
-    .createQueryBuilder('tariffTempCode')
+const findTariffTemp = async (
+  tariffTempCode: string,
+  transactionalEntityManager: EntityManager,
+) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(TariffTempEntity, 'tariffTempCode')
     .where('tariffTempCode.TRF_TEMP_CODE = :tariffTempCode', { tariffTempCode: tariffTempCode })
     .getOne();
 };

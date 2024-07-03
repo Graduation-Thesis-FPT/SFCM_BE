@@ -37,7 +37,7 @@ class VesselService {
             vesselInfo.INBOUND_VOYAGE,
             vesselInfo.ETA,
           );
-          const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY);
+          const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY, transactionalEntityManager);
           if (vessel) {
             throw new BadRequestError(`Mã tàu ${vessel.VOYAGEKEY} đã tồn tại`);
           }
@@ -49,7 +49,7 @@ class VesselService {
 
       if (updateData) {
         for (const vesselInfo of updateData) {
-          const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY);
+          const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY, transactionalEntityManager);
           if (!vessel) {
             throw new BadRequestError(`Mã tàu ${vesselInfo.VOYAGEKEY} không hợp lệ`);
           }

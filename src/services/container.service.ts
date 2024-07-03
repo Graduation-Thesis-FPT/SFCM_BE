@@ -11,7 +11,7 @@ import {
   filterContainer,
   findContainer,
   findContainerByRowid,
-  isUniqueContainer,
+  isDuplicateContainer,
   updateContainer,
 } from '../repositories/container.repo';
 
@@ -23,35 +23,32 @@ class ContainerService {
     let newCreatedContainer: Container[] = [];
     let newUpdatedContainer;
 
-    const processContainer = (containerInfo: Container) => {
-      if (containerInfo.BILLOFLADING === '') containerInfo.BILLOFLADING = null;
-      if (containerInfo.SEALNO === '') containerInfo.SEALNO = null;
-      if (containerInfo.COMMODITYDESCRIPTION === '') containerInfo.COMMODITYDESCRIPTION = null;
-      containerInfo.CREATE_BY = createBy.ROWGUID;
-      containerInfo.UPDATE_BY = createBy.ROWGUID;
-      containerInfo.UPDATE_DATE = new Date();
-    };
-
     await manager.transaction(async transactionalEntityManager => {
       if (insertData) {
         for (const containerInfo of insertData) {
-          const isDuplicated = await isUniqueContainer(
+          const container = await isDuplicateContainer(
             containerInfo.VOYAGEKEY,
             containerInfo.CNTRNO,
+            transactionalEntityManager,
           );
 
-          if (isDuplicated) {
+          if (container.length > 0) {
             throw new BadRequestError(
-              `Số container ${containerInfo.CNTRNO} đã tồn tại trên tàu ${containerInfo.VOYAGEKEY}`,
+              `Số container ${containerInfo.CNTRNO} đã tồn tại trên tàu ${container[0].VESSEL_NAME}`,
             );
           }
-
-          const isContainerExist = await findVesselByCode(containerInfo.VOYAGEKEY);
+          const isContainerExist = await findVesselByCode(
+            containerInfo.VOYAGEKEY,
+            transactionalEntityManager,
+          );
           if (!isContainerExist) {
             throw new BadRequestError(`Mã tàu ${containerInfo.VOYAGEKEY} không tồn tại`);
           }
 
-          const isValidItemTypeCode = await findItemTypeByCode(containerInfo.ITEM_TYPE_CODE);
+          const isValidItemTypeCode = await findItemTypeByCode(
+            containerInfo.ITEM_TYPE_CODE,
+            transactionalEntityManager,
+          );
 
           if (!isValidItemTypeCode) {
             throw new BadRequestError(
@@ -59,13 +56,22 @@ class ContainerService {
             );
           }
 
-          const isValidCustomerCode = await findCustomerByCode(containerInfo.CONSIGNEE);
+          const isValidCustomerCode = await findCustomerByCode(
+            containerInfo.CONSIGNEE,
+            transactionalEntityManager,
+          );
 
           if (!isValidCustomerCode) {
             throw new BadRequestError(`Mã loại khách hàng ${containerInfo.CONSIGNEE} không hợp lệ`);
           }
 
-          processContainer(containerInfo);
+          if (containerInfo.BILLOFLADING === '') containerInfo.BILLOFLADING = null;
+          if (containerInfo.SEALNO === '') containerInfo.SEALNO = null;
+          if (containerInfo.COMMODITYDESCRIPTION === '') containerInfo.COMMODITYDESCRIPTION = null;
+          containerInfo.CREATE_BY = createBy.ROWGUID;
+          containerInfo.CREATE_DATE = new Date();
+          containerInfo.UPDATE_BY = createBy.ROWGUID;
+          containerInfo.UPDATE_DATE = new Date();
         }
 
         newCreatedContainer = await createContainer(insertData, transactionalEntityManager);
@@ -73,7 +79,10 @@ class ContainerService {
 
       if (updateData) {
         for (const containerInfo of updateData) {
-          const container = await findContainerByRowid(containerInfo.ROWGUID);
+          const container = await findContainerByRowid(
+            containerInfo.ROWGUID,
+            transactionalEntityManager,
+          );
           if (!container) {
             throw new BadRequestError(`Mã container ${containerInfo.ROWGUID} không hợp lệ`);
           }
@@ -84,18 +93,21 @@ class ContainerService {
             );
           }
 
-          // const isDuplicated = await isUniqueContainer(
-          //   containerInfo.VOYAGEKEY,
-          //   containerInfo.CNTRNO,
-          // );
+          const containerData = await isDuplicateContainer(
+            containerInfo.VOYAGEKEY,
+            containerInfo.CNTRNO,
+            transactionalEntityManager,
+          );
 
-          // if (isDuplicated) {
-          //   throw new BadRequestError(
-          //     `Không thể cập nhật số container ${containerInfo.CNTRNO} đã tồn tại trên tàu ${containerInfo.VOYAGEKEY}`,
-          //   );
-          // }
-
-          const isValidItemTypeCode = await findItemTypeByCode(containerInfo.ITEM_TYPE_CODE);
+          if (containerData.length > 0) {
+            throw new BadRequestError(
+              `Số container ${containerInfo.CNTRNO} đã tồn tại trên tàu ${containerData[0].VESSEL_NAME}`,
+            );
+          }
+          const isValidItemTypeCode = await findItemTypeByCode(
+            containerInfo.ITEM_TYPE_CODE,
+            transactionalEntityManager,
+          );
 
           if (!isValidItemTypeCode) {
             throw new BadRequestError(
@@ -103,13 +115,20 @@ class ContainerService {
             );
           }
 
-          const isValidCustomerCode = await findCustomerByCode(containerInfo.CONSIGNEE);
+          const isValidCustomerCode = await findCustomerByCode(
+            containerInfo.CONSIGNEE,
+            transactionalEntityManager,
+          );
 
           if (!isValidCustomerCode) {
             throw new BadRequestError(`Mã loại khách hàng ${containerInfo.CONSIGNEE} không hợp lệ`);
           }
 
-          processContainer(containerInfo);
+          if (containerInfo.BILLOFLADING === '') containerInfo.BILLOFLADING = null;
+          if (containerInfo.SEALNO === '') containerInfo.SEALNO = null;
+          if (containerInfo.COMMODITYDESCRIPTION === '') containerInfo.COMMODITYDESCRIPTION = null;
+          containerInfo.UPDATE_BY = createBy.ROWGUID;
+          containerInfo.UPDATE_DATE = new Date();
         }
 
         newUpdatedContainer = await updateContainer(updateData, transactionalEntityManager);
@@ -139,6 +158,7 @@ class ContainerService {
     return await deleteContainerMany(containerRowIdList);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static getAllContainer = async (rule: any) => {
     return await filterContainer(rule);
   };
