@@ -17,9 +17,12 @@ const deleteItemtype = async (itemTypeListId: string[]) => {
   return await itemTypeRepository.delete(itemTypeListId);
 };
 
-const findItemTypeByCode = async (ITEM_TYPE_CODE: string) => {
-  return await itemTypeRepository
-    .createQueryBuilder('item')
+const findItemTypeByCode = async (
+  ITEM_TYPE_CODE: string,
+  transactionEntityManager: EntityManager,
+) => {
+  return await transactionEntityManager
+    .createQueryBuilder(ItemTypeEntity, 'item')
     .where('item.ITEM_TYPE_CODE = :ITEM_TYPE_CODE', { ITEM_TYPE_CODE: ITEM_TYPE_CODE })
     .getOne();
 };
