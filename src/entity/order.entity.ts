@@ -49,7 +49,7 @@ export class OrderEntity extends Model {
 
   @Column()
   @IsNotEmpty()
-  GATE_CHK: boolean;
+  JOB_CHK: boolean;
 
   @Column()
   COMMODITYDESCRIPTION: string;

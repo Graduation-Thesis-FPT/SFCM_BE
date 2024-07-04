@@ -14,6 +14,6 @@ export interface Order extends Base {
   NOTE: string;
   DRAFT_NO: string;
   INV_NO: string;
-  GATE_CHK: boolean;
+  JOB_CHK: boolean;
   COMMODITYDESCRIPTION: string;
 }
