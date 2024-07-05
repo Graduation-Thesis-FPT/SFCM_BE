@@ -29,11 +29,16 @@ class JobQuantityCheckController {
   };
 
   insertAndUpdateJobQuantityCheck = async (req: Request, res: Response) => {
+    const { PACKAGE_ID } = req.params;
     const listData = req.body;
     const createBy = res.locals.user;
     new SuccessResponse({
       message: SUCCESS_MESSAGE.SAVE_JOB_QUANTITY_CHECK_SUCCESS,
-      metadata: await JobQuantityCheckService.insertAndUpdateJobQuantityCheck(listData, createBy),
+      metadata: await JobQuantityCheckService.insertAndUpdateJobQuantityCheck(
+        listData,
+        createBy,
+        PACKAGE_ID,
+      ),
     }).send(res);
   };
 }

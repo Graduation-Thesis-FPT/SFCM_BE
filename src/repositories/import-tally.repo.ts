@@ -79,14 +79,6 @@ export const getAllJobQuantityCheckByPACKAGE_ID = async (PACKAGE_ID: string) => 
     .getRawMany();
 };
 
-export const insertJobQuantityCheck = async (
-  listData: JobQuantityCheckModel[],
-  transactionalEntityManager: EntityManager,
-) => {
-  const createData = tbJobQuantityCheck.create(listData);
-  return await transactionalEntityManager.save(createData);
-};
-
 export const insertJobAndPallet = async (
   listData: any,
   transactionalEntityManager: EntityManager,
@@ -129,14 +121,6 @@ export const updateJobQuantityCheck = async (
   );
 };
 
-export const insertPalletStock = async (
-  listData: JobQuantityCheckModel[],
-  transactionalEntityManager: EntityManager,
-) => {
-  const createData = tbPalletStock.create(listData);
-  return await transactionalEntityManager.save(createData);
-};
-
 export const updatePalletStock = async (
   listData: PalletModel[],
   transactionalEntityManager: EntityManager,
@@ -159,4 +143,24 @@ export const checkJobQuantityIdExist = async (ROWGUID: string) => {
 
 export const checkPalletNoExist = async (PALLET_NO: string) => {
   return await tbPalletStock.findOne({ where: { PALLET_NO: PALLET_NO } });
+};
+
+export const checkEstimatedCargoPieceIsValid = async (
+  PACKAGE_ID: string,
+  transactionalEntityManager: EntityManager,
+) => {
+  const sum = await transactionalEntityManager
+    .createQueryBuilder(JobQuantityCheckEntity, 'job')
+    .select('SUM(job.ESTIMATED_CARGO_PIECE) as sum')
+    .where('job.PACKAGE_ID = :package_id', { package_id: PACKAGE_ID })
+    .getRawOne();
+  const actual = await transactionalEntityManager
+    .createQueryBuilder(PackageEntity, 'pk')
+    .select('SUM(pk.CARGO_PIECE) as acctual')
+    .where('pk.ROWGUID = :id', { id: PACKAGE_ID })
+    .getRawOne();
+  if (sum.sum > actual.acctual) {
+    return false;
+  }
+  return true;
 };

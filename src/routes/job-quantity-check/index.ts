@@ -21,7 +21,7 @@ router.get(
 );
 
 router.post(
-  '/',
+  '/:PACKAGE_ID',
   asyncHandler(grantPermission),
   asyncHandler(jobQuantityCheckController.insertAndUpdateJobQuantityCheck),
 );

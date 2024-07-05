@@ -4,13 +4,13 @@ import {
   getAllImportTallyContainer,
   getAllJobQuantityCheckByPACKAGE_ID,
   getImportTallyContainerInfoByCONTAINER_ID,
-  insertJobQuantityCheck,
   checkPackageIdExist,
   checkJobQuantityIdExist,
   updateJobQuantityCheck,
   updatePalletStock,
   checkPalletNoExist,
   insertJobAndPallet,
+  checkEstimatedCargoPieceIsValid,
 } from '../repositories/import-tally.repo';
 import { manager } from '../repositories/index.repo';
 
@@ -27,7 +27,11 @@ class JobQuantityCheckService {
     return await getAllJobQuantityCheckByPACKAGE_ID(PACKAGE_ID);
   };
 
-  static insertAndUpdateJobQuantityCheck = async (listData: any, createBy: User) => {
+  static insertAndUpdateJobQuantityCheck = async (
+    listData: any,
+    createBy: User,
+    PACKAGE_ID: string,
+  ) => {
     const insertData = listData.insert;
     const updateData = listData.update;
 
@@ -45,6 +49,7 @@ class JobQuantityCheckService {
           if (!isExist) {
             throw new BadRequestError(`Kiện hàng không tồn tại. Vui lòng kiểm tra lại`);
           }
+
           data.CREATE_BY = createBy.ROWGUID;
           data.UPDATE_BY = createBy.ROWGUID;
         }
@@ -91,6 +96,16 @@ class JobQuantityCheckService {
           updateJobQuantityCheck(dataJob, transactionalEntityManager),
           updatePalletStock(dataPallet, transactionalEntityManager),
         ]);
+      }
+
+      if (insertData.length || updateData.length) {
+        const isValid = await checkEstimatedCargoPieceIsValid(
+          PACKAGE_ID,
+          transactionalEntityManager,
+        );
+        if (!isValid) {
+          throw new BadRequestError(`Số lượng kiểm đếm không hợp lệ. Vui lòng kiểm tra lại`);
+        }
       }
     });
 
