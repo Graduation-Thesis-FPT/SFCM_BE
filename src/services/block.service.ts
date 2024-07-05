@@ -1,6 +1,4 @@
 import { BadRequestError } from '../core/error.response';
-import { isValidID } from '../utils';
-import { ERROR_MESSAGE } from '../constants';
 import { User } from '../entity/user.entity';
 import {
   checkDuplicateBlock,
@@ -13,7 +11,6 @@ import {
   getAllCell,
 } from '../repositories/block.repo';
 import { Block, BlockListInfo } from '../models/block.model';
-import { Cell } from '../models/cell.model';
 class BlockService {
   static createAndUpdateBlockAndCell = async (blockListInfo: BlockListInfo, createBy: User) => {
     const insertData = blockListInfo.insert;
@@ -26,10 +23,10 @@ class BlockService {
         const block = await isValidWarehouseCode(blockInfo.WAREHOUSE_CODE);
 
         if (!block) {
-          throw new BadRequestError(ERROR_MESSAGE.INVALID_WAREHOUSE_CODE);
+          throw new BadRequestError(`Kho ${blockInfo.WAREHOUSE_CODE} không tồn tại`);
         }
+
         const isDuplicateBlock = await checkDuplicateBlock(blockInfo.BLOCK_CODE);
-        console.log(isDuplicateBlock);
         if (isDuplicateBlock) {
           throw new BadRequestError(
             `Không thể thêm dãy ${blockInfo.BLOCK_NAME} ở kho ${blockInfo.WAREHOUSE_CODE} (Đã tồn tại)`,
@@ -45,7 +42,7 @@ class BlockService {
     }
 
     if (updateData.length) {
-      let cellArrStatus = await checkCellStatus(updateData.map(e => e.BLOCK_CODE));
+      const cellArrStatus = await checkCellStatus(updateData.map(e => e.BLOCK_CODE));
       if (cellArrStatus.length) {
         throw new BadRequestError(
           `Không thể cập nhật mã dãy ${cellArrStatus.map(e => e.BLOCK_CODE).join(', ')} đang hoạt động`,
@@ -66,7 +63,7 @@ class BlockService {
   };
 
   static deleteBlockNCell = async (blockListID: string[]) => {
-    let cellArrStatus = await checkCellStatus(blockListID);
+    const cellArrStatus = await checkCellStatus(blockListID);
     if (cellArrStatus.length) {
       throw new BadRequestError(
         `Không thể xóa mã dãy ${cellArrStatus.map(e => e.BLOCK_CODE).join(', ')} đang hoạt động`,

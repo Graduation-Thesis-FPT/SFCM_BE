@@ -8,14 +8,14 @@ import {
   updateWareHouse,
   findWarehouse,
 } from '../repositories/warehouse.repo';
-import { WareHouse, WareHouseInfo } from '../models/warehouse.model';
+import { WareHouseInfo } from '../models/warehouse.model';
 
 class WarehouseService {
   static createAndUpdateWarehouse = async (warehouseListInfo: WareHouseInfo, createBy: User) => {
-    let insertData = warehouseListInfo.insert;
-    let updateData = warehouseListInfo.update;
+    const insertData = warehouseListInfo.insert;
+    const updateData = warehouseListInfo.update;
 
-    let createdWarehouse;
+    let createdWarehouse = [];
     let updatedWarehouse;
     if (insertData.length) {
       for (const data of insertData) {

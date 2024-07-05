@@ -7,9 +7,9 @@ export class Cell extends Model {
   @PrimaryGeneratedColumn('uuid')
   ROWGUID: string;
 
-  @Column()
-  @IsNotEmpty()
-  WAREHOUSE_CODE: string;
+  // @Column()
+  // @IsNotEmpty()
+  // WAREHOUSE_CODE: string;
 
   @Column()
   @IsNotEmpty()

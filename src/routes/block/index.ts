@@ -11,7 +11,7 @@ router.use(authentication);
 
 router.post(
   '',
-  // asyncHandler(grantPermission),
+  asyncHandler(grantPermission),
   validateBlockRequest,
   asyncHandler(blockController.createAndUpdateBlock),
 );
