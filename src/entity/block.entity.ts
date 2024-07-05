@@ -29,5 +29,4 @@ export class Block extends Model {
 
   @Column()
   BLOCK_LENGTH: number;
-
 }

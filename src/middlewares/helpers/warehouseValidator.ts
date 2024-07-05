@@ -6,13 +6,16 @@ import { BadRequestError } from '../../core/error.response';
 const validateWarehouse = (data: WareHouse) => {
   const blockSchema = Joi.object({
     WAREHOUSE_CODE: Joi.string().uppercase().trim().required().messages({
-      'any.required': 'WAREHOUSE_CODE không được để trống',
+      'any.required': 'Mã kho không được để trống',
+      'string.empty': 'Mã kho không được để trống',
     }),
     WAREHOUSE_NAME: Joi.string().uppercase().trim().required().messages({
-      'any.required': 'WAREHOUSE_NAME không được để trống',
+      'any.required': 'Tên mã kho không được để trống',
     }),
-    ACREAGE: Joi.number().positive().messages({
-      'number.positive': 'Diện tích kho phải là số dương',
+    ACREAGE: Joi.number().required().positive().messages({
+      'number.positive': 'Diện tích kho phải lớn hơn 0',
+      'number.base': 'Diện tích kho không được để trống',
+      'number.empty': 'Diện tích kho không được để trống',
     }),
   });
 

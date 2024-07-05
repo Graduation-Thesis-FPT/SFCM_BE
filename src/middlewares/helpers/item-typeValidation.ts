@@ -7,10 +7,12 @@ import { ItemType } from '../../models/item-type.model';
 const validateItemType = (data: ItemType) => {
   const blockSchema = Joi.object({
     ITEM_TYPE_CODE: Joi.string().uppercase().trim().required().messages({
-      'any.required': `Mã loại hàng không được để trống`,
+      'any.required': `Mã loại hàng hóa không được để trống`,
+      'string.empty': `Mã loại hàng hóa không được để trống`,
     }),
     ITEM_TYPE_NAME: Joi.string().uppercase().trim().required().messages({
-      'any.required': 'Tên Loại hàng không được để trống',
+      'any.required': 'Tên Loại hàng hóa không được để trống',
+      'string.empty': 'Tên Loại hàng hóa không được để trống',
     }),
   });
 

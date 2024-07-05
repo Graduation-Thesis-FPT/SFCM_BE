@@ -4,7 +4,6 @@ import { Cell as CellEntity } from '../entity/cell.entity';
 import { Block } from '../models/block.model';
 import { warehouseRepository } from './warehouse.repo';
 import { Cell } from '../models/cell.model';
-import { boolean } from 'joi';
 import { EntityManager } from 'typeorm';
 
 export const blockRepository = mssqlConnection.getRepository(BlockEntity);
@@ -18,13 +17,13 @@ const checkDuplicateBlock = async (BLOCK_CODE: string) => {
 };
 
 const createBlockandCell = async (blockListInfo: Block[], statusCreateBlock: boolean = true) => {
-  let arrayCell: Cell[] = [];
+  const arrayCell: Cell[] = [];
   for (let i = 0; i < blockListInfo.length; i++) {
-    let blockInfo = blockListInfo[i];
+    const blockInfo = blockListInfo[i];
     for (let j = 0; j < blockInfo.SLOT_COUNT; j++) {
       for (let o = 0; o < blockInfo.TIER_COUNT; o++) {
         arrayCell.push({
-          WAREHOUSE_CODE: blockInfo.WAREHOUSE_CODE,
+          // WAREHOUSE_CODE: blockInfo.WAREHOUSE_CODE,
           BLOCK_CODE: blockInfo.BLOCK_CODE,
           TIER_ORDERED: o + 1,
           SLOT_ORDERED: j + 1,
@@ -74,7 +73,7 @@ const deleteBlockMany = async (blockListId: string[], statusDeleteBlock: boolean
 };
 
 const updateBlock = async (blockListInfo: Block[]) => {
-  let blockCode = blockListInfo.map(e => e.BLOCK_CODE);
+  const blockCode = blockListInfo.map(e => e.BLOCK_CODE);
   await deleteBlockMany(blockCode, false);
   await createBlockandCell(blockListInfo, false);
   return await Promise.all(
@@ -98,16 +97,24 @@ const isValidWarehouseCode = async (warehouseCode: string) => {
 };
 
 const getAllCell = async (WAREHOUSE_CODE: string = '', BLOCK_CODE: string = '') => {
-  let whereObj: any = {
-    WAREHOUSE_CODE: WAREHOUSE_CODE,
-  };
-  BLOCK_CODE != 'all' ? (whereObj['BLOCK_CODE'] = BLOCK_CODE) : '';
-  return await cellRepository.find({
-    order: {
-      UPDATE_DATE: 'DESC',
-    },
-    where: whereObj,
-  });
+  const queryBuilder = cellRepository
+    .createQueryBuilder('cell')
+    .select(['cell.*'])
+    .leftJoin('BS_BLOCK', 'block', 'block.BLOCK_CODE = cell.BLOCK_CODE')
+    .addSelect('block.BLOCK_NAME', 'BLOCK_NAME')
+    .addSelect('block.WAREHOUSE_CODE', 'WAREHOUSE_CODE');
+
+  if (BLOCK_CODE !== 'all') {
+    queryBuilder.andWhere('cell.BLOCK_CODE = :blockCode', { blockCode: BLOCK_CODE });
+  }
+
+  if (WAREHOUSE_CODE) {
+    queryBuilder.andWhere('block.WAREHOUSE_CODE = :warehouseCode', {
+      warehouseCode: WAREHOUSE_CODE,
+    });
+  }
+
+  return await queryBuilder.getRawMany();
 };
 
 const findBlockByCode = async (blockCode: string, transactionEntityManager: EntityManager) => {
