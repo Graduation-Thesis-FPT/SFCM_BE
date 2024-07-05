@@ -24,6 +24,7 @@ import tariffRouter from './tariff/index';
 import tariffTempRouter from './tariff-temp/index';
 import configAttachSrvRouter from './config-attach-srv/index';
 import discountTariffRouter from './discount-tariff/index';
+import jobQuantityCheckRouter from './job-quantity-check/index';
 
 const routes = Router();
 
@@ -82,5 +83,8 @@ routes.use('/api/v1/config-attach-srv', configAttachSrvRouter);
 
 // discount tariff
 routes.use('/api/v1/discount-tariff', discountTariffRouter);
+
+//deliver order
+routes.use('/api/v1/job-quantity-check', jobQuantityCheckRouter);
 
 export default routes;

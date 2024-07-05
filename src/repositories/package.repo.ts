@@ -53,7 +53,7 @@ const getPackage = async (refContainer: string) => {
     order: {
       UPDATE_DATE: 'DESC',
     },
-    where: { REF_CONTAINER: refContainer },
+    where: { CONTAINER_ID: refContainer },
   });
 };
 

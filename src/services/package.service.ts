@@ -17,7 +17,7 @@ class PackageService {
     const insertData = reqData.insert;
     const updateData = reqData.update;
 
-    let newCreated: Package[] = [];
+    let newCreated;
     let newUpdated;
 
     await manager.transaction(async transactionalEntityManager => {

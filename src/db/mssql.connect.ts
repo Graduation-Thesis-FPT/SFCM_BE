@@ -23,6 +23,9 @@ import { TariffTempEntity } from '../entity/tariff-temp.entity';
 import { ConfigAttachSrvEntity } from '../entity/config-attach-srv.entity';
 import { DiscountTariffEntity } from '../entity/discount-tariff.entity';
 import { PackageUnit } from '../entity/packge-unit.entity';
+import { DeliverOrderEntity } from '../entity/deliver-order.entity';
+import { JobQuantityCheckEntity } from '../entity/job-quantity-check.entity';
+import { PalletStockEntity } from '../entity/pallet-stock.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -55,6 +58,9 @@ const mssqlConnection = new DataSource({
     TariffTempEntity,
     ConfigAttachSrvEntity,
     DiscountTariffEntity,
+    DeliverOrderEntity,
+    JobQuantityCheckEntity,
+    PalletStockEntity,
   ],
   options: {
     encrypt: false,

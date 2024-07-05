@@ -2,38 +2,32 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import Model from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
-@Entity('DT_PACKAGE_MNF_LD')
-export class Package extends Model {
+@Entity('JOB_QUANTITY_CHECK')
+export class JobQuantityCheckEntity extends Model {
   @PrimaryGeneratedColumn('uuid')
   @IsNotEmpty()
   ROWGUID: string;
 
-  @IsNotEmpty()
   @Column()
-  PACKAGE_UNIT_CODE: string;
-
-  @IsNotEmpty()
-  @Column()
-  ITEM_TYPE_CODE: string;
-
-  @IsNotEmpty()
-  @Column()
-  CONTAINER_ID: string;
-
-  @IsNotEmpty()
-  @Column()
-  HOUSE_BILL: string;
+  PACKAGE_ID: string;
 
   @Column()
-  CARGO_PIECE: number;
+  ESTIMATED_CARGO_PIECE: number;
 
-  @IsNotEmpty()
   @Column()
-  CBM: number;
+  ACTUAL_CARGO_PIECE: number;
 
-  @IsNotEmpty()
   @Column()
-  DECLARE_NO: string;
+  SEQ: number;
+
+  @Column()
+  START_DATE: Date;
+
+  @Column()
+  FINISH_DATE: Date;
+
+  @Column()
+  JOB_STATUS: string;
 
   @Column()
   NOTE: string;
