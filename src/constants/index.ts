@@ -144,6 +144,10 @@ export const SUCCESS_MESSAGE = {
 
   //job-quantity-check
   SAVE_JOB_QUANTITY_CHECK_SUCCESS: 'SAVE_JOB_QUANTITY_CHECK_SUCCESS',
+
+  // pallet
+  UPDATE_PALLET_SUCCESS: 'UPDATE_PALLET_SUCCESS',
+  GET_PALLET_SUCCESS: 'GET_PALLET_SUCCESS',
 };
 
 export const REASON_PHRASES = {
@@ -204,6 +208,7 @@ export const REASON_PHRASES = {
   MISDIRECTED_REQUEST: 'MISDIRECTED_REQUEST',
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const dbColumns: any = {
   //warehouse
   WAREHOUSE_CODE: 'Mã kho',
