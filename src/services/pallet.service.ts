@@ -74,8 +74,8 @@ class PalletService {
     return groupPalletByBlock;
   };
 
-  static getPalletByStatus = async () => {
-    return await getPalletByStatus();
+  static getPalletByStatus = async (palletStatus: string) => {
+    return await getPalletByStatus(palletStatus);
   };
 }
 export default PalletService;

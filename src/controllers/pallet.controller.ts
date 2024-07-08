@@ -33,9 +33,10 @@ class palletController {
   };
 
   getPalletByStatus = async (req: Request, res: Response) => {
+    const palletStatus = req.query.palletStatus as string;
     new SuccessResponse({
       message: SUCCESS_MESSAGE.GET_PALLET_SUCCESS,
-      metadata: await PalletService.getPalletByStatus(),
+      metadata: await PalletService.getPalletByStatus(palletStatus),
     }).send(res);
   };
 }
