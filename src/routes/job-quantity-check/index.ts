@@ -14,22 +14,28 @@ router.get(
   asyncHandler(jobQuantityCheckController.getAllImportTallyContainer),
 );
 
+router.post(
+  '/import-tally/complete/:PACKAGE_ID',
+  asyncHandler(grantPermission),
+  asyncHandler(jobQuantityCheckController.completeJobQuantityCheckByPackageId),
+);
+
 router.get(
-  '/import-tally/:CONTAINER_ID',
+  '/import-tally/cont-info/:CONTAINER_ID',
   asyncHandler(grantPermission),
   asyncHandler(jobQuantityCheckController.getImportTallyContainerInfo),
 );
 
-router.post(
-  '/:PACKAGE_ID',
-  asyncHandler(grantPermission),
-  asyncHandler(jobQuantityCheckController.insertAndUpdateJobQuantityCheck),
-);
-
 router.get(
-  '/:PACKAGE_ID',
+  '/import-tally/:PACKAGE_ID',
   asyncHandler(grantPermission),
   asyncHandler(jobQuantityCheckController.getAllJobQuantityCheckByPACKAGE_ID),
+);
+
+router.post(
+  '/import-tally/:PACKAGE_ID',
+  asyncHandler(grantPermission),
+  asyncHandler(jobQuantityCheckController.insertAndUpdateJobQuantityCheck),
 );
 
 export default router;

@@ -6,6 +6,7 @@ import { Package as PackageEntity } from '../entity/package.entity';
 import { JobQuantityCheck as JobQuantityCheckModel } from '../models/job-quantity-check.model';
 import { PalletStockEntity } from '../entity/pallet-stock.entity';
 import { PalletModel } from '../models/pallet-stock.model';
+import moment from 'moment';
 
 const tbJobQuantityCheck = mssqlConnection.getRepository(JobQuantityCheckEntity);
 const tbDeliverOrder = mssqlConnection.getRepository(DeliverOrderEntity);
@@ -90,14 +91,15 @@ export const insertJobAndPallet = async (
       .into(JobQuantityCheckEntity)
       .values(data)
       .execute();
-
     const JOB_QUANTITY_ID = jobQuantityCheck.identifiers[0].ROWGUID;
-    const palletStock = await transactionalEntityManager
+
+    await transactionalEntityManager
       .createQueryBuilder()
       .insert()
       .into(PalletStockEntity)
       .values({
-        PALLET_NO: `${data.HOUSE_BILL}/${data.ESTIMATED_CARGO_PIECE}/${data.ACTUAL_CARGO_PIECE}/${data.SEQ}`,
+        PALLET_NO: `${data.HOUSE_BILL}/${moment().format('DD')}/${moment().format('MM')}/${moment().format('YYYY')}/${data.SEQ}`,
+        PALLET_STATUS: 'I',
         JOB_QUANTITY_ID: JOB_QUANTITY_ID,
         PALLET_HEIGHT: data.PALLET_HEIGHT,
         PALLET_LENGTH: data.PALLET_LENGTH,
@@ -132,6 +134,18 @@ export const updatePalletStock = async (
   );
 };
 
+export const completeJobQuantityCheckByPackageId = async (
+  PACKAGE_ID: string,
+  dataUpdate: any,
+  transactionalEntityManager: EntityManager,
+) => {
+  return await transactionalEntityManager.update(
+    JobQuantityCheckEntity,
+    { PACKAGE_ID: PACKAGE_ID },
+    dataUpdate,
+  );
+};
+
 //check
 export const checkPackageIdExist = async (PACKAGE_ID: string) => {
   return await tbPackage.findOne({ where: { ROWGUID: PACKAGE_ID } });
@@ -163,4 +177,30 @@ export const checkEstimatedCargoPieceIsValid = async (
     return false;
   }
   return true;
+};
+
+export const checkCanCompoleteJobQuantityCheck = async (PACKAGE_ID: string) => {
+  const sum = await tbJobQuantityCheck
+    .createQueryBuilder('job')
+    .select('SUM(job.ESTIMATED_CARGO_PIECE) as sum')
+    .where('job.PACKAGE_ID = :package_id', { package_id: PACKAGE_ID })
+    .andWhere('job.JOB_STATUS = :job_status', { job_status: 'I' })
+    .getRawOne();
+  const actual = await tbPackage
+    .createQueryBuilder('pk')
+    .select('SUM(pk.CARGO_PIECE) as acctual')
+    .where('pk.ROWGUID = :id', { id: PACKAGE_ID })
+    .getRawOne();
+  if (sum.sum === actual.acctual) {
+    return true;
+  }
+  return false;
+};
+
+export const checkSEQExist = async (PACKAGE_ID: string, SEQ: number) => {
+  return await tbJobQuantityCheck.findOne({ where: { PACKAGE_ID: PACKAGE_ID, SEQ: SEQ } });
+};
+
+export const checkJobStatus = async (ROWGUID: string, JOB_STATUS: string) => {
+  return await tbJobQuantityCheck.findOne({ where: { ROWGUID: ROWGUID, JOB_STATUS: JOB_STATUS } });
 };

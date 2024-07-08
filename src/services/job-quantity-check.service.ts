@@ -11,6 +11,10 @@ import {
   checkPalletNoExist,
   insertJobAndPallet,
   checkEstimatedCargoPieceIsValid,
+  completeJobQuantityCheckByPackageId,
+  checkSEQExist,
+  checkJobStatus,
+  checkCanCompoleteJobQuantityCheck,
 } from '../repositories/import-tally.repo';
 import { manager } from '../repositories/index.repo';
 
@@ -50,6 +54,11 @@ class JobQuantityCheckService {
             throw new BadRequestError(`Kiện hàng không tồn tại. Vui lòng kiểm tra lại`);
           }
 
+          const isSEQExist = await checkSEQExist(PACKAGE_ID, data.SEQ);
+          if (isSEQExist) {
+            throw new BadRequestError(`Số thứ tự đã tồn tại. Vui lòng kiểm tra lại`);
+          }
+
           data.CREATE_BY = createBy.ROWGUID;
           data.UPDATE_BY = createBy.ROWGUID;
         }
@@ -71,6 +80,13 @@ class JobQuantityCheckService {
           const isPalletExist = await checkPalletNoExist(data.PALLET_NO);
           if (!isPalletExist) {
             throw new BadRequestError(`Mã pallet không tồn tại. Vui lòng kiểm tra lại`);
+          }
+
+          const isJobStatusExist = await checkJobStatus(data.ROWGUID, 'C');
+          if (isJobStatusExist) {
+            throw new BadRequestError(
+              `${data.PALLET_NO} đã hoàn tất kiểm đếm. Vui lòng kiểm tra lại`,
+            );
           }
 
           data.UPDATE_BY = createBy.ROWGUID;
@@ -111,6 +127,25 @@ class JobQuantityCheckService {
 
     return {
       newCreateData,
+      newUpdateData,
+    };
+  };
+
+  static completeJobQuantityCheckByPackageId = async (PACKAGE_ID: string, createBy: User) => {
+    let newUpdateData;
+    const dataUpdate = { JOB_STATUS: 'C', UPDATE_BY: createBy.ROWGUID, UPDATE_DATE: new Date() };
+    await manager.transaction(async transactionalEntityManager => {
+      const check = await checkCanCompoleteJobQuantityCheck(PACKAGE_ID);
+      if (!check) {
+        throw new BadRequestError(`Không thể hoàn tất kiểm đếm. Vui lòng kiểm tra lại`);
+      }
+      newUpdateData = await completeJobQuantityCheckByPackageId(
+        PACKAGE_ID,
+        dataUpdate,
+        transactionalEntityManager,
+      );
+    });
+    return {
       newUpdateData,
     };
   };

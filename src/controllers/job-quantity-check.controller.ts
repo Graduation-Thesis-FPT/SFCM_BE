@@ -41,6 +41,18 @@ class JobQuantityCheckController {
       ),
     }).send(res);
   };
+
+  completeJobQuantityCheckByPackageId = async (req: Request, res: Response) => {
+    const { PACKAGE_ID } = req.params;
+    const createBy = res.locals.user;
+    new SuccessResponse({
+      message: SUCCESS_MESSAGE.COMPLETE_JOB_QUANTITY_CHECK_SUCCESS,
+      metadata: await JobQuantityCheckService.completeJobQuantityCheckByPackageId(
+        PACKAGE_ID,
+        createBy,
+      ),
+    }).send(res);
+  };
 }
 
 export default new JobQuantityCheckController();
