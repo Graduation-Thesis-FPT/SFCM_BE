@@ -1,4 +1,4 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 import Model from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
@@ -17,11 +17,4 @@ export class WareHouse extends Model {
 
   @Column({ default: false })
   STATUS: boolean;
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  trimString() {
-    this.WAREHOUSE_CODE = this.WAREHOUSE_CODE.trim();
-    this.WAREHOUSE_NAME = this.WAREHOUSE_NAME.trim();
-  }
 }

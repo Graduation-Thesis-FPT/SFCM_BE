@@ -11,6 +11,7 @@ const validateWarehouse = (data: WareHouse) => {
     }),
     WAREHOUSE_NAME: Joi.string().uppercase().trim().required().messages({
       'any.required': 'Tên mã kho không được để trống',
+      'string.empty': 'Tên mã kho không được để trống',
     }),
     ACREAGE: Joi.number().required().positive().messages({
       'number.positive': 'Diện tích kho phải lớn hơn 0',

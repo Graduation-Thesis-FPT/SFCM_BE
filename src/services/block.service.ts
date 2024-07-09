@@ -29,7 +29,8 @@ class BlockService {
         const isDuplicateBlock = await checkDuplicateBlock(blockInfo.BLOCK_CODE);
         if (isDuplicateBlock) {
           throw new BadRequestError(
-            `Không thể thêm dãy ${blockInfo.BLOCK_NAME} ở kho ${blockInfo.WAREHOUSE_CODE} (Đã tồn tại)`,
+            // `Không thể thêm dãy ${blockInfo.BLOCK_NAME} ở kho ${blockInfo.WAREHOUSE_CODE} (Đã tồn tại)`,
+            `Mã dãy ${blockInfo.BLOCK_CODE} (Đã tồn tại)`,
           );
         }
 

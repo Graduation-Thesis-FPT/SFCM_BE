@@ -11,14 +11,14 @@ const findWarehouseByCode = async (
 ) => {
   return await transactionEntityManager
     .createQueryBuilder(WarehouseEntity, 'warehouse')
-    .where('warehouse.WAREHOUSE_CODE = :warehouseCode', { warehouseCode: warehouseCode })
+    .where('warehouse.WAREHOUSE_CODE = :warehouseCode', { warehouseCode })
     .getOne();
 };
 
 const findWarehouse = async (warehouseCode: string) => {
   return await warehouseRepository
     .createQueryBuilder('warehouse')
-    .where('warehouse.WAREHOUSE_CODE = :warehouseCode', { warehouseCode: warehouseCode })
+    .where('warehouse.WAREHOUSE_CODE = :warehouseCode', { warehouseCode })
     .getOne();
 };
 

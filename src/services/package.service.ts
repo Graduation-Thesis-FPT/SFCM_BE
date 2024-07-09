@@ -1,5 +1,4 @@
 import { BadRequestError } from '../core/error.response';
-import { ERROR_MESSAGE } from '../constants';
 import { User } from '../entity/user.entity';
 import { Package, PackageInfo } from '../models/packageMnfLd.model';
 import { manager } from '../repositories/index.repo';
@@ -41,7 +40,6 @@ class PackageService {
           if (isExist) {
             throw new BadRequestError(`Số HouseBill ${data.HOUSE_BILL} đã tồn tại`);
           }
-          data.CREATE_BY = createBy.ROWGUID;
           data.UPDATE_BY = createBy.ROWGUID;
           data.UPDATE_DATE = new Date();
         }

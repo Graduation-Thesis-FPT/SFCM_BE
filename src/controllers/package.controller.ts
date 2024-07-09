@@ -15,7 +15,7 @@ class packageController {
   };
 
   deletepackage = async (req: Request, res: Response) => {
-    const {packageRow} = req.body;
+    const { packageRow } = req.body;
     new SuccessResponse({
       message: SUCCESS_MESSAGE.DELETE_PACKAGE_SUCCESS,
       metadata: await PackageService.deletePackage(packageRow),
@@ -23,7 +23,7 @@ class packageController {
   };
 
   getpackage = async (req: Request, res: Response) => {
-   const refcont = req.query.REF_CONTAINER as string;
+    const refcont = req.query.REF_CONTAINER as string;
     new OK({
       message: SUCCESS_MESSAGE.GET_PACKAGE_SUCCESS,
       metadata: await PackageService.getPackage(refcont),

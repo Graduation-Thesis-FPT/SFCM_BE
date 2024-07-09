@@ -45,10 +45,8 @@ class WarehouseService {
             `Không thể cập nhật kho ${data.WAREHOUSE_CODE} vì đang hoạt động`,
           );
         }
-        data.CREATE_BY = createBy.ROWGUID;
         data.UPDATE_BY = createBy.ROWGUID;
         data.UPDATE_DATE = new Date();
-        data.CREATE_DATE = new Date();
         data.STATUS = false;
       }
       updatedWarehouse = await updateWareHouse(updateData);

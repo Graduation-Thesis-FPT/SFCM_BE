@@ -51,9 +51,9 @@ const createBlockandCell = async (blockListInfo: Block[], statusCreateBlock: boo
 const checkCellStatus = async (blockListID: string[]) => {
   const cellArrStatus = await cellRepository
     .createQueryBuilder('cell')
-    .select(['cell.BLOCK_CODE', 'cell.WAREHOUSE_CODE'])
+    .select(['cell.BLOCK_CODE'])
     .where('BLOCK_CODE IN (:...ids)', { ids: blockListID })
-    .where('STATUS =:status', { status: 1 })
+    .andWhere('cell.STATUS = :status', { status: 1 })
     .getMany();
 
   return cellArrStatus;

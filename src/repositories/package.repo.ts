@@ -10,7 +10,7 @@ export const packageRepository = mssqlConnection.getRepository(PackageEntity);
 // check them dieu kien insert update
 const check4AddnUpdate = async (pack: Package) => {
   let whereObj: any = {
-    REF_CONTAINER: pack.REF_CONTAINER,
+    CONTAINER_ID: pack.CONTAINER_ID,
     HOUSE_BILL: pack.HOUSE_BILL,
   };
   pack.ROWGUID ? (whereObj['ROWGUID'] = Not(pack.ROWGUID)) : '';
