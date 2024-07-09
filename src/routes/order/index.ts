@@ -8,5 +8,7 @@ const router = Router();
 // router.use(authentication);
 router.get('/getcont', asyncHandler(orderController.getContList));
 router.get('/getPackageData', asyncHandler(orderController.getManifestPackage));
+router.post('/getToBillIn', asyncHandler(orderController.getToBillIn));
+router.post('/saveInOrder', asyncHandler(orderController.saveInOrder));
 
 export default router;

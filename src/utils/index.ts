@@ -62,6 +62,25 @@ const generateKeyVessel = (vesselName: string, inboundVoyage: string, etaDate: D
   return vesselCode.toUpperCase();
 };
 
+const checkContSize = (sizeType: string) => {
+  switch (sizeType.charAt(0)) {
+    case '2':
+      return '20';
+    case '4':
+      return '40';
+    case 'L':
+    case 'M':
+    case '9':
+      return '45';
+    default:
+      return '';
+  }
+};
+
+const roundMoney = (money: number) => {
+  return (Math.round(money * 10) / 10).toFixed(0);
+};
+
 export {
   removeUndefinedProperty,
   asyncHandler,
@@ -70,4 +89,6 @@ export {
   isValidID,
   checkDuplicatedID,
   generateKeyVessel,
+  checkContSize,
+  roundMoney
 };
