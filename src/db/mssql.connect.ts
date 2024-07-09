@@ -15,7 +15,6 @@ import { Customer } from '../entity/customer.entity';
 import { Vessel } from '../entity/vessel.entity';
 import { ContainerEntity } from '../entity/container.entity';
 import { User } from '../entity/user.entity';
-import { OrderEntity } from '../entity/order.entity';
 import { Package } from '../entity/package.entity';
 import { TariffCodeEntity } from '../entity/tariff-code.entity';
 import { TariffEntity } from '../entity/tariff.entity';
@@ -24,6 +23,7 @@ import { ConfigAttachSrvEntity } from '../entity/config-attach-srv.entity';
 import { DiscountTariffEntity } from '../entity/discount-tariff.entity';
 import { PackageUnit } from '../entity/packge-unit.entity';
 import { DeliverOrderEntity } from '../entity/deliver-order.entity';
+import { DeliveryOrderDtlEntity } from '../entity/delivery-order-detail.entity';
 import { JobQuantityCheckEntity } from '../entity/job-quantity-check.entity';
 import { PalletStockEntity } from '../entity/pallet-stock.entity';
 
@@ -52,7 +52,6 @@ const mssqlConnection = new DataSource({
     Vessel,
     ContainerEntity,
     Package,
-    OrderEntity,
     TariffCodeEntity,
     TariffEntity,
     TariffTempEntity,
@@ -61,6 +60,7 @@ const mssqlConnection = new DataSource({
     DeliverOrderEntity,
     JobQuantityCheckEntity,
     PalletStockEntity,
+    DeliveryOrderDtlEntity
   ],
   options: {
     encrypt: false,

@@ -305,7 +305,7 @@ CREATE TABLE [dbo].[DT_ORDER](
 	[NOTE] [nvarchar](max) NULL,
 	[DRAFT_NO] [nvarchar](20) NULL,
 	[INV_NO] [nvarchar](20) NULL,
-	[GATE_CHK] [bit] NOT NULL,
+	[JOB_CHK] [bit] NOT NULL,
 	[COMMODITYDESCRIPTION] [nvarchar](max) NULL,
 	[CREATE_BY] [nvarchar](100) NOT NULL,
 	[CREATE_DATE] [datetime] NOT NULL,

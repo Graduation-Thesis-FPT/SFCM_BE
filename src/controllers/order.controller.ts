@@ -7,7 +7,7 @@ class orderController {
     const VOYAGEKEY = req.query.VOYAGEKEY as string;
     const BILLOFLADING = req.query.BILLOFLADING as string;
 
-    console.log('asd', VOYAGEKEY, BILLOFLADING)
+    console.log('asd', VOYAGEKEY, BILLOFLADING);
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
       metadata: await OrderService.getContList(VOYAGEKEY, BILLOFLADING),
@@ -19,6 +19,23 @@ class orderController {
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
       metadata: await OrderService.getManifestPackage(String(VOYAGEKEY), String(CNTRNO)),
+    }).send(res);
+  };
+
+  getToBillIn = async (req: Request, res: Response) => {
+    let { arrayPackage, addInfo } = req.body;
+    new OK({
+      message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
+      metadata: await OrderService.getToBillIn(arrayPackage, addInfo),
+    }).send(res);
+  };
+
+  saveInOrder = async (req: Request, res: Response) => {
+    let { arrayPackage } = req.body;
+    const createBy = res.locals.user;
+    new OK({
+      message: SUCCESS_MESSAGE.SAVE_ORDER_SUCCESS,
+      metadata: await OrderService.saveInOrder(arrayPackage, createBy),
     }).send(res);
   };
 }
