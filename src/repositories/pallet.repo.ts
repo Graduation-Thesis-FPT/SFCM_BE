@@ -36,7 +36,12 @@ const getAllPalletPositionByWarehouseCode = async (warehouseCode: string) => {
     .where('block.WAREHOUSE_CODE = :warehouseCode', { warehouseCode })
     .select([
       'job.PACKAGE_ID as PACKAGE_ID',
+      'job.ESTIMATED_CARGO_PIECE as ESTIMATED_CARGO_PIECE',
       'job.ACTUAL_CARGO_PIECE as ACTUAL_CARGO_PIECE',
+      'job.SEQ as SEQ',
+      'job.START_DATE as START_DATE',
+      'job.JOB_STATUS as JOB_STATUS',
+      'job.NOTE as NOTE',
       'pallet.CELL_ID as CELL_ID',
       'pallet.PALLET_STATUS as PALLET_STATUS',
       'pallet.PALLET_NO as PALLET_NO',
