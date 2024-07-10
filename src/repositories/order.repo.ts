@@ -147,7 +147,33 @@ const saveInOrder = async (reqData: OrderReqIn[], createBy: User) => {
   const order = orderRepository.create(deliveryOrder);
   const orderDtl = orderDtlRepository.create(deliveryOrderDtl);
   const neworder = await orderRepository.save(order);
-  const neworderDtl = await orderDtlRepository.save(orderDtl);
+  const neworderDtlTemp = await orderDtlRepository.save(orderDtl);
+
+  const neworderDtlIds = neworderDtlTemp.map(item => item.ROWGUID);
+  const neworderDtl = await orderDtlRepository
+    .createQueryBuilder('orderDtl')
+    .leftJoinAndSelect('DT_PACKAGE_MNF_LD', 'pk', 'pk.ROWGUID = orderDtl.REF_PAKAGE')
+    .leftJoinAndSelect('BS_ITEM_TYPE', 'item', 'pk.ITEM_TYPE_CODE = item.ITEM_TYPE_CODE')
+    .where('orderDtl.ROWGUID IN (:...ids)', { ids: neworderDtlIds })
+    .select([
+      'orderDtl.ROWGUID as ROWGUID',
+      'orderDtl.DE_ORDER_NO as DE_ORDER_NO',
+      'orderDtl.METHOD_CODE as METHOD_CODE',
+      'orderDtl.HOUSE_BILL as HOUSE_BILL',
+      'orderDtl.CBM as CBM',
+      'orderDtl.LOT_NO as LOT_NO',
+      'pk.PACKAGE_UNIT_CODE as PACKAGE_UNIT_CODE',
+      'pk.ITEM_TYPE_CODE as ITEM_TYPE_CODE',
+      'pk.CONTAINER_ID as CONTAINER_ID',
+      'pk.HOUSE_BILL as PK_HOUSE_BILL',
+      'pk.CBM as PK_CBM',
+      'pk.DECLARE_NO as PK_DECLARE_NO',
+      'pk.CARGO_PIECE as PK_CARGO_PIECE',
+      'pk.NOTE as PK_NOTE',
+      'item.ITEM_TYPE_NAME as ITEM_TYPE_NAME',
+    ])
+    .orderBy('orderDtl.LOT_NO', 'ASC')
+    .getRawMany();
   return {
     neworder,
     neworderDtl,
