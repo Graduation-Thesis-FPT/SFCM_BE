@@ -19,6 +19,7 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.12.11",
     "@types/nodemon": "^1.19.6",
+    "@types/socket.io": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "7.10.0",
     "@typescript-eslint/parser": "7.10.0",
     "eslint": "^8.57.0",
@@ -43,6 +44,7 @@
     "moment": "^2.30.1",
     "mssql": "^10.0.2",
     "reflect-metadata": "^0.2.2",
+    "socket.io": "^4.7.5",
     "typeorm": "^0.3.20"
   }
 }

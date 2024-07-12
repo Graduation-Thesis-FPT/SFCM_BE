@@ -4,6 +4,8 @@ import { Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import 'reflect-metadata';
+import { createServer } from 'http';
+import { Server as SocketIOServer } from 'socket.io';
 
 dotenv.config({ path: '.env' });
 
@@ -11,8 +13,11 @@ import routes from './routes';
 import { ErrorResponse } from './core/error.response';
 import mssqlConnection from './db/mssql.connect';
 import { ERROR_MESSAGE } from './constants';
+import initializeSocket from './socket.io';
 
 const app = express();
+const httpServer = createServer(app);
+
 const allowedOrigins = [
   'http://localhost:2024',
   'http://127.0.0.1:2024',
@@ -100,7 +105,10 @@ mssqlConnection
 /**
  * Server activation
  */
+
+initializeSocket(httpServer, allowedOrigins);
+
 const PORT = process.env.PORT || 3050;
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
