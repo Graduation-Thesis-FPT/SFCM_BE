@@ -17,6 +17,10 @@ const initializeSocket = (server: Server, origins: string[]): SocketIOServer => 
     socket.on('completeJobQuantityCheck', () => {
       socket.broadcast.emit('receiveCompleteJobQuantityCheck', 'Có pallet mới hoàn thành kiểm đếm');
     });
+
+    socket.on('inputPalletToCellSuccess', () => {
+      socket.broadcast.emit('receiveInputPalletToCellSuccess', 'Có pallet mới chuyển vào kho');
+    });
   });
 
   return io;
