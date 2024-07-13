@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { CREATED, OK, SuccessResponse } from '../core/success.response';
+import { OK } from '../core/success.response';
 import { SUCCESS_MESSAGE } from '../constants';
 import OrderService from '../services/order.service';
 class orderController {
@@ -15,15 +15,16 @@ class orderController {
   };
 
   getManifestPackage = async (req: Request, res: Response) => {
-    const { VOYAGEKEY, CNTRNO } = req.query;
+    const VOYAGEKEY = req.query.VOYAGEKEY as string;
+    const CNTRNO = req.query.CNTRNO as string;
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await OrderService.getManifestPackage(String(VOYAGEKEY), String(CNTRNO)),
+      metadata: await OrderService.getManifestPackage(VOYAGEKEY, CNTRNO),
     }).send(res);
   };
 
   getToBillIn = async (req: Request, res: Response) => {
-    let { arrayPackage, addInfo } = req.body;
+    const { arrayPackage, addInfo } = req.body;
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
       metadata: await OrderService.getToBillIn(arrayPackage, addInfo),
@@ -31,7 +32,7 @@ class orderController {
   };
 
   saveInOrder = async (req: Request, res: Response) => {
-    let { arrayPackage } = req.body;
+    const { arrayPackage } = req.body;
     const createBy = res.locals.user;
     new OK({
       message: SUCCESS_MESSAGE.SAVE_ORDER_SUCCESS,

@@ -11,7 +11,7 @@ import {
   checkContStatus,
   getManifestPackage,
   getTariffSTD,
-  saveInOrder
+  saveInOrder,
 } from '../repositories/order.repo';
 import { checkContSize, roundMoney } from '../utils';
 import { Tariff } from '../models/tariff.model';
@@ -20,7 +20,7 @@ import { Package } from '../models/packageMnfLd.model';
 class OrderService {
   static getContList = async (VOYAGEKEY: string, BILLOFLADING: string) => {
     if (!VOYAGEKEY || !BILLOFLADING) {
-      throw new BadRequestError(`Mã tàu ${VOYAGEKEY} hoặc số vận đơn không được rỗng!`);
+      throw new BadRequestError(`Mã tàu hoặc số vận đơn không được rỗng!`);
     }
     return getContList(VOYAGEKEY, BILLOFLADING);
   };
@@ -38,7 +38,7 @@ class OrderService {
   };
 
   static getToBillIn = async (dataReq_sualai: Package[], addInfo_s: any) => {
-    let arrReturn = [];
+    const arrReturn = [];
     const addInfo = {
       ITEM_TYPE_CODE_CNTR: 'GP',
       METHOD_CODE: 'NK',
@@ -72,23 +72,23 @@ class OrderService {
     }
     const totalCbm = dataReq.reduce((accumulator, item) => accumulator + item.CBM, 0);
     //kiểm tra xem có biểu cước ở bảng cấu hình giảm giá không- Nếu kh có thì tìm giá trị ở biểu cước chuẩn
-    let whereObj = {
+    const whereObj = {
       METHOD_CODE: addInfo.METHOD_CODE,
       ITEM_TYPE_CODE: addInfo.ITEM_TYPE_CODE_CNTR,
     };
-    let tariffInfo: Tariff = await getTariffSTD(whereObj);
+    const tariffInfo: Tariff = await getTariffSTD(whereObj);
     if (!tariffInfo) {
       throw new BadRequestError(
         `Không tìm thấy biểu cước phù hợp! Vui lòng cấu hình tính cước lại Mã : ${whereObj['METHOD_CODE']} và loại hàng ${whereObj['ITEM_TYPE_CODE']}`,
       );
     }
-    let quanlity: number = totalCbm;
-    let vatPrice: number = tariffInfo.AMT_CBM * (tariffInfo.VAT / 100) * quanlity;
-    let unitPrice: number = tariffInfo.AMT_CBM * (1 - tariffInfo.VAT / 100);
-    let cost: number = tariffInfo.AMT_CBM * (1 - tariffInfo.VAT / 100) * quanlity;
-    let totalPrice: number = vatPrice + cost;
+    const quanlity: number = totalCbm;
+    const vatPrice: number = tariffInfo.AMT_CBM * (tariffInfo.VAT / 100) * quanlity;
+    const unitPrice: number = tariffInfo.AMT_CBM * (1 - tariffInfo.VAT / 100);
+    const cost: number = tariffInfo.AMT_CBM * (1 - tariffInfo.VAT / 100) * quanlity;
+    const totalPrice: number = vatPrice + cost;
 
-    let tempObj: any = {
+    const tempObj: any = {
       UNIT_RATE: roundMoney(unitPrice),
       VAT_PRICE: roundMoney(vatPrice),
       AMOUNT: roundMoney(cost),
@@ -99,7 +99,7 @@ class OrderService {
     return arrReturn;
   };
 
-  static saveInOrder = async (req :OrderReqIn[], createBy: User) => {
+  static saveInOrder = async (req: OrderReqIn[], createBy: User) => {
     return await saveInOrder(req, createBy);
   };
 }
