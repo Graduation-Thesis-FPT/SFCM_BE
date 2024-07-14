@@ -25,6 +25,7 @@ const allowedOrigins = [
   'http://localhost:9900',
   'https://sfcm-fe.vercel.app',
   'https://sfcm-fe.onrender.com',
+  'https://sfcmfe.up.railway.app',
 ];
 const corsOptions = {
   credentials: true,
