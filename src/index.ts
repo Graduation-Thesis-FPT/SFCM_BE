@@ -24,7 +24,7 @@ const allowedOrigins = [
   'http://localhost:3050',
   'http://localhost:9900',
   'https://sfcm-fe.vercel.app',
-  'https://sfcm-fe-thienlisys-projects.vercel.app',
+  'https://sfcm-fe.onrender.com',
 ];
 const corsOptions = {
   credentials: true,
