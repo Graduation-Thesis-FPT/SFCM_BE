@@ -23,6 +23,7 @@ const allowedOrigins = [
   'http://127.0.0.1:2024',
   'http://localhost:3050',
   'http://localhost:9900',
+  'https://sfcm-fe.vercel.app'
 ];
 const corsOptions = {
   credentials: true,
