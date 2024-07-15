@@ -11,6 +11,7 @@ import {
   filterContainer,
   findContainer,
   findContainerByRowid,
+  isContainerExecuted,
   isDuplicateContainer,
   updateContainer,
 } from '../repositories/container.repo';
@@ -24,7 +25,7 @@ class ContainerService {
     let newUpdatedContainer;
 
     await manager.transaction(async transactionalEntityManager => {
-      if (insertData) {
+      if (insertData.length > 0) {
         for (const containerInfo of insertData) {
           const container = await isDuplicateContainer(
             containerInfo.VOYAGEKEY,
@@ -32,11 +33,12 @@ class ContainerService {
             transactionalEntityManager,
           );
 
-          if (container.length > 0) {
-            throw new BadRequestError(
-              `Số container ${containerInfo.CNTRNO} đã tồn tại trên tàu ${container[0].VESSEL_NAME}`,
-            );
+          if (container) {
+            if (container.CNTRNO === containerInfo.CNTRNO) {
+              throw new BadRequestError(`Số container ${containerInfo.CNTRNO} đã tồn tại trên tàu`);
+            }
           }
+
           const isContainerExist = await findVesselByCode(
             containerInfo.VOYAGEKEY,
             transactionalEntityManager,
@@ -77,58 +79,71 @@ class ContainerService {
         newCreatedContainer = await createContainer(insertData, transactionalEntityManager);
       }
 
-      if (updateData) {
-        for (const containerInfo of updateData) {
+      if (updateData.length > 0) {
+        const isExecuted = await isContainerExecuted(updateData[0].ROWGUID);
+        if (isExecuted) {
+          throw new BadRequestError(`Không thể cập nhật, container đã làm lệnh!`);
+        }
+        for (const containerReqInfo of updateData) {
           const container = await findContainerByRowid(
-            containerInfo.ROWGUID,
+            containerReqInfo.ROWGUID,
             transactionalEntityManager,
           );
           if (!container) {
-            throw new BadRequestError(`Mã container ${containerInfo.ROWGUID} không hợp lệ`);
+            throw new BadRequestError(`Mã container ${containerReqInfo.ROWGUID} không hợp lệ`);
           }
 
-          if (!container.STATUSOFGOOD) {
-            throw new BadRequestError(
-              `Không thể cập nhật container ${container.CNTRNO}, container đã được làm lệnh`,
+          // if (!container.STATUSOFGOOD) {
+          //   throw new BadRequestError(
+          //     `Không thể cập nhật container ${container.CNTRNO}, container đã được làm lệnh`,
+          //   );
+          // }
+
+          if (containerReqInfo.CNTRNO !== container.CNTRNO) {
+            const container = await isDuplicateContainer(
+              containerReqInfo.VOYAGEKEY,
+              containerReqInfo.CNTRNO,
+              transactionalEntityManager,
             );
+
+            console.log(container);
+
+            if (container)
+              if (container.CNTRNO === containerReqInfo.CNTRNO) {
+                throw new BadRequestError(
+                  `Số container ${containerReqInfo.CNTRNO} đã tồn tại trên tàu`,
+                );
+              }
           }
 
-          const containerData = await isDuplicateContainer(
-            containerInfo.VOYAGEKEY,
-            containerInfo.CNTRNO,
-            transactionalEntityManager,
-          );
-
-          if (containerData.length > 0) {
-            throw new BadRequestError(
-              `Số container ${containerInfo.CNTRNO} đã tồn tại trên tàu ${containerData[0].VESSEL_NAME}`,
-            );
-          }
           const isValidItemTypeCode = await findItemTypeByCode(
-            containerInfo.ITEM_TYPE_CODE,
+            containerReqInfo.ITEM_TYPE_CODE,
             transactionalEntityManager,
           );
 
           if (!isValidItemTypeCode) {
             throw new BadRequestError(
-              `Mã loại hàng hóa ${containerInfo.ITEM_TYPE_CODE} không hợp lệ`,
+              `Mã loại hàng hóa ${containerReqInfo.ITEM_TYPE_CODE} không hợp lệ`,
             );
           }
 
           const isValidCustomerCode = await findCustomerByCode(
-            containerInfo.CONSIGNEE,
+            containerReqInfo.CONSIGNEE,
             transactionalEntityManager,
           );
 
           if (!isValidCustomerCode) {
-            throw new BadRequestError(`Mã loại khách hàng ${containerInfo.CONSIGNEE} không hợp lệ`);
+            throw new BadRequestError(
+              `Mã loại khách hàng ${containerReqInfo.CONSIGNEE} không hợp lệ`,
+            );
           }
 
-          if (containerInfo.BILLOFLADING === '') containerInfo.BILLOFLADING = null;
-          if (containerInfo.SEALNO === '') containerInfo.SEALNO = null;
-          if (containerInfo.COMMODITYDESCRIPTION === '') containerInfo.COMMODITYDESCRIPTION = null;
-          containerInfo.UPDATE_BY = createBy.ROWGUID;
-          containerInfo.UPDATE_DATE = new Date();
+          if (containerReqInfo.BILLOFLADING === '') containerReqInfo.BILLOFLADING = null;
+          if (containerReqInfo.SEALNO === '') containerReqInfo.SEALNO = null;
+          if (containerReqInfo.COMMODITYDESCRIPTION === '')
+            containerReqInfo.COMMODITYDESCRIPTION = null;
+          containerReqInfo.UPDATE_BY = createBy.ROWGUID;
+          containerReqInfo.UPDATE_DATE = new Date();
         }
 
         newUpdatedContainer = await updateContainer(updateData, transactionalEntityManager);
@@ -142,17 +157,21 @@ class ContainerService {
   };
 
   static deleteContainer = async (containerRowIdList: string[]) => {
+    const isExecuted = await isContainerExecuted(containerRowIdList[0]);
+    if (isExecuted) {
+      throw new BadRequestError(`Không thể xóa, container đã làm lệnh!`);
+    }
     for (const rowId of containerRowIdList) {
       const container = await findContainer(rowId.trim());
       if (!container) {
         throw new BadRequestError(`Container with ID ${rowId} not exist!`);
       }
 
-      if (!container.STATUSOFGOOD) {
-        throw new BadRequestError(
-          `Không thể xóa container ${container.CNTRNO}, container đã được làm lệnh`,
-        );
-      }
+      // if (!container.STATUSOFGOOD) {
+      //   throw new BadRequestError(
+      //     `Không thể xóa container ${container.CNTRNO}, container đã được làm lệnh`,
+      //   );
+      // }
     }
 
     return await deleteContainerMany(containerRowIdList);

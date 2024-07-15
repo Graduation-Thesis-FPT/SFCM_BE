@@ -7,7 +7,7 @@ class packageController {
   createAndUpdatepackage = async (req: Request, res: Response) => {
     const createBy = res.locals.user;
     const reqData = res.locals.requestData;
-
+    console.log(reqData);
     new CREATED({
       message: SUCCESS_MESSAGE.SAVE_PACKAGE_SUCCESS,
       metadata: await PackageService.createAndUpdate(reqData, createBy),

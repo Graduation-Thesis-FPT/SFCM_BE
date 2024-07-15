@@ -1,6 +1,7 @@
 import { BadRequestError } from '../core/error.response';
 import { User } from '../entity/user.entity';
 import { Package, PackageInfo } from '../models/packageMnfLd.model';
+import { isContainerExecuted } from '../repositories/container.repo';
 import { manager } from '../repositories/index.repo';
 import {
   check4AddnUpdate,
@@ -21,6 +22,10 @@ class PackageService {
 
     await manager.transaction(async transactionalEntityManager => {
       for (const data of insertData) {
+        const isExecuted = await isContainerExecuted(data.CONTAINER_ID);
+        if (isExecuted) {
+          throw new BadRequestError(`Không thể thêm dữ liệu, container đã làm lệnh!`);
+        }
         const isExist = await check4AddnUpdate(data);
         if (isExist) {
           throw new BadRequestError(`Số HouseBill ${data.HOUSE_BILL} đã tồn tại trong container!`);
@@ -30,12 +35,17 @@ class PackageService {
         data.UPDATE_DATE = new Date();
       }
 
-      if (updateData.length) {
-        const isSuccess = await check4UpdatenDelete(updateData[0].ROWGUID);
-        if (isSuccess) {
-          throw new BadRequestError(`Không thể thay đổi dữ liệu vì đã làm lệnh!`);
-        }
+      if (updateData.length > 0) {
+        // const isSuccess = await check4UpdatenDelete(updateData[0].CONTAINER_ID);
+        // if (isSuccess) {
+        //   throw new BadRequestError(`Không thể thay đổi dữ liệu vì đã làm lệnh!`);
+        // }
         for (const data of updateData) {
+          const isExecuted = await isContainerExecuted(data.CONTAINER_ID);
+          if (isExecuted) {
+            throw new BadRequestError(`Không thể thay đổi dữ liệu, container đã làm lệnh!`);
+          }
+
           const isExist = await check4AddnUpdate(data);
           if (isExist) {
             throw new BadRequestError(`Số HouseBill ${data.HOUSE_BILL} đã tồn tại`);
@@ -57,13 +67,20 @@ class PackageService {
   };
 
   static deletePackage = async (dataPackage: Package[]) => {
-    if (!dataPackage.length) {
-      throw new BadRequestError(`Dữ liệu đâu mà xóa hả Phú, truyền bậy à!`);
+    // if (!dataPackage.length) {
+    //   throw new BadRequestError(`Dữ liệu đâu mà xóa hả Phú, truyền bậy à!`);
+    // }
+    // const isSuccess = await check4UpdatenDelete(dataPackage[0].CONTAINER_ID);
+    // console.log(isSuccess);
+    // if (isSuccess) {
+    //   throw new BadRequestError(`Không thể xóa dữ liệu vì đã làm lệnh!`);
+    // }
+
+    const isExecuted = await isContainerExecuted(dataPackage[0].CONTAINER_ID);
+    if (isExecuted) {
+      throw new BadRequestError(`Không thể xóa hàng hóa, container đã làm lệnh!`);
     }
-    const isSuccess = await check4UpdatenDelete(dataPackage[0].ROWGUID);
-    if (isSuccess) {
-      throw new BadRequestError(`Không thể xóa dữ liệu vì đã làm lệnh!`);
-    }
+
     return await deletePackage(dataPackage.map(e => e.ROWGUID));
   };
 
