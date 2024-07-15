@@ -76,7 +76,7 @@ const isDuplicateContainer = async (
   transactionalEntityManager: EntityManager,
 ) => {
   return await transactionalEntityManager
-    .createQueryBuilder(ContainerEntity, 'container') // Assuming 'container' maps to DT_CNTR_MNF_LD
+    .createQueryBuilder(ContainerEntity, 'container')
     .select('container.VOYAGEKEY', 'VOYAGEKEY')
     .addSelect('container.CNTRNO', 'CNTRNO')
     .leftJoin('DT_VESSEL_VISIT', 'vesselVisit', 'container.VOYAGEKEY = vesselVisit.VOYAGEKEY')
@@ -84,7 +84,22 @@ const isDuplicateContainer = async (
     .addSelect('vesselVisit.ETA', 'ETA')
     .where('container.VOYAGEKEY = :voyageKey', { voyageKey })
     .andWhere('container.CNTRNO = :cntrNo', { cntrNo })
-    .getRawMany(); // To get a flat structure similar to SQL query result
+    .getRawOne();
+};
+
+const isContainerExecuted = async (containerId: string) => {
+  const container = await containerRepository
+    .createQueryBuilder('cn')
+    .innerJoin('DELIVER_ORDER', 'do', 'cn.ROWGUID = do.CONTAINER_ID')
+    .where('cn.ROWGUID = :containerId', { containerId })
+    .select([
+      'cn.ROWGUID as ROWGUID',
+      'do.DE_ORDER_NO as DE_ORDER_NO',
+      'do.CONTAINER_ID as CONTAINER_ID',
+    ])
+    .getRawOne();
+
+  return container;
 };
 
 export {
@@ -96,4 +111,5 @@ export {
   findContainer,
   isUniqueContainer,
   isDuplicateContainer,
+  isContainerExecuted,
 };
