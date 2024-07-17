@@ -110,7 +110,7 @@ const getTariffSTD = async (whereObj: object) => {
 
 const saveInOrder = async (reqData: OrderReqIn[], createBy: User) => {
   const totalCbm = reqData.reduce((accumulator, item) => accumulator + item.CBM, 0);
-  const orderNo = await genOrderNo('NK');
+  const orderNo = reqData[0].DE_ORDER_NO || (await genOrderNo('NK'));
 
   let deliveryOrder: DeliverOrder = {
     DE_ORDER_NO: String(orderNo),
@@ -175,6 +175,7 @@ const saveInOrder = async (reqData: OrderReqIn[], createBy: User) => {
     ])
     .orderBy('orderDtl.LOT_NO', 'ASC')
     .getRawMany();
+
   return {
     neworder,
     neworderDtl,

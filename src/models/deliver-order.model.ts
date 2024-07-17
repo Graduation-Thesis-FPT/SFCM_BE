@@ -21,7 +21,8 @@ export interface DeliverOrderList {
 }
 
 export interface OrderReqIn extends Base {
-  ROWGUID : string,
+  DE_ORDER_NO?: string;
+  ROWGUID: string;
   CONTAINER_ID: string;
   CUSTOMER_CODE: string;
   EXP_DATE: Date;
