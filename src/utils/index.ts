@@ -90,5 +90,5 @@ export {
   checkDuplicatedID,
   generateKeyVessel,
   checkContSize,
-  roundMoney
+  roundMoney,
 };

@@ -20,7 +20,7 @@ import { Package } from '../models/packageMnfLd.model';
 class OrderService {
   static getContList = async (VOYAGEKEY: string, BILLOFLADING: string) => {
     if (!VOYAGEKEY || !BILLOFLADING) {
-      throw new BadRequestError(`Mã tàu hoặc số vận đơn không được rỗng!`);
+      throw new BadRequestError(`Mã tàu ${VOYAGEKEY} hoặc số vận đơn không được rỗng!`);
     }
     return getContList(VOYAGEKEY, BILLOFLADING);
   };
@@ -72,23 +72,23 @@ class OrderService {
     }
     const totalCbm = dataReq.reduce((accumulator, item) => accumulator + item.CBM, 0);
     //kiểm tra xem có biểu cước ở bảng cấu hình giảm giá không- Nếu kh có thì tìm giá trị ở biểu cước chuẩn
-    const whereObj = {
+    let whereObj = {
       METHOD_CODE: addInfo.METHOD_CODE,
       ITEM_TYPE_CODE: addInfo.ITEM_TYPE_CODE_CNTR,
     };
-    const tariffInfo: Tariff = await getTariffSTD(whereObj);
+    let tariffInfo: Tariff = await getTariffSTD(whereObj);
     if (!tariffInfo) {
       throw new BadRequestError(
         `Không tìm thấy biểu cước phù hợp! Vui lòng cấu hình tính cước lại Mã : ${whereObj['METHOD_CODE']} và loại hàng ${whereObj['ITEM_TYPE_CODE']}`,
       );
     }
-    const quanlity: number = totalCbm;
-    const vatPrice: number = tariffInfo.AMT_CBM * (tariffInfo.VAT / 100) * quanlity;
-    const unitPrice: number = tariffInfo.AMT_CBM * (1 - tariffInfo.VAT / 100);
-    const cost: number = tariffInfo.AMT_CBM * (1 - tariffInfo.VAT / 100) * quanlity;
-    const totalPrice: number = vatPrice + cost;
+    let quanlity: number = totalCbm;
+    let vatPrice: number = tariffInfo.AMT_CBM * (tariffInfo.VAT / 100) * quanlity;
+    let unitPrice: number = tariffInfo.AMT_CBM * (1 - tariffInfo.VAT / 100);
+    let cost: number = tariffInfo.AMT_CBM * (1 - tariffInfo.VAT / 100) * quanlity;
+    let totalPrice: number = vatPrice + cost;
 
-    const tempObj: any = {
+    let tempObj: any = {
       UNIT_RATE: roundMoney(unitPrice),
       VAT_PRICE: roundMoney(vatPrice),
       AMOUNT: roundMoney(cost),

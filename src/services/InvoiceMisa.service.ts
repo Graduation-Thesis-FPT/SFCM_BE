@@ -35,11 +35,11 @@ class InvoiceManagementMisa {
       MISA_SRV_ID: 'testmisa@yahoo.com',
       MISA_SRV_PWD: '123456Aa',
       INV_PATTERN: '1/073',
-      INV_SERIAL: '1C23TYY',
+      INV_SERIAL: '1C24TYY',
       MISA_PORTAL_URL: 'https://www.meinvoice.vn/tra-cuu',
       INV_CRE: {
         INV_PATTERN: '1/073',
-        INV_SERIAL: '1C23TYY',
+        INV_SERIAL: '1C24TYY',
       },
     };
   }
@@ -533,7 +533,8 @@ class InvoiceManagementMisa {
   };
 
   publish = async (req: any) => {
-    if (!(await this.getToken())) {
+    let temps = await this.getToken();
+    if (!temps) {
       this.data.success = false;
       return this.data;
     }
@@ -591,7 +592,7 @@ class InvoiceManagementMisa {
       OriginalInvoiceData: {
         IsTaxReduction43: true,
         RefID: orderNo,
-        InvSeries: `${inv_tplt}${inv_serial}`,
+        InvSeries: `${inv_serial}`,
         InvoiceName: 'HÓA ĐƠN GIÁ TRỊ GIA TĂNG',
         InvDate: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
         CurrencyCode: currencyInDetails,
@@ -936,7 +937,7 @@ class InvoiceManagementMisa {
     let invoice: any = {
       RefID: orderNo,
       IsTaxReduction43: true,
-      InvSeries: `${inv_tplt}${inv_serial}`,
+      InvSeries: `${inv_serial}`,
       InvoiceName: 'HÓA ĐƠN GIÁ TRỊ GIA TĂNG',
       InvDate: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
       CurrencyCode: currencyInDetails,
@@ -1093,4 +1094,4 @@ class InvoiceManagementMisa {
   };
 }
 
-export default new InvoiceManagementMisa();
+export default InvoiceManagementMisa;

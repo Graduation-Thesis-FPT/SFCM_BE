@@ -52,8 +52,7 @@ const getContList = async (VOYAGEKEY: string, BILLOFLADING: string) => {
     .leftJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID and dto.JOB_CHK <> 1')
     .where('cn.VOYAGEKEY = :voyagekey', { voyagekey: VOYAGEKEY })
     .andWhere('cn.BILLOFLADING = :bill', { bill: BILLOFLADING })
-    .getMany();
-  console.log('asd', contList.toString);
+    .getRawMany();
   return await contList;
 };
 // lấy dữ liệu của cont này ra. 1--check cont này đã làm lệnh chưa  2-- lấy dữ liệu ra
@@ -63,7 +62,7 @@ const checkContStatus = async (VOYAGEKEY: string, CNTRNO: string) => {
     .leftJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID and dto.JOB_CHK <> 1')
     .where('cn.VOYAGEKEY = :voyagekey', { voyagekey: VOYAGEKEY })
     .andWhere('cn.CNTRNO = :cont', { cont: CNTRNO })
-    .getMany();
+    .getRawMany();
   if (contArr.length) return false;
   return true;
 };
@@ -102,6 +101,8 @@ const getTariffSTD = async (whereObj: object) => {
     // });
     if (data.length == 1) {
       return data[0];
+    } else {
+      return null;
     }
   });
   return tariffInfo;
