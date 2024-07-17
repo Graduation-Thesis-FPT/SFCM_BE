@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { OK } from '../core/success.response';
+import { CREATED, OK, SuccessResponse } from '../core/success.response';
 import { SUCCESS_MESSAGE } from '../constants';
 import OrderService from '../services/order.service';
+import InvoiceManagementMisa from '../services/InvoiceMisa.service';
 class orderController {
   getContList = async (req: Request, res: Response) => {
     const VOYAGEKEY = req.query.VOYAGEKEY as string;
@@ -15,11 +16,10 @@ class orderController {
   };
 
   getManifestPackage = async (req: Request, res: Response) => {
-    const VOYAGEKEY = req.query.VOYAGEKEY as string;
-    const CNTRNO = req.query.CNTRNO as string;
+    const { VOYAGEKEY, CNTRNO } = req.query;
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await OrderService.getManifestPackage(VOYAGEKEY, CNTRNO),
+      metadata: await OrderService.getManifestPackage(String(VOYAGEKEY), String(CNTRNO)),
     }).send(res);
   };
 
@@ -37,6 +37,25 @@ class orderController {
     new OK({
       message: SUCCESS_MESSAGE.SAVE_ORDER_SUCCESS,
       metadata: await OrderService.saveInOrder(arrayPackage, createBy),
+    }).send(res);
+  };
+
+  //Phát hành hóa đơn
+  invoicePublish = async (req: Request, res: Response) => {
+    let temp = new InvoiceManagementMisa();
+    let data = await temp.publish(req);
+    new OK({
+      message: SUCCESS_MESSAGE.PUBLISH_INVOICE_SUCCESS,
+      metadata: data,
+    }).send(res);
+  };
+  //In hóa đơn
+  viewInvoice = async (req: Request, res: Response) => {
+    let temp = new InvoiceManagementMisa();
+    let data = await temp.getInvView(req);
+    new OK({
+      message: SUCCESS_MESSAGE.SUCCESS,
+      metadata: data,
     }).send(res);
   };
 }

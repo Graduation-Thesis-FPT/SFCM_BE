@@ -32,7 +32,7 @@ class AccessController {
       message: SUCCESS_MESSAGE.CHANGE_PASSWORD_SUCCESS,
       metadata: await AccessService.changePassword(user, req.body),
     }).send(res);
-  }
+  };
 }
 
 export default new AccessController();
