@@ -187,8 +187,8 @@ const saveInOrder = async (
   const invDtlInfo = invNoRepository.create(invVatDtlSave);
   const neworder = await orderRepository.save(order);
   const neworderDtlTemp = await orderDtlRepository.save(orderDtl);
-  const newInvInfo = await orderDtlRepository.save(invInfo);
-  const newInvDtlInfo = await orderDtlRepository.save(invDtlInfo);
+  const newInvInfo = await invNoRepository.save(invInfo);
+  const newInvDtlInfo = await invNoDtlRepository.save(invDtlInfo);
 
   const neworderDtlIds = neworderDtlTemp.map(item => item.ROWGUID);
   const neworderDtl = await orderDtlRepository
