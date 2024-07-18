@@ -8,11 +8,17 @@ const tbConfigAttachSrv = mssqlConnection.getRepository(ConfigAttachSrvEntity);
 const tbMethod = mssqlConnection.getRepository(MethodEntity);
 
 export const getConfigAttachSrvByMethodCode = async (METHOD_CODE: string) => {
-  return await tbConfigAttachSrv.find({
-    where: {
-      METHOD_CODE: METHOD_CODE,
-    },
-  });
+  return await tbConfigAttachSrv
+    .createQueryBuilder('sv')
+    .leftJoinAndSelect('BS_METHOD', 'mt', 'sv.ATTACH_SERVICE_CODE = mt.METHOD_CODE')
+    .select([
+      'sv.ROWGUID as ROWGUID',
+      'sv.ATTACH_SERVICE_CODE as ATTACH_SERVICE_CODE',
+      'sv.METHOD_CODE as METHOD_CODE',
+      'mt.METHOD_NAME as METHOD_NAME',
+    ])
+    .where('sv.METHOD_CODE = :METHOD_CODE', { METHOD_CODE: METHOD_CODE })
+    .getRawMany();
 };
 
 export const createAndUpdateConfigAttachSrvByMethodCode = async (
