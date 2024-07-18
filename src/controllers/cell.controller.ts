@@ -11,7 +11,6 @@ class CellController {
       PALLET_LENGTH: Number(req.query.PALLET_LENGTH as string),
       PALLET_WIDTH: Number(req.query.PALLET_WIDTH as string),
     };
-    console.log('🚀 ~ CellController ~ suggestCell= ~ palletInfo:', palletInfo);
     new SuccessResponse({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
       metadata: await CellService.suggestCell(palletInfo, warehouseCode),
