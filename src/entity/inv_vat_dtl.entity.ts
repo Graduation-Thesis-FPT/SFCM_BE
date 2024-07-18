@@ -2,17 +2,20 @@ import { Column, Entity, PrimaryColumn } from 'typeorm';
 import Model from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
-@Entity('INV_DFT')
-export class InvDftEntity extends Model {
+@Entity('INV_VAT_DTL')
+export class InvNoDtlEntity extends Model {
   @PrimaryColumn()
   @IsNotEmpty()
-  DRAFT_INV_NO: string;
+  ROWGUID: string;
 
   @Column()
-  INV_NO: Date;
+  INV_ID: string;
 
   @Column()
-  PAYER: string;
+  QTY: number;
+
+  @Column()
+  UNIT_RATE: number;
 
   @Column()
   AMOUNT: number;
@@ -21,17 +24,14 @@ export class InvDftEntity extends Model {
   VAT: number;
 
   @Column()
+  VAT_RATE: number;
+
+  @Column()
   TAMOUNT: number;
 
   @Column()
-  PAYMENT_STATUS: string;
+  CARGO_TYPE: string;
 
   @Column()
-  ACC_CD: string;
-
-  @Column()
-  CANCEL_DATE: Date;
-
-  @Column()
-  CANCLE_REMARK: string;
+  TRF_DESC: string;
 }
