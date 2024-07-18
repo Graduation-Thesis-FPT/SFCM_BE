@@ -7,10 +7,6 @@ export class Cell extends Model {
   @PrimaryGeneratedColumn('uuid')
   ROWGUID: string;
 
-  // @Column()
-  // @IsNotEmpty()
-  // WAREHOUSE_CODE: string;
-
   @Column()
   @IsNotEmpty()
   BLOCK_CODE: string;
@@ -24,12 +20,12 @@ export class Cell extends Model {
   @Column({ default: 0 })
   STATUS: number;
 
-  @Column()
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   CELL_LENGTH: number;
 
-  @Column()
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   CELL_WIDTH: number;
 
-  @Column()
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   CELL_HEIGHT: number;
 }
