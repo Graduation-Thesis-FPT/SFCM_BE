@@ -32,11 +32,11 @@ class orderController {
   };
 
   saveInOrder = async (req: Request, res: Response) => {
-    const { arrayPackage } = req.body;
+    const { arrayPackage, paymentInfo } = req.body;
     const createBy = res.locals.user;
     new OK({
       message: SUCCESS_MESSAGE.SAVE_ORDER_SUCCESS,
-      metadata: await OrderService.saveInOrder(arrayPackage, createBy),
+      metadata: await OrderService.saveInOrder(arrayPackage, paymentInfo, createBy),
     }).send(res);
   };
 
