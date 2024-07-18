@@ -5,7 +5,6 @@ import cors from 'cors';
 import morgan from 'morgan';
 import 'reflect-metadata';
 import { createServer } from 'http';
-import { Server as SocketIOServer } from 'socket.io';
 
 dotenv.config({ path: '.env' });
 
@@ -74,6 +73,9 @@ app.use((error: Error | any, req: Request, res: Response, next: NextFunction) =>
       statusCode = 409;
       error.message = 'Không thể xóa dữ liệu vì nó đang được tham chiếu trong một bảng khác.';
     } else if (error.message.includes('Cannot insert duplicate key in object')) {
+      statusCode = 409;
+      error.message = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.';
+    } else if (error.message.includes('Cannot insert the value NULL into column')) {
       statusCode = 409;
       error.message = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.';
     }
