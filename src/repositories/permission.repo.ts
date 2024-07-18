@@ -89,7 +89,7 @@ const checkPermissionAccessMenu = async (roleCode: string, menuCode: string) => 
     .andWhere('permission.MENU_CODE = :menuCode', { menuCode: menuCode })
     .getOne();
   const end_seconds = new Date().getTime();
-  console.log('Time to check permission: ', end_seconds - start_seconds);
+  console.log('checkPermissionAccessMenu: ', end_seconds - start_seconds, 'ms');
   return isExist;
 };
 

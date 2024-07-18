@@ -29,7 +29,7 @@ class PermissionController {
       metadata: await PermissionService.getGrantPermission(userInfo.ROLE_CODE, menuCode),
     }).send(res);
     const end_seconds = Date.now();
-    console.log('Time to get permission: ', end_seconds - start_seconds);
+    console.log('getGrantPermission: ', end_seconds - start_seconds, 'ms');
   };
 }
 

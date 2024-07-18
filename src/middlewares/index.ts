@@ -15,6 +15,7 @@ type HttpMethod = 'GET' | 'POST' | 'DELETE' | 'PATCH';
 type PermissionProperty = 'IS_VIEW' | 'IS_ADD_NEW' | 'IS_DELETE' | 'IS_MODIFY';
 
 const grantPermission = async (req: Request, res: Response, next: NextFunction) => {
+  const start_seconds = Date.now();
   const methodPermissionMap: Record<HttpMethod, PermissionProperty> = {
     GET: 'IS_VIEW',
     POST: 'IS_ADD_NEW',
@@ -42,7 +43,8 @@ const grantPermission = async (req: Request, res: Response, next: NextFunction) 
   if (!permission[permissionProperty]) {
     throw new BadRequestError(ERROR_MESSAGE.YOU_DO_NOT_HAVE_THIS_PERMISSION);
   }
-
+  const end_seconds = Date.now();
+  console.log('grantPermission: ', end_seconds - start_seconds, 'ms');
   next();
 };
 
