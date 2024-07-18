@@ -18,13 +18,13 @@ export class PalletStockEntity extends Model {
   @Column()
   PALLET_STATUS: string;
 
-  @Column()
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   PALLET_LENGTH: number;
 
-  @Column()
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   PALLET_WIDTH: number;
 
-  @Column()
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   PALLET_HEIGHT: number;
 
   @Column()

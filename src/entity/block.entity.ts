@@ -21,12 +21,12 @@ export class Block extends Model {
   @Column()
   SLOT_COUNT: number;
 
-  @Column()
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   BLOCK_WIDTH: number;
 
-  @Column()
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   BLOCK_HEIGHT: number;
 
-  @Column()
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
   BLOCK_LENGTH: number;
 }

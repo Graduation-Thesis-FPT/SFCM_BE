@@ -46,4 +46,29 @@ const updateOldCellStatus = async (cellID: string) => {
     .execute();
 };
 
-export { findCell, updateNewCellStatus, findCellById, updateOldCellStatus };
+const findCellByWarehouseCode = async (warehouseCode: string): Promise<CellEntity[]> => {
+  return await cellRepository
+    .createQueryBuilder('cell')
+    .leftJoinAndSelect('BS_BLOCK', 'block', 'block.BLOCK_CODE = cell.BLOCK_CODE')
+    .where('block.WAREHOUSE_CODE = :warehouseCode', { warehouseCode })
+    .andWhere('cell.STATUS = 0')
+    .select([
+      'cell.ROWGUID as ROWGUID',
+      'cell.CELL_WIDTH as CELL_WIDTH',
+      'cell.CELL_HEIGHT as CELL_HEIGHT',
+      'cell.CELL_LENGTH as CELL_LENGTH',
+      'cell.STATUS as STATUS',
+      'block.WAREHOUSE_CODE as WAREHOUSE_CODE',
+      'block.BLOCK_CODE as BLOCK_CODE',
+      'block.BLOCK_NAME as BLOCK_NAME',
+    ])
+    .getRawMany();
+};
+
+export {
+  findCell,
+  updateNewCellStatus,
+  findCellById,
+  updateOldCellStatus,
+  findCellByWarehouseCode,
+};

@@ -20,17 +20,19 @@ const createBlockandCell = async (blockListInfo: Block[], statusCreateBlock: boo
   const arrayCell: Cell[] = [];
   for (let i = 0; i < blockListInfo.length; i++) {
     const blockInfo = blockListInfo[i];
+    const cellHeight = blockInfo.BLOCK_HEIGHT / blockInfo.TIER_COUNT;
+    const cellWidth = blockInfo.BLOCK_WIDTH;
+    const cellLength = blockInfo.BLOCK_LENGTH / blockInfo.SLOT_COUNT;
     for (let j = 0; j < blockInfo.SLOT_COUNT; j++) {
       for (let o = 0; o < blockInfo.TIER_COUNT; o++) {
         arrayCell.push({
-          // WAREHOUSE_CODE: blockInfo.WAREHOUSE_CODE,
           BLOCK_CODE: blockInfo.BLOCK_CODE,
           TIER_ORDERED: o + 1,
           SLOT_ORDERED: j + 1,
           STATUS: 0,
-          CELL_LENGTH: 1,
-          CELL_WIDTH: 2,
-          CELL_HEIGHT: 3,
+          CELL_LENGTH: cellLength,
+          CELL_WIDTH: cellWidth,
+          CELL_HEIGHT: cellHeight,
           CREATE_BY: blockInfo.CREATE_BY,
           CREATE_DATE: blockInfo.CREATE_DATE,
           UPDATE_BY: blockInfo.UPDATE_BY,
@@ -44,6 +46,7 @@ const createBlockandCell = async (blockListInfo: Block[], statusCreateBlock: boo
   if (statusCreateBlock) {
     newBlock = await blockRepository.save(blockListInfo);
   }
+  console.log(arrayCell);
   await cellRepository.save(arrayCell);
   return newBlock;
 };
