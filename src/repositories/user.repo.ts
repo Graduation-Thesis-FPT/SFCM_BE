@@ -1,3 +1,4 @@
+import { QueryFailedError } from 'typeorm';
 import { ERROR_MESSAGE } from '../constants';
 import { BadRequestError } from '../core/error.response';
 import mssqlConnection from '../db/mssql.connect';
@@ -20,30 +21,49 @@ const findUserById = async (userId: string): Promise<UserEntity> => {
   // if (!uuidRegex.test(userId)) {
   //   throw new BadRequestError(ERROR_MESSAGE.INVALID_USER_ID);
   // }
+  try {
+    const user = await userRepository.findOne({
+      where: {
+        ROWGUID: userId
+      },
+      relations: ['ROLE']
+    });
 
-  const user = await userRepository
-    .createQueryBuilder('user')
-    .leftJoinAndSelect(Role, 'role', 'user.ROLE_CODE = role.ROLE_CODE')
-    .select([
-      'user.ROWGUID as ROWGUID',
-      'user.USER_NAME as USER_NAME',
-      'user.FULLNAME as FULLNAME',
-      'user.EMAIL as EMAIL',
-      'user.TELEPHONE as TELEPHONE',
-      'user.ADDRESS as ADDRESS',
-      'user.BIRTHDAY as BIRTHDAY',
-      'user.IS_ACTIVE as IS_ACTIVE',
-      'user.CREATE_DATE as CREATE_DATE',
-      'user.CREATE_BY as CREATE_BY',
-      'user.UPDATE_DATE as UPDATE_DATE',
-      'user.UPDATE_BY as UPDATE_BY',
-      'user.ROLE_CODE as ROLE_CODE',
-      'role.ROLE_NAME as ROLE_NAME',
-    ])
-    .where('user.ROWGUID = :ROWGUID', { ROWGUID: userId })
-    .getRawOne();
+    if (!user) {
+      throw new BadRequestError(ERROR_MESSAGE.USER_NOT_EXIST);
+    }
 
-  return user;
+    return user;
+  } catch (err) {
+    if (err instanceof QueryFailedError && err.message.includes('uniqueidentifier')) {
+      throw new BadRequestError(ERROR_MESSAGE.INVALID_USER_ID);
+    }
+    throw new BadRequestError(err.message);
+  }
+
+  // const user = await userRepository
+  //   .createQueryBuilder('user')
+  //   .leftJoinAndSelect(Role, 'role', 'user.ROLE_CODE = role.ROLE_CODE')
+  //   .select([
+  //     'user.ROWGUID as ROWGUID',
+  //     'user.USER_NAME as USER_NAME',
+  //     'user.FULLNAME as FULLNAME',
+  //     'user.EMAIL as EMAIL',
+  //     'user.TELEPHONE as TELEPHONE',
+  //     'user.ADDRESS as ADDRESS',
+  //     'user.BIRTHDAY as BIRTHDAY',
+  //     'user.IS_ACTIVE as IS_ACTIVE',
+  //     'user.CREATE_DATE as CREATE_DATE',
+  //     'user.CREATE_BY as CREATE_BY',
+  //     'user.UPDATE_DATE as UPDATE_DATE',
+  //     'user.UPDATE_BY as UPDATE_BY',
+  //     'user.ROLE_CODE as ROLE_CODE',
+  //     'role.ROLE_NAME as ROLE_NAME',
+  //   ])
+  //   .where('user.ROWGUID = :ROWGUID', { ROWGUID: userId })
+  //   .getRawOne();
+
+  // return user;
 };
 
 const getAllUser = async (): Promise<UserEntity[]> => {

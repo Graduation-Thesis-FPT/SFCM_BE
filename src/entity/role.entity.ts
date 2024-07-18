@@ -1,6 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import Model from './model.entity';
+import { User } from './user.entity';
 
 @Entity('SA_ROLE')
 export class Role extends Model {
@@ -14,4 +15,7 @@ export class Role extends Model {
   @Column()
   @IsNotEmpty()
   ROLE_NAME: string;
+
+  @OneToMany(() => User, user => user.ROLE)
+  USERS: User[];
 }
