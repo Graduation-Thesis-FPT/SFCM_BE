@@ -127,7 +127,7 @@ const saveInOrder = async (
     DE_ORDER_NO: String(orderNo),
     CUSTOMER_CODE: reqData[0].CUSTOMER_CODE,
     CONTAINER_ID: reqData[0].CONTAINER_ID,
-    INV_ID: reqData[0].INV_ID ? reqData[0].INV_ID : null,
+    INV_ID: paymentInfoHeader.INV_NO ? paymentInfoHeader.INV_NO : null,
     INV_DRAFT_ID: reqData[0].INV_DRAFT_ID ? reqData[0].INV_DRAFT_ID : null,
     ISSUE_DATE: new Date(),
     EXP_DATE: reqData[0].EXP_DATE,
@@ -172,7 +172,7 @@ const saveInOrder = async (
   let invVatDtlSave: InvVatDtl[] = paymentInfoDetail.map((item, idx) => ({
     AMOUNT: item.AMOUNT,
     CARGO_TYPE: item.CARGO_TYPE,
-    INV_ID: reqData[0].INV_ID ? reqData[0].INV_ID : null,
+    INV_ID: paymentInfoHeader.INV_NO ? paymentInfoHeader.INV_NO : null,
     QTY: item.QTY,
     TAMOUNT: item.TAMOUNT,
     TRF_DESC: item.TRF_DESC,

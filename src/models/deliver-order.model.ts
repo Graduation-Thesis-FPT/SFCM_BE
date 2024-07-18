@@ -28,6 +28,5 @@ export interface OrderReqIn extends Base {
   EXP_DATE: Date;
   HOUSE_BILL: string;
   CBM: number;
-  INV_ID: string;
   INV_DRAFT_ID: string;
 }
