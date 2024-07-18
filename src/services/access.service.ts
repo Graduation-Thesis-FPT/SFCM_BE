@@ -43,9 +43,10 @@ class AccessService {
     }
 
     const resDataUser = await findUserById(foundUser.ROWGUID);
+    const { ROLE, ...userWithoutRole } = resDataUser;
 
-    const accessToken = createNewAccessToken(resDataUser);
-    const refreshToken = createRefreshToken(resDataUser);
+    const accessToken = createNewAccessToken(userWithoutRole);
+    const refreshToken = createRefreshToken(userWithoutRole);
     return {
       userInfo: getInfoData(resDataUser, [
         'ROWGUID',
