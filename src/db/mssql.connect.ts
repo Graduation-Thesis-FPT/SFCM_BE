@@ -26,6 +26,8 @@ import { DeliverOrderEntity } from '../entity/deliver-order.entity';
 import { DeliveryOrderDtlEntity } from '../entity/delivery-order-detail.entity';
 import { JobQuantityCheckEntity } from '../entity/job-quantity-check.entity';
 import { PalletStockEntity } from '../entity/pallet-stock.entity';
+import { InvNoEntity } from '../entity/inv_vat.entity';
+import { InvNoDtlEntity } from '../entity/inv_vat_dtl.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -60,7 +62,9 @@ const mssqlConnection = new DataSource({
     DeliverOrderEntity,
     JobQuantityCheckEntity,
     PalletStockEntity,
-    DeliveryOrderDtlEntity
+    DeliveryOrderDtlEntity,
+    InvNoEntity,
+    InvNoDtlEntity,
   ],
   options: {
     encrypt: false,
