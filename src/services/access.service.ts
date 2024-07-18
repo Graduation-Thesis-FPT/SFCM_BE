@@ -105,8 +105,9 @@ class AccessService {
   };
 
   static handlerRefreshToken = async (user: User) => {
-    const newAccessToken = createNewAccessToken(user);
-    const newRefreshToken = createRefreshToken(user);
+    const { ROLE, ...userWithoutRole } = user;
+    const newAccessToken = createNewAccessToken(userWithoutRole);
+    const newRefreshToken = createRefreshToken(userWithoutRole);
     return {
       userInfo: getInfoData(user, [
         'ROWGUID',
