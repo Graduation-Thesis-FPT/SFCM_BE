@@ -82,11 +82,14 @@ const getPermissionByRoleCode = async (roleCode: string) => {
 };
 
 const checkPermissionAccessMenu = async (roleCode: string, menuCode: string) => {
+  const start_seconds = new Date().getTime();
   const isExist = await permissionRepository
     .createQueryBuilder('permission')
     .where('permission.ROLE_CODE = :roleCode', { roleCode: roleCode })
     .andWhere('permission.MENU_CODE = :menuCode', { menuCode: menuCode })
     .getOne();
+  const end_seconds = new Date().getTime();
+  console.log('Time to check permission: ', end_seconds - start_seconds);
   return isExist;
 };
 
