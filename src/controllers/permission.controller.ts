@@ -21,12 +21,15 @@ class PermissionController {
   };
 
   getGrantPermission = async (req: Request, res: Response) => {
+    const start_seconds = Date.now();
     const userInfo = res.locals.user;
     const menuCode = req.query.menuCode as string;
     new OK({
       message: SUCCESS_MESSAGE.GET_GRANT_PERMISSION_SUCCESS,
       metadata: await PermissionService.getGrantPermission(userInfo.ROLE_CODE, menuCode),
     }).send(res);
+    const end_seconds = Date.now();
+    console.log('Time to get permission: ', end_seconds - start_seconds);
   };
 }
 
