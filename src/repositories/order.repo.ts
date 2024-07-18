@@ -5,12 +5,14 @@ import { ContainerEntity } from '../entity/container.entity';
 import { Package as PackageEntity } from '../entity/package.entity';
 import { TariffEntity } from '../entity/tariff.entity';
 import { InvNoEntity } from '../entity/inv_vat.entity';
+import { InvNoDtlEntity } from '../entity/inv_vat_dtl.entity';
 import { DeliverOrder, OrderReqIn } from '../models/deliver-order.model';
 import moment from 'moment';
 import { DeliverOrderDetail } from '../models/delivery-order-detail.model';
 import { User } from '../entity/user.entity';
 import { genOrderNo } from '../utils/genKey';
 import { InvVat, Payment } from '../models/inv_vat.model';
+import { InvVatDtl, PaymentDtl } from '../models/inv_vat_dtl.model';
 
 export const orderRepository = mssqlConnection.getRepository(DeliverOrderEntity);
 export const orderDtlRepository = mssqlConnection.getRepository(DeliveryOrderDtlEntity);
@@ -18,6 +20,7 @@ export const contRepository = mssqlConnection.getRepository(ContainerEntity);
 export const packageRepository = mssqlConnection.getRepository(PackageEntity);
 export const tariffRepository = mssqlConnection.getRepository(TariffEntity);
 export const invNoRepository = mssqlConnection.getRepository(InvNoEntity);
+export const invNoDtlRepository = mssqlConnection.getRepository(InvNoDtlEntity);
 
 const createfakeOrderData = async (data: DeliverOrder[]) => {
   const order = orderRepository.create(data);
@@ -111,7 +114,12 @@ const getTariffSTD = async (whereObj: object) => {
   return tariffInfo;
 };
 
-const saveInOrder = async (reqData: OrderReqIn[], paymentInfo: Payment, createBy: User) => {
+const saveInOrder = async (
+  reqData: OrderReqIn[],
+  paymentInfoHeader: Payment,
+  paymentInfoDetail: PaymentDtl[],
+  createBy: User,
+) => {
   const totalCbm = reqData.reduce((accumulator, item) => accumulator + item.CBM, 0);
   const orderNo = reqData[0].DE_ORDER_NO || (await genOrderNo('NK'));
 
@@ -147,26 +155,40 @@ const saveInOrder = async (reqData: OrderReqIn[], paymentInfo: Payment, createBy
   }));
 
   let inv_vatSave: InvVat = {
-    INV_NO: paymentInfo.INV_NO,
-    INV_DATE: paymentInfo.INV_DATE,
+    INV_NO: paymentInfoHeader.INV_NO,
+    INV_DATE: paymentInfoHeader.INV_DATE,
     PAYER: reqData[0].CUSTOMER_CODE,
-    AMOUNT: paymentInfo.AMOUNT,
-    VAT: paymentInfo.VAT,
-    TAMOUNT: paymentInfo.TAMOUNT,
+    AMOUNT: paymentInfoHeader.AMOUNT,
+    VAT: paymentInfoHeader.VAT,
+    TAMOUNT: paymentInfoHeader.TAMOUNT,
     PAYMENT_STATUS: 'Y',
-    ACC_CD: paymentInfo.ACC_CD,
+    ACC_CD: paymentInfoHeader.ACC_CD,
     CREATE_BY: 'sql',
     CREATE_DATE: new Date(),
     UPDATE_BY: 'sql',
     UPDATE_DATE: new Date(),
   };
 
+  let invVatDtlSave: InvVatDtl[] = paymentInfoDetail.map((item, idx) => ({
+    AMOUNT: item.AMOUNT,
+    CARGO_TYPE: item.CARGO_TYPE,
+    INV_ID: reqData[0].INV_ID ? reqData[0].INV_ID : null,
+    QTY: item.QTY,
+    TAMOUNT: item.TAMOUNT,
+    TRF_DESC: item.TRF_DESC,
+    UNIT_RATE: item.UNIT_RATE,
+    VAT: item.VAT,
+    VAT_RATE: item.VAT_RATE,
+  }));
+
   const order = orderRepository.create(deliveryOrder);
   const orderDtl = orderDtlRepository.create(deliveryOrderDtl);
   const invInfo = invNoRepository.create(inv_vatSave);
+  const invDtlInfo = invNoRepository.create(invVatDtlSave);
   const neworder = await orderRepository.save(order);
   const neworderDtlTemp = await orderDtlRepository.save(orderDtl);
   const newInvInfo = await orderDtlRepository.save(invInfo);
+  const newInvDtlInfo = await orderDtlRepository.save(invDtlInfo);
 
   const neworderDtlIds = neworderDtlTemp.map(item => item.ROWGUID);
   const neworderDtl = await orderDtlRepository
@@ -198,6 +220,7 @@ const saveInOrder = async (reqData: OrderReqIn[], paymentInfo: Payment, createBy
     neworder,
     neworderDtl,
     newInvInfo,
+    newInvDtlInfo,
   };
 };
 

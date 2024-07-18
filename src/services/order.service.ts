@@ -17,6 +17,7 @@ import { checkContSize, roundMoney } from '../utils';
 import { Tariff } from '../models/tariff.model';
 import { Package } from '../models/packageMnfLd.model';
 import { Payment } from '../models/inv_vat.model';
+import { PaymentDtl } from '../models/inv_vat_dtl.model';
 class OrderService {
   static getContList = async (VOYAGEKEY: string, BILLOFLADING: string) => {
     if (!VOYAGEKEY || !BILLOFLADING) {
@@ -99,8 +100,13 @@ class OrderService {
     return arrReturn;
   };
 
-  static saveInOrder = async (req: OrderReqIn[], paymentInfo: Payment, createBy: User) => {
-    return await saveInOrder(req, paymentInfo, createBy);
+  static saveInOrder = async (
+    req: OrderReqIn[],
+    paymentInfo: Payment,
+    paymentInfoDetail: PaymentDtl[],
+    createBy: User,
+  ) => {
+    return await saveInOrder(req, paymentInfo, paymentInfoDetail, createBy);
   };
 }
 export default OrderService;
