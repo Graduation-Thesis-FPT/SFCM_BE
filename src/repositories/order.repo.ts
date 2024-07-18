@@ -4,17 +4,20 @@ import { DeliveryOrderDtlEntity } from '../entity/delivery-order-detail.entity';
 import { ContainerEntity } from '../entity/container.entity';
 import { Package as PackageEntity } from '../entity/package.entity';
 import { TariffEntity } from '../entity/tariff.entity';
+import { InvNoEntity } from '../entity/inv_vat.entity';
 import { DeliverOrder, OrderReqIn } from '../models/deliver-order.model';
 import moment from 'moment';
 import { DeliverOrderDetail } from '../models/delivery-order-detail.model';
 import { User } from '../entity/user.entity';
 import { genOrderNo } from '../utils/genKey';
+import { InvVat, Payment } from '../models/inv_vat.model';
 
 export const orderRepository = mssqlConnection.getRepository(DeliverOrderEntity);
 export const orderDtlRepository = mssqlConnection.getRepository(DeliveryOrderDtlEntity);
 export const contRepository = mssqlConnection.getRepository(ContainerEntity);
 export const packageRepository = mssqlConnection.getRepository(PackageEntity);
 export const tariffRepository = mssqlConnection.getRepository(TariffEntity);
+export const invNoRepository = mssqlConnection.getRepository(InvNoEntity);
 
 const createfakeOrderData = async (data: DeliverOrder[]) => {
   const order = orderRepository.create(data);
@@ -108,7 +111,7 @@ const getTariffSTD = async (whereObj: object) => {
   return tariffInfo;
 };
 
-const saveInOrder = async (reqData: OrderReqIn[], createBy: User) => {
+const saveInOrder = async (reqData: OrderReqIn[], paymentInfo: Payment, createBy: User) => {
   const totalCbm = reqData.reduce((accumulator, item) => accumulator + item.CBM, 0);
   const orderNo = reqData[0].DE_ORDER_NO || (await genOrderNo('NK'));
 
@@ -122,8 +125,6 @@ const saveInOrder = async (reqData: OrderReqIn[], createBy: User) => {
     EXP_DATE: reqData[0].EXP_DATE,
     TOTAL_CBM: totalCbm,
     JOB_CHK: false,
-    // INV_ID?: string;
-    // INV_DRAFT_ID?: string;
     CREATE_BY: 'sql',
     CREATE_DATE: new Date(),
     UPDATE_BY: 'sql',
@@ -145,10 +146,27 @@ const saveInOrder = async (reqData: OrderReqIn[], createBy: User) => {
     UPDATE_DATE: new Date(),
   }));
 
+  let inv_vatSave: InvVat = {
+    INV_NO: paymentInfo.INV_NO,
+    INV_DATE: paymentInfo.INV_DATE,
+    PAYER: reqData[0].CUSTOMER_CODE,
+    AMOUNT: paymentInfo.AMOUNT,
+    VAT: paymentInfo.VAT,
+    TAMOUNT: paymentInfo.TAMOUNT,
+    PAYMENT_STATUS: 'Y',
+    ACC_CD: paymentInfo.ACC_CD,
+    CREATE_BY: 'sql',
+    CREATE_DATE: new Date(),
+    UPDATE_BY: 'sql',
+    UPDATE_DATE: new Date(),
+  };
+
   const order = orderRepository.create(deliveryOrder);
   const orderDtl = orderDtlRepository.create(deliveryOrderDtl);
+  const invInfo = invNoRepository.create(inv_vatSave);
   const neworder = await orderRepository.save(order);
   const neworderDtlTemp = await orderDtlRepository.save(orderDtl);
+  const newInvInfo = await orderDtlRepository.save(invInfo);
 
   const neworderDtlIds = neworderDtlTemp.map(item => item.ROWGUID);
   const neworderDtl = await orderDtlRepository
@@ -179,6 +197,7 @@ const saveInOrder = async (reqData: OrderReqIn[], createBy: User) => {
   return {
     neworder,
     neworderDtl,
+    newInvInfo,
   };
 };
 

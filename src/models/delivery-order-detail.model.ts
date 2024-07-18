@@ -8,6 +8,5 @@ export interface DeliverOrderDetail extends Base {
   CBM: number;
   LOT_NO: number;
   QUANTITY_CHK?: boolean;
-  REF_PAKAGE : string;
+  REF_PAKAGE: string;
 }
-
