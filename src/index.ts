@@ -1,3 +1,4 @@
+import "./instrument.js";
 import dotenv from 'dotenv';
 import express, { NextFunction } from 'express';
 import { Request, Response } from 'express';
@@ -6,6 +7,7 @@ import morgan from 'morgan';
 import 'reflect-metadata';
 import { createServer } from 'http';
 import { Server as SocketIOServer } from 'socket.io';
+import * as Sentry from "@sentry/node"
 
 dotenv.config({ path: '.env' });
 
