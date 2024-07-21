@@ -8,6 +8,7 @@ import {
   deleteCustomerMany,
   findCustomer,
   findCustomerByCode,
+  findCustomerByUserId,
   getAllCustomer,
   updateCustomer,
 } from '../repositories/customer.repo';
@@ -98,6 +99,10 @@ class CustomerService {
 
   static getAllCustomer = async () => {
     return await getAllCustomer();
+  };
+
+  static getCustomerByUserId = async (userId: string) => {
+    return await findCustomerByUserId(userId);
   };
 }
 export default CustomerService;

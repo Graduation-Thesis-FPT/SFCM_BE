@@ -28,4 +28,7 @@ export class Customer extends Model {
   @Column()
   @IsNotEmpty()
   IS_ACTIVE: boolean;
+
+  @Column()
+  USER_ID: string;
 }
