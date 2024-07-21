@@ -7,8 +7,8 @@ import {
   updatePallet,
 } from '../repositories/pallet.repo';
 import {
-  findCell,
   findCellById,
+  findCellInWarehouse,
   updateNewCellStatus,
   updateOldCellStatus,
 } from '../repositories/cell.repo';
@@ -16,8 +16,8 @@ import { PalletReq } from '../models/pallet.model';
 import _ from 'lodash';
 
 class PalletService {
-  static updatePallet = async (data: PalletReq, createBy: User) => {
-    const cell = await findCell(data.CELL_ID, data.WAREHOUSE_CODE);
+  static placePalletIntoCell = async (data: PalletReq, createBy: User) => {
+    const cell = await findCellInWarehouse(data.CELL_ID, data.WAREHOUSE_CODE);
 
     if (!cell) {
       throw new BadRequestError(`ô không hợp lệ!`);
@@ -31,7 +31,19 @@ class PalletService {
 
     const pallet = await findPallet(data.PALLET_NO);
     if (!pallet) {
-      throw new BadRequestError('Mã pallet không hợp lệ');
+      throw new BadRequestError(`Mã pallet không hợp lệ`);
+    }
+
+    const { PALLET_HEIGHT, PALLET_WIDTH, PALLET_LENGTH } = pallet;
+    const { CELL_HEIGHT, CELL_WIDTH, CELL_LENGTH } = cell;
+    const cellVolumn = CELL_HEIGHT * CELL_WIDTH * CELL_LENGTH;
+    const palletVolumn = PALLET_HEIGHT * PALLET_WIDTH * PALLET_LENGTH;
+    if (palletVolumn > cellVolumn) {
+      throw new BadRequestError(`Kích thước pallet phải nhỏ hơn kích thước ô!`);
+    }
+
+    if (PALLET_HEIGHT > CELL_HEIGHT || PALLET_LENGTH > CELL_LENGTH || PALLET_WIDTH > CELL_WIDTH) {
+      throw new BadRequestError(`Kích thước pallet không phù hợp`);
     }
 
     return await Promise.all([
@@ -55,10 +67,23 @@ class PalletService {
       throw new BadRequestError(`Ô không không tồn tại trong kho!`);
     }
 
-    if (cell.STATUS === 1) {
+    if (cell.STATUS) {
       throw new BadRequestError(
         `Ô ${cell.BLOCK_CODE}-${cell.TIER_ORDERED}-${cell.SLOT_ORDERED} đã chứa pallet, xin vui lòng chọn ô khác!`,
       );
+    }
+
+    const { PALLET_HEIGHT, PALLET_WIDTH, PALLET_LENGTH } = pallet;
+    const { CELL_HEIGHT, CELL_WIDTH, CELL_LENGTH } = cell;
+    const cellVolumn = CELL_HEIGHT * CELL_WIDTH * CELL_LENGTH;
+    const palletVolumn = PALLET_HEIGHT * PALLET_WIDTH * PALLET_LENGTH;
+
+    if (palletVolumn > cellVolumn) {
+      throw new BadRequestError(`Kích thước pallet không phù hợp`);
+    }
+
+    if (PALLET_HEIGHT > CELL_HEIGHT || PALLET_LENGTH > CELL_LENGTH || PALLET_WIDTH > CELL_WIDTH) {
+      throw new BadRequestError(`Kích thước pallet không phù hợp`);
     }
 
     return await Promise.all([

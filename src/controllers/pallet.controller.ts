@@ -4,13 +4,13 @@ import { SUCCESS_MESSAGE } from '../constants';
 import PalletService from '../services/pallet.service';
 
 class palletController {
-  updatePallet = async (req: Request, res: Response) => {
+  placePalletIntoCell = async (req: Request, res: Response) => {
     const createBy = res.locals.user;
     const data = req.body;
 
     new SuccessResponse({
       message: SUCCESS_MESSAGE.UPDATE_PALLET_SUCCESS,
-      metadata: await PalletService.updatePallet(data, createBy),
+      metadata: await PalletService.placePalletIntoCell(data, createBy),
     }).send(res);
   };
 

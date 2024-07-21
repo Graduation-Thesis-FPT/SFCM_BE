@@ -43,12 +43,20 @@ class CellService {
       .sort((a, b) => a.VOLUME - b.VOLUME);
 
     const match = cellVolumeFilter.length > 0 ? cellVolumeFilter[0] : null;
+    console.log(match);
+    if (
+      palletInfo.PALLET_HEIGHT > match.CELL_HEIGHT ||
+      palletInfo.PALLET_LENGTH > match.CELL_LENGTH ||
+      palletInfo.PALLET_WIDTH > match.CELL_WIDTH
+    ) {
+      throw new BadRequestError('Kích thước pallet không phù hợp');
+    }
 
     if (!match) {
       throw new BadRequestError('Không tìm thấy cell phù hợp');
     }
 
-    return { matchedCell: match, newListCell: cellVolume };
+    return { matchedCell: match, listCellSuggested: cellVolume };
   };
 }
 export default CellService;
