@@ -3,6 +3,7 @@ import { CREATED, OK, SuccessResponse } from '../core/success.response';
 import { SUCCESS_MESSAGE } from '../constants';
 import OrderService from '../services/order.service';
 import InvoiceManagementMisa from '../services/InvoiceMisa.service';
+import { whereExManifest } from '../models/deliver-order.model';
 class orderController {
   getContList = async (req: Request, res: Response) => {
     const VOYAGEKEY = req.query.VOYAGEKEY as string;
@@ -45,10 +46,14 @@ class orderController {
   };
 
   getExManifest = async (req: Request, res: Response) => {
-    const { VOYAGEKEY, CONTAINER_ID, HOUSE_BILL } = req.body;
+    const { VOYAGEKEY, CONTAINER_ID, HOUSE_BILL } = req.query;
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await OrderService.getExManifest({ VOYAGEKEY, CONTAINER_ID, HOUSE_BILL }),
+      metadata: await OrderService.getExManifest({
+        CONTAINER_ID: String(CONTAINER_ID),
+        HOUSE_BILL: String(HOUSE_BILL),
+        VOYAGEKEY: String(VOYAGEKEY),
+      }),
     }).send(res);
   };
 
@@ -57,6 +62,14 @@ class orderController {
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
       metadata: await OrderService.getToBillEx(arrayPackage),
+    }).send(res);
+  };
+
+  getOrderContList = async (req: Request, res: Response) => {
+    const { VOYAGEKEY } = req.query;
+    new OK({
+      message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
+      metadata: await OrderService.getOrderContList(String(VOYAGEKEY)),
     }).send(res);
   };
 

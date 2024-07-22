@@ -13,6 +13,7 @@ import { User } from '../entity/user.entity';
 import { genOrderNo } from '../utils/genKey';
 import { InvVat, Payment } from '../models/inv_vat.model';
 import { InvVatDtl, PaymentDtl } from '../models/inv_vat_dtl.model';
+import { containerRepository } from './container.repo';
 
 export const orderRepository = mssqlConnection.getRepository(DeliverOrderEntity);
 export const orderDtlRepository = mssqlConnection.getRepository(DeliveryOrderDtlEntity);
@@ -241,6 +242,7 @@ const getExManifest = async (whereObject: whereExManifest) => {
     .where('pk.VOYAGEKEY = :voyagekey', { voyagekey: whereObject.VOYAGEKEY })
     .where('pk.CONTAINER_ID = :container', { container: whereObject.CONTAINER_ID })
     .where('pk.HOUSE_BILL = :housebill', { housebill: whereObject.HOUSE_BILL })
+    .select(['pk.*'])
     .getRawMany();
   return list;
 };
@@ -355,6 +357,25 @@ const saveExOrder = async (
   };
 };
 
+const getOrderContList = async (VOYAGEKEY: string) => {
+  const list = await containerRepository
+    .createQueryBuilder('cn')
+    .leftJoin('DELIVER_ORDER', 'dor', 'cn.ROWGUID = dor.CONTAINER_ID')
+    .where('dor.JOB_CHK = :JOB_CHK', { JOB_CHK: 1 })
+    .where('cn.VOYAGE_KEY = :VOYAGE_KEY', { VOYAGE_KEY: VOYAGEKEY })
+    .select([
+      'cn.BILLOFLADING as BILLOFLADING',
+      'cn.SEALNO as SEALNO',
+      'cn.CNTRSZTP as CNTRSZTP',
+      'cn.ITEM_TYPE_CODE as ITEM_TYPE_CODE',
+      'cn.CNTRNO as CNTRNO',
+      'cn.COMMODITYDESCRIPTION as COMMODITYDESCRIPTION',
+      'dor.JOB_CHK as JOB_CHK',
+    ])
+    .getRawMany();
+  return list;
+};
+
 export {
   createfakeOrderData,
   findOrder,
@@ -367,4 +388,5 @@ export {
   saveInOrder,
   getExManifest,
   saveExOrder,
+  getOrderContList,
 };
