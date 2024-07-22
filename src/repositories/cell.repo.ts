@@ -67,6 +67,8 @@ const findCellByWarehouseCode = async (warehouseCode: string): Promise<CellEntit
       'block.BLOCK_CODE as BLOCK_CODE',
       'block.BLOCK_NAME as BLOCK_NAME',
     ])
+    .orderBy('cell.TIER_ORDERED', 'ASC')
+    .orderBy('cell.SLOT_ORDERED', 'ASC')
     .getRawMany();
 };
 

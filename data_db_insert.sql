@@ -19,22 +19,22 @@ VALUES
 ('generic-list','package-unit-list',N'Danh mục đơn vị ',NULL,1,208,'PackageUnitList','sql','sql'),
 ('generic-list','customer-type',N'Danh mục loại khách hàng',NULL,1,209,'CustomerType','sql','sql'),
 ('generic-list','customer-list',N'Danh mục khách hàng',NULL,1,210,'CustomerList','sql','sql'),
-(NULL,'input-data',N'Dữ liệu đầu vào','FolderInput',1,300,NULL,'sql','sql'),
-('input-data','vessel-info',N'Thông tin tàu chuyến',NULL,1,301,'VesselInfo','sql','sql'),
-('input-data','manifest-loading-list',N'Kê khai hàng hóa',NULL,1,302,'ManifestLoadingList','sql','sql'),
-('input-data','goods-manifest',N'Bảng kê danh mục hàng hóa',NULL,1,303,'GoodsManifest','sql','sql'),
-(NULL,'tariff',N'Biểu cước','Calculator',1,400,NULL,'sql','sql'),
-('tariff','tariff-code',N'Mã biểu cước',NULL,1,401,'TariffCode','sql','sql'),
-('tariff','standard-tariff',N'Biểu cước chuẩn',NULL,1,402,'StandardTariff','sql','sql'),
-('tariff','discount-tariff',N'Biểu cước giảm giá',NULL,1,403,'DiscountTariff','sql','sql'),
-('tariff','config-attach-srv',N'Cấu hình dịch vụ đính kèm',NULL,1,404,'ConfigAttachSrv','sql','sql'),
+(NULL,'tariff',N'Biểu cước','Calculator',1,300,NULL,'sql','sql'),
+('tariff','tariff-code',N'Mã biểu cước',NULL,1,301,'TariffCode','sql','sql'),
+('tariff','standard-tariff',N'Biểu cước chuẩn',NULL,1,302,'StandardTariff','sql','sql'),
+('tariff','discount-tariff',N'Biểu cước giảm giá',NULL,1,303,'DiscountTariff','sql','sql'),
+('tariff','config-attach-srv',N'Cấu hình dịch vụ đính kèm',NULL,1,304,'ConfigAttachSrv','sql','sql'),
+(NULL,'input-data',N'Dữ liệu đầu vào','FolderInput',1,400,NULL,'sql','sql'),
+('input-data','vessel-info',N'Kê khai tàu chuyến',NULL,1,401,'VesselInfo','sql','sql'),
+('input-data','manifest-loading-list',N'Kê khai container',NULL,1,402,'ManifestLoadingList','sql','sql'),
+('input-data','goods-manifest',N'Kê khai hàng hóa',NULL,1,403,'GoodsManifest','sql','sql'),
 (NULL,'procedure',N'Thủ tục','FilePen',1,500,NULL,'sql','sql'),
 ('procedure','import-order',N'Lệnh nhập kho',NULL,1,501,'ImportOrder','sql','sql'),
 ('procedure','export-order',N'Lệnh xuất kho',NULL,1,502,'ExportOrder','sql','sql'),
 (NULL,'warehouse-operation',N'Điều hành kho','ReplaceAll',1,600,NULL,'sql','sql'),
 ('warehouse-operation','import-tally',N'Kiểm đếm nhập kho',NULL,1,601,'ImportTally','sql','sql'),
 ('warehouse-operation','export-tally',N'Kiểm đếm xuất kho',NULL,1,602,'ExportTally','sql','sql'),
-('warehouse-operation','fork-lift',N'Xe nâng',NULL,1,603,'ForkLift','sql','sql')
+('warehouse-operation','fork-lift',N'Quản lý hàng nhập/xuất kho',NULL,1,603,'ForkLift','sql','sql')
 
 
 
