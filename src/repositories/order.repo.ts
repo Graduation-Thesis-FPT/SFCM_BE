@@ -362,7 +362,7 @@ const getOrderContList = async (VOYAGEKEY: string) => {
     .createQueryBuilder('cn')
     .leftJoin('DELIVER_ORDER', 'dor', 'cn.ROWGUID = dor.CONTAINER_ID')
     .where('dor.JOB_CHK = :JOB_CHK', { JOB_CHK: 1 })
-    .where('cn.VOYAGE_KEY = :VOYAGE_KEY', { VOYAGE_KEY: VOYAGEKEY })
+    .where('cn.VOYAGEKEY = :VOYAGE_KEY', { VOYAGE_KEY: VOYAGEKEY })
     .select([
       'cn.BILLOFLADING as BILLOFLADING',
       'cn.SEALNO as SEALNO',
