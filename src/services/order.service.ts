@@ -9,6 +9,7 @@ import {
   saveInOrder,
   getExManifest,
   saveExOrder,
+  getOrderContList,
 } from '../repositories/order.repo';
 import { checkContSize, roundMoney } from '../utils';
 import { Tariff } from '../models/tariff.model';
@@ -111,6 +112,13 @@ class OrderService {
       throw new BadRequestError(`Mã tàu hoặc số houseBill không được rỗng!`);
     }
     return getExManifest(whereExManifest);
+  };
+
+  static getOrderContList = async (VOYAGEKEY: string) => {
+    if (!VOYAGEKEY) {
+      throw new BadRequestError(`Vui lòng chuyền số tàu chuyến!`);
+    }
+    return getOrderContList(VOYAGEKEY);
   };
 
   static getToBillEx = async (dataReq_sualai: Package[]) => {

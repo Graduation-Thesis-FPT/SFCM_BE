@@ -13,6 +13,7 @@ router.post('/saveInOrder', asyncHandler(orderController.saveInOrder));
 router.post('/publishInvoice', asyncHandler(orderController.invoicePublish));
 router.get('/viewInvoice', asyncHandler(orderController.viewInvoice));
 
+router.get('/getContainerList', asyncHandler(orderController.getOrderContList));
 router.get('/getExManifest', asyncHandler(orderController.getExManifest));
 router.post('/getToBillEx', asyncHandler(orderController.getToBillEx));
 router.post('/publishInvoiceEx', asyncHandler(orderController.invoicePublishEx));
