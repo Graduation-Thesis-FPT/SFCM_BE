@@ -8,7 +8,6 @@ class orderController {
     const VOYAGEKEY = req.query.VOYAGEKEY as string;
     const BILLOFLADING = req.query.BILLOFLADING as string;
 
-    console.log('asd', VOYAGEKEY, BILLOFLADING);
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
       metadata: await OrderService.getContList(VOYAGEKEY, BILLOFLADING),
@@ -45,10 +44,40 @@ class orderController {
     }).send(res);
   };
 
+  getExManifest = async (req: Request, res: Response) => {
+    const { VOYAGEKEY, CONTAINER_ID, HOUSE_BILL } = req.body;
+    new OK({
+      message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
+      metadata: await OrderService.getExManifest({ VOYAGEKEY, CONTAINER_ID, HOUSE_BILL }),
+    }).send(res);
+  };
+
+  getToBillEx = async (req: Request, res: Response) => {
+    const { arrayPackage, addInfo } = req.body;
+    new OK({
+      message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
+      metadata: await OrderService.getToBillEx(arrayPackage),
+    }).send(res);
+  };
+
+  saveExOrder = async (req: Request, res: Response) => {
+    const { arrayPackage, paymentInfoHeader, paymentInfoDtl } = req.body;
+    const createBy = res.locals.user;
+    new OK({
+      message: SUCCESS_MESSAGE.SAVE_ORDER_SUCCESS,
+      metadata: await OrderService.saveExOrder(
+        arrayPackage,
+        paymentInfoHeader,
+        paymentInfoDtl,
+        createBy,
+      ),
+    }).send(res);
+  };
+
   //Phát hành hóa đơn
   invoicePublish = async (req: Request, res: Response) => {
     let temp = new InvoiceManagementMisa();
-    let data = await temp.publish(req);
+    let data = await temp.publish(req, 'NK');
     new OK({
       message: SUCCESS_MESSAGE.PUBLISH_INVOICE_SUCCESS,
       metadata: data,
@@ -60,6 +89,16 @@ class orderController {
     let data = await temp.getInvView(req);
     new OK({
       message: SUCCESS_MESSAGE.SUCCESS,
+      metadata: data,
+    }).send(res);
+  };
+
+  //phát hành hóa đơn xuất
+  invoicePublishEx = async (req: Request, res: Response) => {
+    let temp = new InvoiceManagementMisa();
+    let data = await temp.publish(req, 'XK');
+    new OK({
+      message: SUCCESS_MESSAGE.PUBLISH_INVOICE_SUCCESS,
       metadata: data,
     }).send(res);
   };

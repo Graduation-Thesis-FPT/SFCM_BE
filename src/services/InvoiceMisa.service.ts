@@ -532,7 +532,7 @@ class InvoiceManagementMisa {
     // result[0].InvSeries;
   };
 
-  publish = async (req: any) => {
+  publish = async (req: any, method: string) => {
     let temps = await this.getToken();
     if (!temps) {
       this.data.success = false;
@@ -574,7 +574,7 @@ class InvoiceManagementMisa {
     var amount_in_words = this.convert_number_to_words(total_amount) + dvt;
     amount_in_words = amount_in_words.charAt(0).toUpperCase() + amount_in_words.slice(1);
 
-    var orderNo = args.orderNo || datas[0]['orderNo'] || (await genOrderNo('NK'));
+    var orderNo = args.orderNo || datas[0]['orderNo'] || (await genOrderNo(method));
     var cusCode = String(cusTaxCode).trim();
 
     if (vat_rate === '') {

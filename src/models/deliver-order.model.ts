@@ -30,3 +30,9 @@ export interface OrderReqIn extends Base {
   CBM: number;
   INV_DRAFT_ID: string;
 }
+
+export type whereExManifest = {
+  VOYAGEKEY: string;
+  CONTAINER_ID: string;
+  HOUSE_BILL: string;
+};
