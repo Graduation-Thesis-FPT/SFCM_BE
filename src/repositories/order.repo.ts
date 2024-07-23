@@ -56,10 +56,12 @@ const findMaxDraftNo = async () => {
 const getContList = async (VOYAGEKEY: string, BILLOFLADING: string) => {
   const contList = contRepository
     .createQueryBuilder('cn')
-    .leftJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID and dto.JOB_CHK <> 1')
-    .where('cn.VOYAGEKEY = :voyagekey', { voyagekey: VOYAGEKEY })
+    .leftJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID')
+    .andWhere('cn.VOYAGEKEY = :voyagekey', { voyagekey: VOYAGEKEY })
     .andWhere('cn.BILLOFLADING = :bill', { bill: BILLOFLADING })
+    .andWhere('dto.JOB_CHK is null or dto.JOB_CHK = :job', { job: 0 })
     .select([
+      'dto.JOB_CHK',
       'cn.BILLOFLADING as BILLOFLADING',
       'cn.CNTRNO as CNTRNO',
       'cn.CNTRSZTP as CNTRSZTP',
