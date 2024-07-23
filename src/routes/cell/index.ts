@@ -9,5 +9,6 @@ const router = Router();
 router.use(authentication);
 
 router.get('', asyncHandler(cellController.suggestCell));
+router.get('/available', asyncHandler(cellController.getAvailableCell));
 
 export default router;

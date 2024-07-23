@@ -72,10 +72,36 @@ const findCellByWarehouseCode = async (warehouseCode: string): Promise<CellEntit
     .getRawMany();
 };
 
+const getAllAvailableCell = async ({
+  palletLength,
+  palletWidth,
+  palletHeight,
+}: {
+  palletHeight: number;
+  palletWidth: number;
+  palletLength: number;
+}) => {
+  const maxCellDimention = await cellRepository
+    .createQueryBuilder('cell')
+    .where('cell.STATUS = 0')
+    .andWhere('cell.CELL_HEIGHT >= :palletHeight', { palletHeight })
+    .andWhere('cell.CELL_WIDTH >= :palletWidth', { palletWidth })
+    .andWhere('cell.CELL_LENGTH >= :palletLength', { palletLength })
+    .select('cell.ROWGUID', 'ROWGUID')
+    .addSelect('cell.CELL_WIDTH', 'CELL_WIDTH')
+    .addSelect('cell.CELL_HEIGHT', 'CELL_HEIGHT')
+    .addSelect('cell.CELL_LENGTH', 'CELL_LENGTH')
+    .addSelect('cell.BLOCK_CODE', 'BLOCK_CODE')
+    .getRawMany();
+  console.log(maxCellDimention);
+  return maxCellDimention;
+};
+
 export {
   findCellInWarehouse,
   updateNewCellStatus,
   findCellById,
   updateOldCellStatus,
   findCellByWarehouseCode,
+  getAllAvailableCell,
 };
