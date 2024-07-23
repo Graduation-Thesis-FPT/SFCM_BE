@@ -35,20 +35,35 @@ class CellService {
       };
     });
 
-    const palletVolum =
-      palletInfo.PALLET_LENGTH * palletInfo.PALLET_WIDTH * palletInfo.PALLET_HEIGHT;
+    // const palletVolum =
+    //   palletInfo.PALLET_LENGTH * palletInfo.PALLET_WIDTH * palletInfo.PALLET_HEIGHT;
 
     const cellVolumeFilter: Cell[] = cellVolume
-      .filter(cell => cell.VOLUME >= palletVolum)
+      .filter(
+        cell =>
+          cell.CELL_HEIGHT >= palletInfo.PALLET_HEIGHT &&
+          cell.CELL_LENGTH >= palletInfo.PALLET_LENGTH &&
+          cell.CELL_WIDTH >= palletInfo.PALLET_WIDTH,
+      )
       .sort((a, b) => a.VOLUME - b.VOLUME);
-
     const match = cellVolumeFilter.length > 0 ? cellVolumeFilter[0] : null;
 
+    // console.log('after filter: ', cellVolumeFilter);
+
     if (!match) {
-      throw new BadRequestError('Không tìm thấy cell phù hợp');
+      throw new BadRequestError('Không tìm thấy ô phù hợp');
     }
 
-    return { matchedCell: match, newListCell: cellVolume };
+    // console.log('match: ', match);
+    if (
+      palletInfo.PALLET_HEIGHT > match.CELL_HEIGHT ||
+      palletInfo.PALLET_LENGTH > match.CELL_LENGTH ||
+      palletInfo.PALLET_WIDTH > match.CELL_WIDTH
+    ) {
+      throw new BadRequestError('Kích thước pallet không phù hợp');
+    }
+
+    return { matchedCell: match, listCellSuggested: cellVolume };
   };
 }
 export default CellService;

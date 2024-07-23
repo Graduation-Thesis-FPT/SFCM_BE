@@ -6,13 +6,14 @@ import { Package as PackageEntity } from '../entity/package.entity';
 import { TariffEntity } from '../entity/tariff.entity';
 import { InvNoEntity } from '../entity/inv_vat.entity';
 import { InvNoDtlEntity } from '../entity/inv_vat_dtl.entity';
-import { DeliverOrder, OrderReqIn } from '../models/deliver-order.model';
+import { DeliverOrder, OrderReqIn, whereExManifest } from '../models/deliver-order.model';
 import moment from 'moment';
 import { DeliverOrderDetail } from '../models/delivery-order-detail.model';
 import { User } from '../entity/user.entity';
 import { genOrderNo } from '../utils/genKey';
 import { InvVat, Payment } from '../models/inv_vat.model';
 import { InvVatDtl, PaymentDtl } from '../models/inv_vat_dtl.model';
+import { containerRepository } from './container.repo';
 
 export const orderRepository = mssqlConnection.getRepository(DeliverOrderEntity);
 export const orderDtlRepository = mssqlConnection.getRepository(DeliveryOrderDtlEntity);
@@ -58,6 +59,16 @@ const getContList = async (VOYAGEKEY: string, BILLOFLADING: string) => {
     .leftJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID and dto.JOB_CHK <> 1')
     .where('cn.VOYAGEKEY = :voyagekey', { voyagekey: VOYAGEKEY })
     .andWhere('cn.BILLOFLADING = :bill', { bill: BILLOFLADING })
+    .select([
+      'cn.BILLOFLADING as BILLOFLADING',
+      'cn.CNTRNO as CNTRNO',
+      'cn.CNTRSZTP as CNTRSZTP',
+      'cn.SEALNO as SEALNO',
+      'cn.STATUSOFGOOD as STATUSOFGOOD',
+      'cn.CONSIGNEE as CONSIGNEE',
+      'cn.ITEM_TYPE_CODE as ITEM_TYPE_CODE',
+      'cn.COMMODITYDESCRIPTION as COMMODITYDESCRIPTION',
+    ])
     .getRawMany();
   return await contList;
 };
@@ -68,6 +79,7 @@ const checkContStatus = async (VOYAGEKEY: string, CNTRNO: string) => {
     .leftJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID and dto.JOB_CHK <> 1')
     .where('cn.VOYAGEKEY = :voyagekey', { voyagekey: VOYAGEKEY })
     .andWhere('cn.CNTRNO = :cont', { cont: CNTRNO })
+    .select(['cn.*'])
     .getRawMany();
   if (contArr.length) return false;
   return true;
@@ -224,6 +236,146 @@ const saveInOrder = async (
   };
 };
 
+const getExManifest = async (whereObject: whereExManifest) => {
+  const list = await packageRepository
+    .createQueryBuilder('pk')
+    .where('pk.VOYAGEKEY = :voyagekey', { voyagekey: whereObject.VOYAGEKEY })
+    .where('pk.CONTAINER_ID = :container', { container: whereObject.CONTAINER_ID })
+    .where('pk.HOUSE_BILL = :housebill', { housebill: whereObject.HOUSE_BILL })
+    .select(['pk.*'])
+    .getRawMany();
+  return list;
+};
+
+const saveExOrder = async (
+  reqData: OrderReqIn[],
+  paymentInfoHeader: Payment,
+  paymentInfoDetail: PaymentDtl[],
+  createBy: User,
+) => {
+  const totalCbm = reqData.reduce((accumulator, item) => accumulator + item.CBM, 0);
+  const orderNo = reqData[0].DE_ORDER_NO || (await genOrderNo('NK'));
+
+  let deliveryOrder: DeliverOrder = {
+    DE_ORDER_NO: String(orderNo),
+    CUSTOMER_CODE: reqData[0].CUSTOMER_CODE,
+    CONTAINER_ID: reqData[0].CONTAINER_ID,
+    INV_ID: paymentInfoHeader.INV_NO ? paymentInfoHeader.INV_NO : null,
+    INV_DRAFT_ID: reqData[0].INV_DRAFT_ID ? reqData[0].INV_DRAFT_ID : null,
+    ISSUE_DATE: new Date(),
+    EXP_DATE: reqData[0].EXP_DATE,
+    TOTAL_CBM: totalCbm,
+    JOB_CHK: false,
+    CREATE_BY: 'sql',
+    CREATE_DATE: new Date(),
+    UPDATE_BY: 'sql',
+    UPDATE_DATE: new Date(),
+  };
+
+  let deliveryOrderDtl: DeliverOrderDetail[] = reqData.map((item, idx) => ({
+    // ROWGUID?: item.,
+    DE_ORDER_NO: String(orderNo),
+    METHOD_CODE: 'XK',
+    HOUSE_BILL: item.HOUSE_BILL,
+    CBM: item.CBM,
+    LOT_NO: idx + 1,
+    // QUANTITY_CHK: false,
+    REF_PAKAGE: item.ROWGUID,
+    CREATE_BY: 'sql',
+    CREATE_DATE: new Date(),
+    UPDATE_BY: 'sql',
+    UPDATE_DATE: new Date(),
+  }));
+
+  let inv_vatSave: InvVat = {
+    INV_NO: paymentInfoHeader.INV_NO,
+    INV_DATE: paymentInfoHeader.INV_DATE,
+    PAYER: reqData[0].CUSTOMER_CODE,
+    AMOUNT: paymentInfoHeader.AMOUNT,
+    VAT: paymentInfoHeader.VAT,
+    TAMOUNT: paymentInfoHeader.TAMOUNT,
+    PAYMENT_STATUS: 'Y',
+    ACC_CD: paymentInfoHeader.ACC_CD,
+    CREATE_BY: 'sql',
+    CREATE_DATE: new Date(),
+    UPDATE_BY: 'sql',
+    UPDATE_DATE: new Date(),
+  };
+
+  let invVatDtlSave: InvVatDtl[] = paymentInfoDetail.map((item, idx) => ({
+    AMOUNT: item.AMOUNT,
+    CARGO_TYPE: item.CARGO_TYPE,
+    INV_ID: paymentInfoHeader.INV_NO ? paymentInfoHeader.INV_NO : null,
+    QTY: item.QTY,
+    TAMOUNT: item.TAMOUNT,
+    TRF_DESC: item.TRF_DESC,
+    UNIT_RATE: item.UNIT_RATE,
+    VAT: item.VAT,
+    VAT_RATE: item.VAT_RATE,
+  }));
+
+  const order = orderRepository.create(deliveryOrder);
+  const orderDtl = orderDtlRepository.create(deliveryOrderDtl);
+  const invInfo = invNoRepository.create(inv_vatSave);
+  const invDtlInfo = invNoRepository.create(invVatDtlSave);
+  const neworder = await orderRepository.save(order);
+  const neworderDtlTemp = await orderDtlRepository.save(orderDtl);
+  const newInvInfo = await invNoRepository.save(invInfo);
+  const newInvDtlInfo = await invNoDtlRepository.save(invDtlInfo);
+
+  const neworderDtlIds = neworderDtlTemp.map(item => item.ROWGUID);
+  const neworderDtl = await orderDtlRepository
+    .createQueryBuilder('orderDtl')
+    .leftJoinAndSelect('DT_PACKAGE_MNF_LD', 'pk', 'pk.ROWGUID = orderDtl.REF_PAKAGE')
+    .leftJoinAndSelect('BS_ITEM_TYPE', 'item', 'pk.ITEM_TYPE_CODE = item.ITEM_TYPE_CODE')
+    .where('orderDtl.ROWGUID IN (:...ids)', { ids: neworderDtlIds })
+    .select([
+      'orderDtl.ROWGUID as ROWGUID',
+      'orderDtl.DE_ORDER_NO as DE_ORDER_NO',
+      'orderDtl.METHOD_CODE as METHOD_CODE',
+      'orderDtl.HOUSE_BILL as HOUSE_BILL',
+      'orderDtl.CBM as CBM',
+      'orderDtl.LOT_NO as LOT_NO',
+      'pk.PACKAGE_UNIT_CODE as PACKAGE_UNIT_CODE',
+      'pk.ITEM_TYPE_CODE as ITEM_TYPE_CODE',
+      'pk.CONTAINER_ID as CONTAINER_ID',
+      'pk.HOUSE_BILL as PK_HOUSE_BILL',
+      'pk.CBM as PK_CBM',
+      'pk.DECLARE_NO as PK_DECLARE_NO',
+      'pk.CARGO_PIECE as PK_CARGO_PIECE',
+      'pk.NOTE as PK_NOTE',
+      'item.ITEM_TYPE_NAME as ITEM_TYPE_NAME',
+    ])
+    .orderBy('orderDtl.LOT_NO', 'ASC')
+    .getRawMany();
+
+  return {
+    neworder,
+    neworderDtl,
+    newInvInfo,
+    newInvDtlInfo,
+  };
+};
+
+const getOrderContList = async (VOYAGEKEY: string) => {
+  const list = await containerRepository
+    .createQueryBuilder('cn')
+    .leftJoin('DELIVER_ORDER', 'dor', 'cn.ROWGUID = dor.CONTAINER_ID')
+    .where('dor.JOB_CHK = :JOB_CHK', { JOB_CHK: 1 })
+    .andWhere('cn.VOYAGEKEY = :VOYAGE_KEY', { VOYAGE_KEY: VOYAGEKEY })
+    .select([
+      'cn.BILLOFLADING as BILLOFLADING',
+      'cn.SEALNO as SEALNO',
+      'cn.CNTRSZTP as CNTRSZTP',
+      'cn.ITEM_TYPE_CODE as ITEM_TYPE_CODE',
+      'cn.CNTRNO as CNTRNO',
+      'cn.COMMODITYDESCRIPTION as COMMODITYDESCRIPTION',
+      'dor.JOB_CHK as JOB_CHK',
+    ])
+    .getRawMany();
+  return list;
+};
+
 const findOrdersByCustomerCode = async (customerCode: string) => {
   const order = await orderRepository
     .createQueryBuilder('order')
@@ -242,5 +394,8 @@ export {
   getManifestPackage,
   getTariffSTD,
   saveInOrder,
+  getExManifest,
+  saveExOrder,
+  getOrderContList,
   findOrdersByCustomerCode,
 };

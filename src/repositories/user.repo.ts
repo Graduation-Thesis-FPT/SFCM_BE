@@ -14,13 +14,6 @@ const findUserByUserName = async (userName: string): Promise<UserEntity> => {
 };
 
 const findUserById = async (userId: string): Promise<UserEntity> => {
-  const uuidRegex =
-    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-
-  if (!uuidRegex.test(userId)) {
-    throw new BadRequestError(ERROR_MESSAGE.INVALID_USER_ID);
-  }
-
   const user = await userRepository
     .createQueryBuilder('user')
     .leftJoinAndSelect(Role, 'role', 'user.ROLE_CODE = role.ROLE_CODE')

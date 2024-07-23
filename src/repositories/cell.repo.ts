@@ -2,14 +2,19 @@ import mssqlConnection from '../db/mssql.connect';
 import { Cell as CellEntity } from '../entity/cell.entity';
 const cellRepository = mssqlConnection.getRepository(CellEntity);
 
-const findCell = async (cellID: string, warehouseCode: string): Promise<CellEntity> => {
+const findCellInWarehouse = async (cellID: string, warehouseCode: string): Promise<CellEntity> => {
   return await cellRepository
     .createQueryBuilder('cell')
     .leftJoinAndSelect('BS_BLOCK', 'block', 'block.BLOCK_CODE = cell.BLOCK_CODE')
     .where('cell.ROWGUID = :cellID', { cellID })
     .andWhere('block.WAREHOUSE_CODE = :warehouseCode', { warehouseCode })
     .select([
-      'cell.*',
+      'cell.TIER_ORDERED as TIER_ORDERED',
+      'cell.SLOT_ORDERED as SLOT_ORDERED',
+      'cell.CELL_WIDTH as CELL_WIDTH',
+      'cell.CELL_HEIGHT as CELL_HEIGHT',
+      'cell.CELL_LENGTH as CELL_LENGTH',
+      'cell.STATUS as STATUS',
       'block.WAREHOUSE_CODE as WAREHOUSE_CODE',
       'block.BLOCK_CODE as BLOCK_CODE',
       'block.BLOCK_NAME as BLOCK_NAME',
@@ -62,11 +67,13 @@ const findCellByWarehouseCode = async (warehouseCode: string): Promise<CellEntit
       'block.BLOCK_CODE as BLOCK_CODE',
       'block.BLOCK_NAME as BLOCK_NAME',
     ])
+    .orderBy('cell.TIER_ORDERED', 'ASC')
+    .orderBy('cell.SLOT_ORDERED', 'ASC')
     .getRawMany();
 };
 
 export {
-  findCell,
+  findCellInWarehouse,
   updateNewCellStatus,
   findCellById,
   updateOldCellStatus,

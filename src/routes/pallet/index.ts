@@ -20,7 +20,7 @@ router.patch(
   '',
   asyncHandler(grantPermission),
   validateTariffRequest,
-  asyncHandler(palletController.updatePallet),
+  asyncHandler(palletController.placePalletIntoCell),
 );
 
 router.patch(
