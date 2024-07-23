@@ -1,5 +1,6 @@
 import { BadRequestError } from '../core/error.response';
 import { User } from '../entity/user.entity';
+import { getAllAvailableCell } from '../repositories/cell.repo';
 import {
   getAllImportTallyContainer,
   getAllJobQuantityCheckByPACKAGE_ID,
@@ -59,6 +60,19 @@ class JobQuantityCheckService {
             throw new BadRequestError(`Số thứ tự đã tồn tại. Vui lòng kiểm tra lại`);
           }
 
+          const listVaidCell = await getAllAvailableCell({
+            palletLength: data.PALLET_LENGTH,
+            palletWidth: data.PALLET_WIDTH,
+            palletHeight: data.PALLET_HEIGHT,
+          });
+
+          console.log(listVaidCell);
+          if (listVaidCell.length === 0) {
+            throw new BadRequestError(
+              `Kích thước Housebill ${data.HOUSE_BILL} không phù hợp với bất kỳ ô nào trong kho`,
+            );
+          }
+
           data.CREATE_BY = createBy.ROWGUID;
           data.UPDATE_BY = createBy.ROWGUID;
         }
@@ -86,6 +100,19 @@ class JobQuantityCheckService {
           if (isJobStatusExist) {
             throw new BadRequestError(
               `${data.PALLET_NO} đã hoàn tất kiểm đếm. Vui lòng kiểm tra lại`,
+            );
+          }
+
+          const listVaidCell = await getAllAvailableCell({
+            palletLength: data.PALLET_LENGTH,
+            palletWidth: data.PALLET_WIDTH,
+            palletHeight: data.PALLET_HEIGHT,
+          });
+
+          console.log(listVaidCell);
+          if (listVaidCell.length === 0) {
+            throw new BadRequestError(
+              `Kích thước Housebill ${data.HOUSE_BILL} không phù hợp với bất kỳ ô nào trong kho`,
             );
           }
 

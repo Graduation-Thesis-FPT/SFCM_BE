@@ -1,7 +1,7 @@
 import { BadRequestError } from '../core/error.response';
 import { Cell } from '../models/cell.model';
 import { Pallet } from '../models/pallet.model';
-import { findCellByWarehouseCode } from '../repositories/cell.repo';
+import { findCellByWarehouseCode, getAllAvailableCell } from '../repositories/cell.repo';
 import { findWarehouse } from '../repositories/warehouse.repo';
 import _ from 'lodash';
 
@@ -64,6 +64,14 @@ class CellService {
     }
 
     return { matchedCell: match, listCellSuggested: cellVolume };
+  };
+
+  static getAvailableCell = async (
+    palletLength: number,
+    palletWidth: number,
+    palletHeight: number,
+  ) => {
+    return await getAllAvailableCell({ palletLength, palletWidth, palletHeight });
   };
 }
 export default CellService;
