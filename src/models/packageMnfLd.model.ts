@@ -10,6 +10,8 @@ export interface Package extends Base {
   DECLARE_NO: string;
   CONTAINER_ID: string;
   NOTE: string;
+  ITEM_TYPE_CODE_CNTR?: string;
+  CUSTOMER_CODE?: string;
 }
 
 export interface PackageInfo {

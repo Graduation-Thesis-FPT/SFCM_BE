@@ -10,6 +10,7 @@ export interface Tariff extends Base {
   VAT: number;
   INCLUDE_VAT: boolean;
   TRF_TEMP_CODE: string;
+  CUSTOMER_CODE?: string;
 }
 
 export interface TariffList {
