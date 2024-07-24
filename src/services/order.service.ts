@@ -10,6 +10,8 @@ import {
   getExManifest,
   saveExOrder,
   getOrderContList,
+  getTariffDis,
+  getServicesTariff,
 } from '../repositories/order.repo';
 import { checkContSize, roundMoney } from '../utils';
 import { Tariff } from '../models/tariff.model';
@@ -36,46 +38,43 @@ class OrderService {
     return getManifestPackage(VOYAGEKEY, CNTRNO);
   };
 
-  static getToBillIn = async (dataReq_sualai: Package[], addInfo_s: any) => {
+  static getToBillIn = async (dataReq: Package[], services: string[], addInfo: any) => {
     const arrReturn = [];
-    const addInfo = {
-      ITEM_TYPE_CODE_CNTR: 'GP',
-      METHOD_CODE: 'NK',
-    };
-    const dataReq = [
-      {
-        HOUSE_BILL: 'HB01',
-        LOT_NO: '1',
-        ITEM_TYPE_CODE: 'GP',
-        UNIT_CODE: 'MTK',
-        CARGO_PIECE: 12,
-        CBM: 12,
-        DECLARE_NO: '12',
-        NOTE: '112',
-        REF_CONTAINER: 'B4225CEC-EFEE-4A63-9151-25E2241ECD85',
-      },
-      {
-        HOUSE_BILL: 'HB01',
-        LOT_NO: '2',
-        ITEM_TYPE_CODE: 'GP',
-        UNIT_CODE: 'MTK',
-        CARGO_PIECE: 13,
-        CBM: 14,
-        DECLARE_NO: '14',
-        NOTE: '14',
-        REF_CONTAINER: 'B4225CEC-EFEE-4A63-9151-25E2241ECD85',
-      },
-    ];
-    if (!dataReq.length || !Object.keys(addInfo).length) {
+    //Tính tiền nhập kho-begin
+    if (!dataReq.length) {
       throw new BadRequestError(`Không có dữ liệu tính cước!`);
     }
-    const totalCbm = dataReq.reduce((accumulator, item) => accumulator + item.CBM, 0);
-    //kiểm tra xem có biểu cước ở bảng cấu hình giảm giá không- Nếu kh có thì tìm giá trị ở biểu cước chuẩn
+    if (!dataReq[0].CUSTOMER_CODE) {
+      throw new BadRequestError(`Vui lòng chọn đối tượng thanh toán!`);
+    }
+    addInfo = {
+      ITEM_TYPE_CODE_CNTR: dataReq[0].ITEM_TYPE_CODE_CNTR,
+      PAYER: dataReq[0].CUSTOMER_CODE,
+      METHOD_CODE: 'NK',
+    };
+
+    let datas = dataReq.map((item, idx) => ({
+      HOUSE_BILL: item.HOUSE_BILL,
+      LOT_NO: idx + 1,
+      ITEM_TYPE_CODE: item.ITEM_TYPE_CODE,
+      UNIT_CODE: item.PACKAGE_UNIT_CODE,
+      CARGO_PIECE: item.CARGO_PIECE,
+      CBM: item.CBM,
+      DECLARE_NO: item.DECLARE_NO,
+      NOTE: item.NOTE,
+      REF_CONTAINER: item.CONTAINER_ID,
+    }));
+
+    const totalCbm = datas.reduce((accumulator, item) => accumulator + item.CBM, 0);
     let whereObj = {
       METHOD_CODE: addInfo.METHOD_CODE,
       ITEM_TYPE_CODE: addInfo.ITEM_TYPE_CODE_CNTR,
     };
-    let tariffInfo: Tariff = await getTariffSTD(whereObj);
+    let tariffInfo: Tariff;
+    tariffInfo = await getTariffDis({ ...whereObj, CUSTOMER_CODE: addInfo.PAYER });
+    if (!tariffInfo) {
+      tariffInfo = await getTariffSTD(whereObj);
+    }
     if (!tariffInfo) {
       throw new BadRequestError(
         `Không tìm thấy biểu cước phù hợp! Vui lòng cấu hình tính cước lại Mã : ${whereObj['METHOD_CODE']} và loại hàng ${whereObj['ITEM_TYPE_CODE']}`,
@@ -95,6 +94,35 @@ class OrderService {
       QTY: (Math.round(quanlity * 100) / 100).toFixed(2),
     };
     arrReturn.push(Object.assign(tempObj, tariffInfo));
+    //Tính tiền nhập kho-end
+
+    //Tính tiền dịch vụ đính kèm
+    if (services.length) {
+      const serviceTariffs = await getServicesTariff(services, addInfo.ITEM_TYPE_CODE_CNTR);
+      if (serviceTariffs.length != services.length) {
+        throw new BadRequestError(
+          `Không tìm thấy cước chuẩn của dịch vụ đính kèm! Vui lòng kiểm tra lại`,
+        );
+      }
+      for (let i = 0; i < serviceTariffs.length; i++) {
+        let serviceTariff = serviceTariffs[i];
+
+        let quanlity: number = 1;
+        let vatPrice: number = serviceTariff.AMT_CBM * (serviceTariff.VAT / 100) * quanlity;
+        let unitPrice: number = serviceTariff.AMT_CBM * (1 - serviceTariff.VAT / 100);
+        let cost: number = serviceTariff.AMT_CBM * (1 - serviceTariff.VAT / 100) * quanlity;
+        let totalPrice: number = vatPrice + cost;
+
+        let tempObj: any = {
+          UNIT_RATE: roundMoney(unitPrice),
+          VAT_PRICE: roundMoney(vatPrice),
+          AMOUNT: roundMoney(cost),
+          TAMOUNT: roundMoney(totalPrice),
+          QTY: (Math.round(quanlity * 100) / 100).toFixed(2),
+        };
+        arrReturn.push(Object.assign(tempObj, tariffInfo));
+      }
+    }
     return arrReturn;
   };
 
