@@ -37,4 +37,7 @@ export class Package extends Model {
 
   @Column()
   NOTE: string;
+
+  @Column()
+  JOB_TYPE: string;
 }
