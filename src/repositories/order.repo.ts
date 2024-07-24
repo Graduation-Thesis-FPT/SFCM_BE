@@ -14,6 +14,7 @@ import { genOrderNo } from '../utils/genKey';
 import { InvVat, Payment } from '../models/inv_vat.model';
 import { InvVatDtl, PaymentDtl } from '../models/inv_vat_dtl.model';
 import { containerRepository } from './container.repo';
+import { Brackets } from 'typeorm';
 
 export const orderRepository = mssqlConnection.getRepository(DeliverOrderEntity);
 export const orderDtlRepository = mssqlConnection.getRepository(DeliveryOrderDtlEntity);
@@ -57,9 +58,13 @@ const getContList = async (VOYAGEKEY: string, BILLOFLADING: string) => {
   const contList = contRepository
     .createQueryBuilder('cn')
     .leftJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID')
-    .andWhere('cn.VOYAGEKEY = :voyagekey', { voyagekey: VOYAGEKEY })
+    .where('cn.VOYAGEKEY = :voyagekey', { voyagekey: VOYAGEKEY })
     .andWhere('cn.BILLOFLADING = :bill', { bill: BILLOFLADING })
-    .andWhere('dto.JOB_CHK is null or dto.JOB_CHK = :job', { job: 0 })
+    .andWhere(
+      new Brackets(subQr => {
+        subQr.where('dto.JOB_CHK is null').orWhere('dto.JOB_CHK = :job', { job: 0 });
+      }),
+    )
     .select([
       'dto.JOB_CHK',
       'cn.BILLOFLADING as BILLOFLADING',
@@ -256,8 +261,11 @@ const saveExOrder = async (
   createBy: User,
 ) => {
   const totalCbm = reqData.reduce((accumulator, item) => accumulator + item.CBM, 0);
-  const orderNo = reqData[0].DE_ORDER_NO || (await genOrderNo('NK'));
+  const orderNo = reqData[0].DE_ORDER_NO || (await genOrderNo('XK'));
 
+  if (reqData[0].ROWGUID) {
+    packageRepository.update(reqData[0].ROWGUID, { JOB_TYPE: 'XK' }).catch(err => console.log(err));
+  }
   let deliveryOrder: DeliverOrder = {
     DE_ORDER_NO: String(orderNo),
     CUSTOMER_CODE: reqData[0].CUSTOMER_CODE,
