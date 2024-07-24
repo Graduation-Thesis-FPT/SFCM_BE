@@ -97,7 +97,7 @@ class OrderService {
     //Tính tiền nhập kho-end
 
     //Tính tiền dịch vụ đính kèm
-    if (!services.length) {
+    if (services.length) {
       const serviceTariffs = await getServicesTariff(services, addInfo.ITEM_TYPE_CODE_CNTR);
       if (serviceTariffs.length != services.length) {
         throw new BadRequestError(
