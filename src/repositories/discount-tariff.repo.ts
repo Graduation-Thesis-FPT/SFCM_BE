@@ -105,6 +105,7 @@ const getDiscountTariffByTemplate = async (tariffTemplate: string) => {
   return await discountTariffRepository
     .createQueryBuilder('discountTariff')
     .where('discountTariff.TRF_TEMP_CODE = :tariffTemplate', { tariffTemplate: tariffTemplate })
+    .orderBy('discountTariff.TRF_CODE', 'ASC')
     .getMany();
 };
 
