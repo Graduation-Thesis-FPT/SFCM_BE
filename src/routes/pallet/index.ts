@@ -8,7 +8,11 @@ import { validateTariffRequest } from '../../middlewares/helpers/tariffValidator
 const router = Router();
 
 router.use(authentication);
-router.get('', asyncHandler(grantPermission), asyncHandler(palletController.getPalletByStatus));
+router.get(
+  '/list-import-job',
+  asyncHandler(grantPermission),
+  asyncHandler(palletController.getListJobImport),
+);
 
 router.get(
   '/cell-position',
@@ -31,9 +35,9 @@ router.patch(
 );
 
 router.get(
-  '/cell-stacking',
+  '/list-export-job',
   asyncHandler(grantPermission),
-  asyncHandler(palletController.getStackingPallet),
+  asyncHandler(palletController.getListJobExport),
 );
 
 router.patch('/export', asyncHandler(grantPermission), asyncHandler(palletController.exportPallet));

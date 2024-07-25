@@ -32,19 +32,19 @@ class palletController {
     }).send(res);
   };
 
-  getPalletByStatus = async (req: Request, res: Response) => {
+  getListJobImport = async (req: Request, res: Response) => {
     const palletStatus = req.query.palletStatus as string;
     new SuccessResponse({
       message: SUCCESS_MESSAGE.GET_PALLET_SUCCESS,
-      metadata: await PalletService.getPalletByStatus(palletStatus),
+      metadata: await PalletService.getListJobImport(palletStatus),
     }).send(res);
   };
 
-  getStackingPallet = async (req: Request, res: Response) => {
+  getListJobExport = async (req: Request, res: Response) => {
     const warehouseCode = req.query.warehouseCode as string;
     new SuccessResponse({
       message: SUCCESS_MESSAGE.GET_PALLET_SUCCESS,
-      metadata: await PalletService.getStackingPallet(warehouseCode),
+      metadata: await PalletService.getListJobExport(warehouseCode),
     }).send(res);
   };
 
