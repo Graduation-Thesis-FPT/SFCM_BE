@@ -4,6 +4,7 @@ import { DeliveryOrderDtlEntity } from '../entity/delivery-order-detail.entity';
 import { ContainerEntity } from '../entity/container.entity';
 import { Package as PackageEntity } from '../entity/package.entity';
 import { TariffEntity } from '../entity/tariff.entity';
+import { TariffDisEntity } from '../entity/tariffDis.entity';
 import { InvNoEntity } from '../entity/inv_vat.entity';
 import { InvNoDtlEntity } from '../entity/inv_vat_dtl.entity';
 import { DeliverOrder, OrderReqIn, whereExManifest } from '../models/deliver-order.model';
@@ -15,14 +16,16 @@ import { InvVat, Payment } from '../models/inv_vat.model';
 import { InvVatDtl, PaymentDtl } from '../models/inv_vat_dtl.model';
 import { containerRepository } from './container.repo';
 import { Brackets } from 'typeorm';
+import { methodRepository } from './method.repo';
 
-export const orderRepository = mssqlConnection.getRepository(DeliverOrderEntity);
-export const orderDtlRepository = mssqlConnection.getRepository(DeliveryOrderDtlEntity);
-export const contRepository = mssqlConnection.getRepository(ContainerEntity);
-export const packageRepository = mssqlConnection.getRepository(PackageEntity);
-export const tariffRepository = mssqlConnection.getRepository(TariffEntity);
-export const invNoRepository = mssqlConnection.getRepository(InvNoEntity);
-export const invNoDtlRepository = mssqlConnection.getRepository(InvNoDtlEntity);
+const orderRepository = mssqlConnection.getRepository(DeliverOrderEntity);
+const orderDtlRepository = mssqlConnection.getRepository(DeliveryOrderDtlEntity);
+const contRepository = mssqlConnection.getRepository(ContainerEntity);
+const packageRepository = mssqlConnection.getRepository(PackageEntity);
+const tariffRepository = mssqlConnection.getRepository(TariffEntity);
+const tariffDisRepository = mssqlConnection.getRepository(TariffDisEntity);
+const invNoRepository = mssqlConnection.getRepository(InvNoEntity);
+const invNoDtlRepository = mssqlConnection.getRepository(InvNoDtlEntity);
 
 const createfakeOrderData = async (data: DeliverOrder[]) => {
   const order = orderRepository.create(data);
@@ -116,14 +119,15 @@ const getManifestPackage = async (VOYAGEKEY: string, CNTRNO: string) => {
   return await listMnf;
 };
 
-const getTariffSTD = async (whereObj: object) => {
-  const tariffInfo = await tariffRepository.find({ where: whereObj }).then(data => {
+const getTariffDis = async (whereObj: object) => {
+  const tariffInfo = await tariffDisRepository.find({ where: whereObj }).then(data => {
     let current = moment().toDate().getTime();
-    // data = data.filter(item => {
-    //   let from = moment(item.FROM_DATE, 'DD/MM/YYYY').toDate().getTime();
-    //   let to = moment(item.TO_DATE, 'DD/MM/YYYY').endOf('day').toDate().getTime();
-    //   return current >= from && current <= to;
-    // });
+    data = data.filter(item => {
+      let arrayValidDate = item.TRF_TEMP_CODE.split('-');
+      const from = moment(arrayValidDate[0], 'DD/MM/YYYY').toDate().getTime();
+      const to = moment(arrayValidDate[1], 'DD/MM/YYYY').endOf('day').toDate().getTime();
+      return current >= from && current <= to;
+    });
     if (data.length == 1) {
       return data[0];
     } else {
@@ -131,6 +135,42 @@ const getTariffSTD = async (whereObj: object) => {
     }
   });
   return tariffInfo;
+};
+
+const getTariffSTD = async (whereObj: object) => {
+  const tariffInfo = await tariffRepository.find({ where: whereObj }).then(data => {
+    let current = moment().toDate().getTime();
+    data = data.filter(item => {
+      let arrayValidDate = item.TRF_TEMP_CODE.split('-');
+      const from = moment(arrayValidDate[0], 'DD/MM/YYYY').toDate().getTime();
+      const to = moment(arrayValidDate[1], 'DD/MM/YYYY').endOf('day').toDate().getTime();
+      return current >= from && current <= to;
+    });
+    if (data.length == 1) {
+      return data[0];
+    } else {
+      return null;
+    }
+  });
+  return tariffInfo;
+};
+
+const getServicesTariff = async (services: string[], ITEM_TYPE_CODE: string) => {
+  const list = await methodRepository
+    .createQueryBuilder('mt')
+    .innerJoin('CONFIG_ATTACH_SRV', 'atr', 'mt.METHOD_CODE = atr.ATTACH_SERVICE_CODE')
+    .leftJoin('TRF_STD', 'trd', 'mt.METHOD_CODE = trd.METHOD_CODE')
+    .where('trd.ITEM_TYPE_CODE = :itemType', { itemType: ITEM_TYPE_CODE })
+    .andWhere('atr.ROWGUID IN (:...ids)', { ids: services })
+    .select([
+      'mt.METHOD_CODE as METHOD_CODE',
+      'trd.TRF_DESC as TRF_DESC',
+      'trd.AMT_CBM as AMT_CBM',
+      'trd.VAT as VAT',
+      'trd.INCLUDE_VAT as INCLUDE_VAT',
+    ])
+    .getRawMany();
+  return list;
 };
 
 const saveInOrder = async (
@@ -407,5 +447,7 @@ export {
   getExManifest,
   saveExOrder,
   getOrderContList,
+  getTariffDis,
+  getServicesTariff,
   findOrdersByCustomerCode,
 };

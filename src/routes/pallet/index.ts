@@ -30,4 +30,12 @@ router.patch(
   asyncHandler(palletController.changePalletPosition),
 );
 
+router.get(
+  '/cell-stacking',
+  asyncHandler(grantPermission),
+  asyncHandler(palletController.getStackingPallet),
+);
+
+router.patch('/export', asyncHandler(grantPermission), asyncHandler(palletController.exportPallet));
+
 export default router;

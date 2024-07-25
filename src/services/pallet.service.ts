@@ -1,9 +1,12 @@
 import { BadRequestError } from '../core/error.response';
 import { User } from '../entity/user.entity';
 import {
+  checkPalletJobTypeStatus,
   findPallet,
   getAllPalletPositionByWarehouseCode,
   getPalletByStatus,
+  getStackingPallet,
+  updateExportPallet,
   updatePallet,
 } from '../repositories/pallet.repo';
 import {
@@ -101,6 +104,37 @@ class PalletService {
 
   static getPalletByStatus = async (palletStatus: string) => {
     return await getPalletByStatus(palletStatus);
+  };
+
+  static getStackingPallet = async (warehouseCode: string) => {
+    const stackingPallet = await getStackingPallet(warehouseCode);
+    if (stackingPallet.length === 0) {
+      throw new BadRequestError(`Kho ${warehouseCode} không có hàng tồn`);
+    }
+    const groupPalletByBlock = _.groupBy(stackingPallet, 'BLOCK_CODE');
+    return groupPalletByBlock;
+    // return stackingPallet;
+  };
+
+  static exportPallet = async (data: PalletReq, createBy: User) => {
+    const pallet = await findPallet(data.PALLET_NO);
+
+    if (!pallet) {
+      throw new BadRequestError(`Mã Pallet không hợp lệ!`);
+    }
+
+    const jobType = await checkPalletJobTypeStatus(data.PALLET_NO);
+
+    console.log(jobType.JOB_TYPE);
+
+    if (jobType.JOB_TYPE !== 'XK') {
+      throw new BadRequestError(`Pallet chưa được làm lệnh xuất!`);
+    }
+
+    return await Promise.all([
+      updateExportPallet(null, data.PALLET_NO, createBy),
+      updateOldCellStatus(pallet.CELL_ID),
+    ]);
   };
 }
 export default PalletService;

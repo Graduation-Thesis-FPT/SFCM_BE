@@ -28,6 +28,7 @@ import { JobQuantityCheckEntity } from '../entity/job-quantity-check.entity';
 import { PalletStockEntity } from '../entity/pallet-stock.entity';
 import { InvNoEntity } from '../entity/inv_vat.entity';
 import { InvNoDtlEntity } from '../entity/inv_vat_dtl.entity';
+import { TariffDisEntity } from '../entity/tariffDis.entity';
 
 const mssqlConnection = new DataSource({
   type: 'mssql',
@@ -65,6 +66,7 @@ const mssqlConnection = new DataSource({
     DeliveryOrderDtlEntity,
     InvNoEntity,
     InvNoDtlEntity,
+    TariffDisEntity,
   ],
   options: {
     encrypt: false,
