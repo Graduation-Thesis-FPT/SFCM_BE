@@ -39,6 +39,14 @@ class palletController {
       metadata: await PalletService.getPalletByStatus(palletStatus),
     }).send(res);
   };
+
+  getStackingPallet = async (req: Request, res: Response) => {
+    const warehouseCode = req.query.warehouseCode as string;
+    new SuccessResponse({
+      message: SUCCESS_MESSAGE.GET_PALLET_SUCCESS,
+      metadata: await PalletService.getStackingPallet(warehouseCode),
+    }).send(res);
+  };
 }
 
 export default new palletController();
