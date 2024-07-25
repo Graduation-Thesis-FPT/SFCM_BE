@@ -4,8 +4,8 @@ import {
   checkPalletJobTypeStatus,
   findPallet,
   getAllPalletPositionByWarehouseCode,
-  getPalletByStatus,
-  getStackingPallet,
+  getListJobExport,
+  getListJobImport,
   updateExportPallet,
   updatePallet,
 } from '../repositories/pallet.repo';
@@ -102,18 +102,16 @@ class PalletService {
     return groupPalletByBlock;
   };
 
-  static getPalletByStatus = async (palletStatus: string) => {
-    return await getPalletByStatus(palletStatus);
+  static getListJobImport = async (palletStatus: string) => {
+    return await getListJobImport(palletStatus);
   };
 
-  static getStackingPallet = async (warehouseCode: string) => {
-    const stackingPallet = await getStackingPallet(warehouseCode);
+  static getListJobExport = async (warehouseCode: string) => {
+    const stackingPallet = await getListJobExport(warehouseCode);
     if (stackingPallet.length === 0) {
       throw new BadRequestError(`Kho ${warehouseCode} không có hàng tồn`);
     }
-    const groupPalletByBlock = _.groupBy(stackingPallet, 'BLOCK_CODE');
-    return groupPalletByBlock;
-    // return stackingPallet;
+    return stackingPallet;
   };
 
   static exportPallet = async (data: PalletReq, createBy: User) => {
