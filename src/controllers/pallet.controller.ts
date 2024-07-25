@@ -41,10 +41,9 @@ class palletController {
   };
 
   getListJobExport = async (req: Request, res: Response) => {
-    const warehouseCode = req.query.warehouseCode as string;
     new SuccessResponse({
       message: SUCCESS_MESSAGE.GET_PALLET_SUCCESS,
-      metadata: await PalletService.getListJobExport(warehouseCode),
+      metadata: await PalletService.getListJobExport(),
     }).send(res);
   };
 

@@ -118,7 +118,7 @@ const getListJobImport = async (palletStatus: string) => {
     .getRawMany();
 };
 
-const getListJobExport = async (warehouseCode: string) => {
+const getListJobExport = async () => {
   return await packageRepository
     .createQueryBuilder('package')
     .innerJoin('JOB_QUANTITY_CHECK', 'job', 'package.ROWGUID = job.PACKAGE_ID')
@@ -126,8 +126,7 @@ const getListJobExport = async (warehouseCode: string) => {
     .innerJoin('BS_CELL', 'cell', 'pallet.CELL_ID = cell.ROWGUID')
     .innerJoin('BS_BLOCK', 'block', 'cell.BLOCK_CODE = block.BLOCK_CODE')
     .innerJoin('BS_WAREHOUSE', 'warehouse', 'block.WAREHOUSE_CODE = warehouse.WAREHOUSE_CODE')
-    .where('warehouse.WAREHOUSE_CODE = :warehouseCode', { warehouseCode })
-    .andWhere('package.JOB_TYPE = :jobType', { jobType: 'XK' })
+    .where('package.JOB_TYPE = :jobType', { jobType: 'XK' })
     .andWhere('pallet.PALLET_STATUS = :palletStatus', { palletStatus: 'S' })
     .select([
       'job.ROWGUID as JOB_ROWGUID',
