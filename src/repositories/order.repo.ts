@@ -310,6 +310,7 @@ const saveExOrder = async (
     DE_ORDER_NO: String(orderNo),
     CUSTOMER_CODE: reqData[0].CUSTOMER_CODE,
     CONTAINER_ID: reqData[0].CONTAINER_ID,
+    PACKAGE_ID: reqData[0].PACKAGE_ID ? reqData[0].PACKAGE_ID : null,
     INV_ID: paymentInfoHeader.INV_NO ? paymentInfoHeader.INV_NO : null,
     INV_DRAFT_ID: reqData[0].INV_DRAFT_ID ? reqData[0].INV_DRAFT_ID : null,
     ISSUE_DATE: new Date(),
