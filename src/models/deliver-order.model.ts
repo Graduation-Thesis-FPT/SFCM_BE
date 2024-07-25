@@ -24,6 +24,7 @@ export interface OrderReqIn extends Base {
   DE_ORDER_NO?: string;
   ROWGUID: string;
   CONTAINER_ID: string;
+  PACKAGE_ID?: string;
   CUSTOMER_CODE: string;
   EXP_DATE: Date;
   HOUSE_BILL: string;
