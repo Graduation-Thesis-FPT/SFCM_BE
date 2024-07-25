@@ -4,6 +4,7 @@ import {
   findPallet,
   getAllPalletPositionByWarehouseCode,
   getPalletByStatus,
+  getStackingPallet,
   updatePallet,
 } from '../repositories/pallet.repo';
 import {
@@ -101,6 +102,16 @@ class PalletService {
 
   static getPalletByStatus = async (palletStatus: string) => {
     return await getPalletByStatus(palletStatus);
+  };
+
+  static getStackingPallet = async (warehouseCode: string) => {
+    const stackingPallet = await getStackingPallet(warehouseCode);
+    if (stackingPallet.length === 0) {
+      throw new BadRequestError(`Kho ${warehouseCode} không có hàng tồn`);
+    }
+    const groupPalletByBlock = _.groupBy(stackingPallet, 'BLOCK_CODE');
+    return groupPalletByBlock;
+    // return stackingPallet;
   };
 }
 export default PalletService;
