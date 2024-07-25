@@ -39,6 +39,9 @@ export const ERROR_MESSAGE = {
 
   //Itemtype
   ITEM_TYPE_EXIST: 'ITEM_TYPE_EXIST',
+
+  //customer
+  CUSTOMER_NOT_EXIST: 'CUSTOMER_NOT_EXIST',
 };
 
 export const SUCCESS_MESSAGE = {
@@ -155,6 +158,10 @@ export const SUCCESS_MESSAGE = {
 
   //Misa
   PUBLISH_INVOICE_SUCCESS: 'PUBLISH_INVOICE_SUCCESS',
+
+
+  //customer-order
+  GET_CUSTOMER_ORDERS_SUCCESS: 'GET_CUSTOMER_ORDER_SUCCESS',
 };
 
 export const REASON_PHRASES = {

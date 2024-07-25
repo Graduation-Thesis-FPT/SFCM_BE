@@ -27,6 +27,7 @@ import discountTariffRouter from './discount-tariff/index';
 import jobQuantityCheckRouter from './job-quantity-check/index';
 import palletRouter from './pallet/index';
 import cellRouter from './cell/index';
+import customerOrderRouter from './customer-order/index';
 
 const routes = Router();
 
@@ -94,4 +95,6 @@ routes.use('/api/v1/pallet', palletRouter);
 
 // cell
 routes.use('/api/v1/cell', cellRouter);
+
+routes.use('/api/v1/customer-order', customerOrderRouter);
 export default routes;

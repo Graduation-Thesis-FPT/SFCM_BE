@@ -27,6 +27,7 @@ const allowedOrigins = [
   'https://sfcm-fe.vercel.app',
   'https://sfcm-fe.onrender.com',
   'https://sfcmfe.up.railway.app',
+  'https://sfcmfe-nhi-test-production.up.railway.app'
 ];
 const corsOptions = {
   credentials: true,

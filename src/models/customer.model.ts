@@ -2,6 +2,7 @@ export interface Customer {
   CUSTOMER_CODE: string;
   CUSTOMER_NAME: string;
   CUSTOMER_TYPE_CODE: string;
+  USER_ID: string;
   ADDRESS: string;
   TAX_CODE: string;
   EMAIL: string;

@@ -57,6 +57,15 @@ const getAllCustomer = async () => {
   });
 };
 
+const findCustomerByUserId = async (userId: string) => {
+  return await customerRepository
+    .createQueryBuilder('customer')
+    .where('customer.USER_ID = :userId', {
+      userId: userId,
+    })
+    .getOne();
+}
+
 export {
   createCustomer,
   updateCustomer,
@@ -64,4 +73,5 @@ export {
   deleteCustomerMany,
   getAllCustomer,
   findCustomer,
+  findCustomerByUserId,
 };

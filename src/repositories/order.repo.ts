@@ -427,6 +427,14 @@ const getOrderContList = async (VOYAGEKEY: string) => {
   return list;
 };
 
+const findOrdersByCustomerCode = async (customerCode: string) => {
+  const order = await orderRepository
+    .createQueryBuilder('order')
+    .where('order.CUSTOMER_CODE = :customerCode', { customerCode: customerCode })
+    .getMany();
+  return order;
+}
+
 export {
   createfakeOrderData,
   findOrder,
@@ -442,4 +450,5 @@ export {
   getOrderContList,
   getTariffDis,
   getServicesTariff,
+  findOrdersByCustomerCode,
 };
