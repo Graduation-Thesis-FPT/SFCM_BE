@@ -21,12 +21,35 @@ const updatePallet = async (cellId: string, PalletNo: string, createBy: User) =>
     .execute();
 };
 
+const updateExportPallet = async (cellId: string, PalletNo: string, createBy: User) => {
+  return await palletRepository
+    .createQueryBuilder('pallet')
+    .update(PalletStockEntity)
+    .set({
+      PALLET_STATUS: 'C', //update lại pallet đó có trạng thái là Complete
+      CELL_ID: cellId,
+      UPDATE_BY: createBy.ROWGUID,
+    })
+    .where('PALLET_NO = :PalletNo', { PalletNo })
+    .execute();
+};
+
 const findPallet = async (PalletNo: string) => {
   return await palletRepository.findOne({
     where: {
       PALLET_NO: PalletNo,
     },
   });
+};
+
+const checkPalletJobTypeStatus = async (palletNo: string) => {
+  return await packageRepository
+    .createQueryBuilder('package')
+    .innerJoin('JOB_QUANTITY_CHECK', 'job', 'package.ROWGUID = job.PACKAGE_ID')
+    .innerJoin('DT_PALLET_STOCK', 'pallet', 'job.ROWGUID = pallet.JOB_QUANTITY_ID')
+    .where('pallet.PALLET_NO = :palletNo', { palletNo })
+    .select(['package.JOB_TYPE as JOB_TYPE'])
+    .getRawOne();
 };
 
 const getAllPalletPositionByWarehouseCode = async (warehouseCode: string) => {
@@ -127,4 +150,6 @@ export {
   getAllPalletPositionByWarehouseCode,
   getPalletByStatus,
   getStackingPallet,
+  updateExportPallet,
+  checkPalletJobTypeStatus,
 };

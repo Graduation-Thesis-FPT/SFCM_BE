@@ -36,4 +36,6 @@ router.get(
   asyncHandler(palletController.getStackingPallet),
 );
 
+router.patch('/export', asyncHandler(grantPermission), asyncHandler(palletController.exportPallet));
+
 export default router;
