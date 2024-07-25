@@ -106,12 +106,8 @@ class PalletService {
     return await getListJobImport(palletStatus);
   };
 
-  static getListJobExport = async (warehouseCode: string) => {
-    const stackingPallet = await getListJobExport(warehouseCode);
-    if (stackingPallet.length === 0) {
-      throw new BadRequestError(`Kho ${warehouseCode} không có hàng tồn`);
-    }
-    return stackingPallet;
+  static getListJobExport = async () => {
+    return await getListJobExport();
   };
 
   static exportPallet = async (data: PalletReq, createBy: User) => {

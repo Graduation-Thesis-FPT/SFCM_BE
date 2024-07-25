@@ -35,10 +35,7 @@ VALUES
 ('procedure','export-order',N'Lệnh xuất kho',NULL,1,502,'ExportOrder','sql','sql'),
 (NULL,'warehouse-operation',N'Điều hành kho','ReplaceAll',1,600,NULL,'sql','sql'),
 ('warehouse-operation','import-tally',N'Kiểm đếm nhập kho',NULL,1,601,'ImportTally','sql','sql'),
-('warehouse-operation','export-tally',N'Kiểm đếm xuất kho',NULL,1,602,'ExportTally','sql','sql'),
-('warehouse-operation','fork-lift',N'Quản lý hàng nhập/xuất kho',NULL,1,603,'ForkLift','sql','sql')
-
-
+('warehouse-operation','fork-lift',N'Quản lý hàng nhập/xuất kho',NULL,1,602,'ForkLift','sql','sql')
 
 INSERT INTO SA_PERMISSION (ROLE_CODE,MENU_CODE,IS_VIEW,IS_ADD_NEW,IS_MODIFY,IS_DELETE,CREATE_BY,UPDATE_BY)
 VALUES 
@@ -61,7 +58,6 @@ VALUES
 ('admin','import-order',1,1,1,1,'sql','sql'),
 ('admin','export-order',1,1,1,1,'sql','sql'),
 ('admin','import-tally',1,1,1,1,'sql','sql'),
-('admin','export-tally',1,1,1,1,'sql','sql'),
 ('admin','fork-lift',1,1,1,1,'sql','sql'),
 ('procedure-staff','user',1,0,0,0,'sql','sql'),
 ('procedure-staff','permission',1,0,0,0,'sql','sql'),

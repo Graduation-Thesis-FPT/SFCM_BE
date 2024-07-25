@@ -36,7 +36,6 @@ class TariffController {
 
   getTariffByTemplate = async (req: Request, res: Response) => {
     const template = req.query.template as string;
-    console.log(template);
     new OK({
       message: SUCCESS_MESSAGE.GET_TARIFF_SUCCESS,
       metadata: await TariffService.getTariffByTemplate(template),
