@@ -29,6 +29,17 @@ const validateData = (data: Package) => {
       'number.positive': 'Số khối phải là số dương',
       'string.empty': 'Số khối không được để trống',
     }),
+    JOB_TYPE: Joi.string().trim().messages({
+      'string.empty': 'Loại công việc không được để trống',
+    }),
+    TIME_IN: Joi.date().optional().allow('').messages({
+      'date.base': 'Thời gian vào không hợp lệ',
+      'string.empty': 'Thời gian vào không được để trống',
+    }),
+    TIME_OUT: Joi.date().optional().allow('').messages({
+      'date.base': 'Thời gian ra không hợp lệ',
+      'string.empty': 'Thời gian ra không được để trống',
+    }),
   });
 
   return methodSchema.validate(data);
