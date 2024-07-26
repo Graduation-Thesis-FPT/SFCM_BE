@@ -33,6 +33,7 @@ class PackageService {
         data.CREATE_BY = createBy.ROWGUID;
         data.UPDATE_BY = createBy.ROWGUID;
         data.UPDATE_DATE = new Date();
+        data.TIME_IN = new Date();
       }
 
       if (updateData.length > 0) {
@@ -52,6 +53,7 @@ class PackageService {
           }
           data.UPDATE_BY = createBy.ROWGUID;
           data.UPDATE_DATE = new Date();
+          data.TIME_IN = new Date();
         }
         newUpdated = await updatePackage(updateData, transactionalEntityManager);
       }

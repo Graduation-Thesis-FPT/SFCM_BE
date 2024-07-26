@@ -40,4 +40,10 @@ export class Package extends Model {
 
   @Column()
   JOB_TYPE: string;
+
+  @Column()
+  TIME_IN: Date;
+
+  @Column()
+  TIME_OUT: Date;
 }

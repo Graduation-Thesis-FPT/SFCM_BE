@@ -39,11 +39,6 @@ class PalletService {
 
     const { PALLET_HEIGHT, PALLET_WIDTH, PALLET_LENGTH } = pallet;
     const { CELL_HEIGHT, CELL_WIDTH, CELL_LENGTH } = cell;
-    // const cellVolumn = CELL_HEIGHT * CELL_WIDTH * CELL_LENGTH;
-    // const palletVolumn = PALLET_HEIGHT * PALLET_WIDTH * PALLET_LENGTH;
-    // if (palletVolumn > cellVolumn) {
-    //   throw new BadRequestError(`Kích thước pallet phải nhỏ hơn kích thước ô!`);
-    // }
 
     if (PALLET_HEIGHT > CELL_HEIGHT || PALLET_LENGTH > CELL_LENGTH || PALLET_WIDTH > CELL_WIDTH) {
       throw new BadRequestError(`Kích thước pallet không phù hợp`);
