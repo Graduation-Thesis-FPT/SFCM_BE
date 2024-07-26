@@ -50,6 +50,17 @@ const updatePackage = async (
 
 const getPackage = async (refContainer: string) => {
   return await packageRepository.find({
+    select: {
+      ROWGUID: true,
+      HOUSE_BILL: true,
+      ITEM_TYPE_CODE: true,
+      PACKAGE_UNIT_CODE: true,
+      CARGO_PIECE: true,
+      CBM: true,
+      DECLARE_NO: true,
+      CONTAINER_ID: true,
+      NOTE: true,
+    },
     order: {
       UPDATE_DATE: 'DESC',
     },

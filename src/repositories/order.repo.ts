@@ -433,7 +433,7 @@ const findOrdersByCustomerCode = async (customerCode: string) => {
     .where('order.CUSTOMER_CODE = :customerCode', { customerCode: customerCode })
     .getMany();
   return order;
-}
+};
 
 export {
   createfakeOrderData,
