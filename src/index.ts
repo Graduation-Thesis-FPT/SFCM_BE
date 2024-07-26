@@ -1,4 +1,4 @@
-import "./instrument.js";
+import './instrument.js';
 import dotenv from 'dotenv';
 import express, { NextFunction } from 'express';
 import { Request, Response } from 'express';
@@ -6,7 +6,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import 'reflect-metadata';
 import { createServer } from 'http';
-import * as Sentry from "@sentry/node"
+import * as Sentry from '@sentry/node';
 
 dotenv.config({ path: '.env' });
 
@@ -27,7 +27,7 @@ const allowedOrigins = [
   'https://sfcm-fe.vercel.app',
   'https://sfcm-fe.onrender.com',
   'https://sfcmfe.up.railway.app',
-  'https://sfcmfe-nhi-test-production.up.railway.app'
+  'https://sfcmfe-nhi-test-production.up.railway.app',
 ];
 const corsOptions = {
   credentials: true,
@@ -87,7 +87,7 @@ app.use((error: Error | any, req: Request, res: Response, next: NextFunction) =>
   return res.status(statusCode).json({
     status: 'error',
     code: statusCode,
-    stack: error.stack,
+    stack: error,
     message: error.message || ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
   });
 });

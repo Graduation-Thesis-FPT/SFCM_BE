@@ -120,7 +120,7 @@ class OrderService {
           TAMOUNT: roundMoney(totalPrice),
           QTY: (Math.round(quanlity * 100) / 100).toFixed(2),
         };
-        arrReturn.push(Object.assign(tempObj, tariffInfo));
+        arrReturn.push(Object.assign(tempObj, serviceTariff));
       }
     }
     return arrReturn;

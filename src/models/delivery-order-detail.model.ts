@@ -7,6 +7,5 @@ export interface DeliverOrderDetail extends Base {
   HOUSE_BILL: string;
   CBM: number;
   LOT_NO: number;
-  QUANTITY_CHK?: boolean;
   REF_PAKAGE: string;
 }

@@ -24,8 +24,5 @@ export class DeliveryOrderDtlEntity extends Model {
   LOT_NO: number;
 
   @Column()
-  QUANTITY_CHK: boolean;
-
-  @Column()
   REF_PAKAGE: string;
 }
