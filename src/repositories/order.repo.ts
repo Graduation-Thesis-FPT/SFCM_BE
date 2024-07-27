@@ -434,10 +434,9 @@ const saveExOrder = async (
 };
 
 const getOrderContList = async (VOYAGEKEY: string) => {
-  const results = await containerRepository
+  let results = await containerRepository
     .createQueryBuilder('cn')
-    .innerJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID')
-    .leftJoin('DT_PACKAGE_MNF_LD', 'pk', 'cn.ROWGUID = pk.CONTAINER_ID')
+    .innerJoin('DT_PACKAGE_MNF_LD', 'pk', 'cn.ROWGUID = pk.CONTAINER_ID')
     .leftJoin('JOB_QUANTITY_CHECK', 'jq', 'pk.ROWGUID = jq.PACKAGE_ID')
     .leftJoin('DT_PALLET_STOCK', 'pl', 'jq.ROWGUID = pl.JOB_QUANTITY_ID')
     .where('pl.PALLET_STATUS = :status', { status: 'S' })
@@ -453,7 +452,30 @@ const getOrderContList = async (VOYAGEKEY: string) => {
       'pk.PACKAGE_UNIT_CODE as PACKAGE_UNIT_CODE',
       'pl.PALLET_STATUS as PALLET_STATUS',
     ])
+    .groupBy('cn.CNTRNO')
+    .addGroupBy('pk.HOUSE_BILL')
+    .addGroupBy('pk.CBM')
+    .addGroupBy('pk.ITEM_TYPE_CODE')
+    .addGroupBy('pk.CONTAINER_ID')
+    .addGroupBy('pk.ROWGUID')
+    .addGroupBy('pk.DECLARE_NO')
+    .addGroupBy('pk.PACKAGE_UNIT_CODE')
+    .addGroupBy('pl.PALLET_STATUS')
     .getRawMany();
+
+  if (results.length) {
+    for (let i = 0; i < results.length; i++) {
+      let temp = await orderRepository
+        .createQueryBuilder()
+        .where('CONTAINER_ID = :contid', { contid: results[i].CONTAINER_ID })
+        .andWhere('PACKAGE_ID = :package', { package: results[i].ROWGUID })
+        .select(['PACKAGE_ID'])
+        .getRawMany();
+      if (temp.length) {
+        results = results.filter(item => item.ROWGUID !== temp[0].PACKAGE_ID);
+      }
+    }
+  }
 
   return results;
 };
