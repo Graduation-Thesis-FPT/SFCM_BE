@@ -19,7 +19,7 @@ import { Pallet } from '../models/pallet.model';
 import { findCustomerByUserId } from '../repositories/customer.repo';
 import { getAllJobQuantityCheckByPACKAGE_ID } from '../repositories/import-tally.repo';
 import { findOrderDetailsByOrderNo } from '../repositories/order-detail.repo';
-import { findOrdersByCustomerCode } from '../repositories/order.repo';
+import { findImportedOrdersByStatus, findOrdersByCustomerCode } from '../repositories/order.repo';
 import { findPalletsByJob } from '../repositories/pallet.repo';
 
 class CustomerOrderService {
@@ -75,84 +75,34 @@ class CustomerOrderService {
     status: string,
     user: User,
   ): Promise<ImportedOrder[]> => {
-    const orders = await CustomerOrderService.getImportedOrders(user);
-    let storedOrders = [];
-    let checkedOrders = [];
-    let confirmedOrders = [];
-    let importedOrders: ImportedOrder[] = [];
+    const customer = await findCustomerByUserId(user.ROWGUID);
+    const orders = await findImportedOrdersByStatus(customer.CUSTOMER_CODE);
 
-    if (orders.length) {
-      // each order has a list of order details
-      // get all order details of all orders
-      for (let order of orders) {
-        const orderDetails: DeliverOrderDetail[] = await findOrderDetailsByOrderNo(
-          order.DE_ORDER_NO,
-        );
-        if (!orderDetails.length) {
-          throw new BadRequestError(ERROR_MESSAGE.ORDER_DETAIL_NOT_EXIST);
-        }
-        let pallets: PalletModel[] = [];
-        let jobs: JobQuantityCheck[] = [];
-        for (let orderDetail of orderDetails) {
-          const _jobs: JobQuantityCheck[] = await getAllJobQuantityCheckByPACKAGE_ID(
-            orderDetail.REF_PAKAGE,
-          );
-          jobs = jobs.concat(_jobs);
-          // each job has one pallet
-          // find all pallets for all jobs by job.ROWGUID
-          const _pallets: PalletStockEntity[] = (
-            await Promise.all(_jobs.map(job => findPalletsByJob(job.ROWGUID)))
-          ).flat();
-          pallets = pallets.concat(_pallets);
-        }
-        const uniqueJobPackageIds = new Set(jobs.map(job => job.PACKAGE_ID));
-        const uniqueOrderDetailPackageIds = new Set(
-          orderDetails.map(orderDetail => orderDetail.REF_PAKAGE),
-        );
-        if (
-          uniqueJobPackageIds.size === uniqueOrderDetailPackageIds.size &&
-          [...uniqueJobPackageIds].every(id => uniqueOrderDetailPackageIds.has(id))
-        ) {
-          if (pallets.every(pallet => pallet.PALLET_STATUS === 'S')) {
-            storedOrders.push(order);
-          } else if (jobs.every(job => job.JOB_STATUS === 'C')) {
-            checkedOrders.push(order);
-          } else {
-            confirmedOrders.push(order);
-          }
+    const processOrder = (order: any): ImportedOrder => {
+      let orderStatus: ImportedOrderStatus;
+      if (order.TOTAL_PACKAGES === order.TOTAL_JOBS) {
+        if (order.TOTAL_PALLETS === order.STORED_PALLETS) {
+          orderStatus = ImportedOrderStatus.isStored;
+        } else if (order.TOTAL_JOBS === order.CHECKED_JOBS) {
+          orderStatus = ImportedOrderStatus.isChecked;
         } else {
-          confirmedOrders.push(order);
+          orderStatus = ImportedOrderStatus.isConfirmed;
         }
+      } else {
+        orderStatus = ImportedOrderStatus.isConfirmed;
       }
 
-      switch (status) {
-        case ImportedOrderStatus.isConfirmed:
-          confirmedOrders = confirmedOrders.map(order => {
-            const status = ImportedOrderStatus.isConfirmed;
-            return Object.assign(order, { status });
-          });
-          importedOrders = confirmedOrders;
-          break;
-        case ImportedOrderStatus.isChecked:
-          checkedOrders = checkedOrders.map(order => {
-            const status = ImportedOrderStatus.isChecked;
-            return Object.assign(order, { status });
-          });
+      return {
+        DE_ORDER_NO: order.DE_ORDER_NO,
+        CUSTOMER_CODE: order.CUSTOMER_CODE,
+        CONTAINER_ID: order.CONTAINER_ID,
+        PACKAGE_ID: order.DO_PACKAGE_ID,
+        status: orderStatus,
+      };
+    };
 
-          importedOrders = checkedOrders;
-          break;
-        case ImportedOrderStatus.isStored:
-          storedOrders = storedOrders.map(order => {
-            const status = ImportedOrderStatus.isStored;
-            return Object.assign(order, { status });
-          });
-          importedOrders = storedOrders;
-          break;
-        default:
-          return importedOrders;
-      }
-    }
-    return importedOrders;
+    const processedOrders = orders.map(processOrder);
+    return processedOrders.filter(order => order.status === status);
   };
 
   static getExportedOrders = async (user: User): Promise<DeliverOrderEntity[]> => {

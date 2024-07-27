@@ -7,7 +7,12 @@ import { TariffEntity } from '../entity/tariff.entity';
 import { TariffDisEntity } from '../entity/tariffDis.entity';
 import { InvNoEntity } from '../entity/inv_vat.entity';
 import { InvNoDtlEntity } from '../entity/inv_vat_dtl.entity';
-import { DeliverOrder, OrderReqIn, whereExManifest } from '../models/deliver-order.model';
+import {
+  DeliverOrder,
+  ImportedOrder,
+  OrderReqIn,
+  whereExManifest,
+} from '../models/deliver-order.model';
 import moment from 'moment';
 import { DeliverOrderDetail } from '../models/delivery-order-detail.model';
 import { User } from '../entity/user.entity';
@@ -464,6 +469,39 @@ const findOrdersByCustomerCode = async (customerCode: string) => {
   return order;
 };
 
+const findImportedOrdersByStatus = async (customerCode: string): Promise<ImportedOrder[]> => {
+  const query = `SELECT
+      do.DE_ORDER_NO,
+      do.CUSTOMER_CODE,
+      do.CONTAINER_ID,
+      do.PACKAGE_ID AS DO_PACKAGE_ID,
+      COUNT(DISTINCT dod.REF_PAKAGE) AS TOTAL_PACKAGES,
+      COUNT(DISTINCT jqc.PACKAGE_ID) AS TOTAL_JOBS,
+      SUM(CASE WHEN jqc.JOB_STATUS = 'C' THEN 1 ELSE 0 END) AS CHECKED_JOBS,
+      SUM(CASE WHEN ps.PALLET_STATUS = 'S' THEN 1 ELSE 0 END) AS STORED_PALLETS,
+      COUNT(DISTINCT ps.PALLET_NO) AS TOTAL_PALLETS
+  FROM
+      DELIVER_ORDER do
+  JOIN
+      DELIVERY_ORDER_DETAIL dod ON do.DE_ORDER_NO = dod.DE_ORDER_NO
+  LEFT JOIN
+      JOB_QUANTITY_CHECK jqc ON dod.REF_PAKAGE = jqc.PACKAGE_ID
+  LEFT JOIN
+      DT_PALLET_STOCK ps ON jqc.ROWGUID = ps.JOB_QUANTITY_ID
+  WHERE
+      do.CUSTOMER_CODE = '${customerCode}'
+  GROUP BY
+      do.DE_ORDER_NO, do.CUSTOMER_CODE, do.CONTAINER_ID, do.PACKAGE_ID`;
+
+  const queryRunner = await mssqlConnection.createQueryRunner();
+  try {
+    const orders = await queryRunner.manager.query(query);
+    return orders;
+  } finally {
+    await queryRunner.release();
+  }
+};
+
 export {
   createfakeOrderData,
   findOrder,
@@ -480,4 +518,5 @@ export {
   getTariffDis,
   getServicesTariff,
   findOrdersByCustomerCode,
+  findImportedOrdersByStatus,
 };
