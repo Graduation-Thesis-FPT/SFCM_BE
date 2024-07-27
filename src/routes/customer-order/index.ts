@@ -17,9 +17,9 @@ router.get(
   asyncHandler(grantPermission),
   asyncHandler(customerOrderController.getImportedOrders),
 );
-router.get('/export-orders',asyncHandler(grantPermission), asyncHandler(customerOrderController.getExportedOrders));
-
-//customer-order/import-orders?status=isConfirmed
-// router.get('', asyncHandler(customerOrderController.getOrdersByCustomerId));
-
+router.get(
+  '/export-orders',
+  asyncHandler(grantPermission),
+  asyncHandler(customerOrderController.getExportedOrders),
+);
 export default router;

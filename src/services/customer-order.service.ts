@@ -75,6 +75,7 @@ class CustomerOrderService {
     status: string,
     user: User,
   ): Promise<ImportedOrder[]> => {
+    const start_time = new Date().getTime();
     const orders = await CustomerOrderService.getImportedOrders(user);
     // console.log('orders2', orders);
     let storedOrders = [];
@@ -107,11 +108,21 @@ class CustomerOrderService {
           ).flat();
           pallets = pallets.concat(_pallets);
         }
-        // if all pallets PALLET_STATUS is S, then add order to importedOrders
-        if (pallets.every(pallet => pallet.PALLET_STATUS === 'S')) {
-          storedOrders.push(order);
-        } else if (jobs.every(job => job.JOB_STATUS === 'C')) {
-          checkedOrders.push(order);
+        const uniqueJobPackageIds = new Set(jobs.map(job => job.PACKAGE_ID));
+        const uniqueOrderDetailPackageIds = new Set(
+          orderDetails.map(orderDetail => orderDetail.REF_PAKAGE),
+        );
+        if (
+          uniqueJobPackageIds.size === uniqueOrderDetailPackageIds.size &&
+          [...uniqueJobPackageIds].every(id => uniqueOrderDetailPackageIds.has(id))
+        ) {
+          if (pallets.every(pallet => pallet.PALLET_STATUS === 'S')) {
+            storedOrders.push(order);
+          } else if (jobs.every(job => job.JOB_STATUS === 'C')) {
+            checkedOrders.push(order);
+          } else {
+            confirmedOrders.push(order);
+          }
         } else {
           confirmedOrders.push(order);
         }
@@ -145,10 +156,11 @@ class CustomerOrderService {
           importedOrders = storedOrders;
           break;
         default:
-          return [];
+          return importedOrders;
       }
     }
-    // console.log('importedOrders', importedOrders.length);
+    const end_time = new Date().getTime();
+    console.log('getImportedOrdersByStatus:', end_time - start_time);
     return importedOrders;
   };
 
