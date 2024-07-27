@@ -7,9 +7,27 @@ class CustomerOrderController {
   getOrdersByCustomerId = async (req: Request, res: Response) => {
     const user = res.locals.user;
     new OK({
-        message: SUCCESS_MESSAGE.GET_CUSTOMER_ORDERS_SUCCESS,
-        metadata: await CustomerOrderService.getOrdersByCustomerCode(user),
-      }).send(res);
+      message: SUCCESS_MESSAGE.GET_CUSTOMER_ORDERS_SUCCESS,
+      metadata: await CustomerOrderService.getOrdersByCustomerCode(user),
+    }).send(res);
+  };
+
+  getImportedOrders = async (req: Request, res: Response) => {
+    const status = req.query.status as string;
+    const user = res.locals.user;
+    new OK({
+      message: SUCCESS_MESSAGE.GET_IMPORTED_ORDERS_SUCCESS,
+      metadata: await CustomerOrderService.getImportedOrdersByStatus(status, user),
+    }).send(res);
+  };
+
+  getExportedOrders = async (req: Request, res: Response) => {
+    const user = res.locals.user;
+    const status = req.query.status as string;
+    new OK({
+      message: SUCCESS_MESSAGE.GET_IMPORTED_ORDERS_SUCCESS,
+      metadata: await CustomerOrderService.getExportedOrdersByStatus(status, user),
+    }).send(res);
   };
 }
 
