@@ -77,6 +77,7 @@ class CustomerOrderService {
   ): Promise<ImportedOrder[]> => {
     const start_time = new Date().getTime();
     const orders = await CustomerOrderService.getImportedOrders(user);
+    console.log('getOrders:', new Date().getTime() - start_time);
     // console.log('orders2', orders);
     let storedOrders = [];
     let checkedOrders = [];
@@ -87,9 +88,11 @@ class CustomerOrderService {
       // each order has a list of order details
       // get all order details of all orders
       for (let order of orders) {
+        const _start_time = new Date().getTime();
         const orderDetails: DeliverOrderDetail[] = await findOrderDetailsByOrderNo(
           order.DE_ORDER_NO,
         );
+        console.log('findOrderDetailsByOrderNo:', new Date().getTime() - _start_time);
         if (!orderDetails.length) {
           throw new BadRequestError(ERROR_MESSAGE.ORDER_DETAIL_NOT_EXIST);
         }
@@ -97,15 +100,19 @@ class CustomerOrderService {
         let pallets: PalletModel[] = [];
         let jobs: JobQuantityCheck[] = [];
         for (let orderDetail of orderDetails) {
+          const __start_time = new Date().getTime();
           const _jobs: JobQuantityCheck[] = await getAllJobQuantityCheckByPACKAGE_ID(
             orderDetail.REF_PAKAGE,
           );
+          console.log('getAllJobQuantityCheckByPACKAGE_ID:', new Date().getTime() - __start_time);
           jobs = jobs.concat(_jobs);
           // each job has one pallet
           // find all pallets for all jobs by job.ROWGUID
+          const __start_time2 = new Date().getTime();
           const _pallets: PalletStockEntity[] = (
             await Promise.all(_jobs.map(job => findPalletsByJob(job.ROWGUID)))
           ).flat();
+          console.log('findPalletsByJob:', new Date().getTime() - __start_time2);
           pallets = pallets.concat(_pallets);
         }
         const uniqueJobPackageIds = new Set(jobs.map(job => job.PACKAGE_ID));
