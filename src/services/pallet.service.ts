@@ -116,7 +116,7 @@ class PalletService {
 
     console.log(jobType.JOB_TYPE);
 
-    if (jobType.JOB_TYPE !== 'XK') {
+    if (jobType.JOB_TYPE == 'XK') {
       throw new BadRequestError(`Pallet chưa được làm lệnh xuất!`);
     }
 

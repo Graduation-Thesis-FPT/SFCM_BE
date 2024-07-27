@@ -311,6 +311,8 @@ const getExManifest = async (whereObject: whereExManifest) => {
       'pk.ROWGUID as ROWGUID',
       'pk.DECLARE_NO as DECLARE_NO',
       'pk.PACKAGE_UNIT_CODE as PACKAGE_UNIT_CODE',
+      'jq.ESTIMATED_CARGO_PIECE as ESTIMATED_CARGO_PIECE',
+      'pl.note as note',
       'pl.PALLET_STATUS as PALLET_STATUS',
     ])
     .getRawMany();
