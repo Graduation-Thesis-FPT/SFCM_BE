@@ -25,7 +25,7 @@ class CustomerOrderController {
     const user = res.locals.user;
     const status = req.query.status as string;
     new OK({
-      message: SUCCESS_MESSAGE.GET_IMPORTED_ORDERS_SUCCESS,
+      message: SUCCESS_MESSAGE.GET_EXPORTED_ORDERS_SUCCESS,
       metadata: await CustomerOrderService.getExportedOrdersByStatus(status, user),
     }).send(res);
   };

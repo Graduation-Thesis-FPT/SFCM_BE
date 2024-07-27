@@ -1,7 +1,7 @@
-import { stat } from 'fs';
 import { ERROR_MESSAGE } from '../constants';
 import { BadRequestError } from '../core/error.response';
 import { DeliverOrderEntity } from '../entity/deliver-order.entity';
+import { JobQuantityCheckEntity } from '../entity/job-quantity-check.entity';
 import { PalletStockEntity } from '../entity/pallet-stock.entity';
 import { User } from '../entity/user.entity';
 import {
@@ -10,17 +10,13 @@ import {
   ExportedOrderStatus,
   ImportedOrder,
   ImportedOrderStatus,
-  OrderType,
 } from '../models/deliver-order.model';
-import { DeliverOrderDetail } from '../models/delivery-order-detail.model';
-import { JobQuantityCheck } from '../models/job-quantity-check.model';
-import { PalletModel } from '../models/pallet-stock.model';
-import { Pallet } from '../models/pallet.model';
 import { findCustomerByUserId } from '../repositories/customer.repo';
-import { getAllJobQuantityCheckByPACKAGE_ID } from '../repositories/import-tally.repo';
-import { findOrderDetailsByOrderNo } from '../repositories/order-detail.repo';
-import { findImportedOrdersByStatus, findOrdersByCustomerCode } from '../repositories/order.repo';
-import { findPalletsByJob } from '../repositories/pallet.repo';
+import {
+  findExportedOrdersByStatus,
+  findImportedOrdersByStatus,
+  findOrdersByCustomerCode,
+} from '../repositories/order.repo';
 
 class CustomerOrderService {
   static getOrdersByCustomerCode = async (user: User): Promise<DeliverOrder[]> => {
@@ -38,37 +34,6 @@ class CustomerOrderService {
     }
 
     return [];
-  };
-
-  static getOrderType = (order: DeliverOrderEntity): OrderType => {
-    if (order.DE_ORDER_NO.startsWith('NK')) {
-      return OrderType.import;
-    } else if (order.DE_ORDER_NO.startsWith('XK')) {
-      return OrderType.export;
-    }
-    return OrderType.undefined;
-  };
-
-  static getImportedOrders = async (user: User): Promise<DeliverOrderEntity[]> => {
-    const customer = await findCustomerByUserId(user.ROWGUID);
-    console.log('customer', customer.CUSTOMER_CODE);
-    if (!customer) {
-      throw new BadRequestError(ERROR_MESSAGE.CUSTOMER_NOT_EXIST);
-    }
-
-    const customerCode = customer.CUSTOMER_CODE;
-    const orders = await findOrdersByCustomerCode(customerCode);
-    // console.log('orders1', orders);
-    let importedOrders: DeliverOrderEntity[] = [];
-
-    if (orders.length) {
-      for (const order of orders) {
-        if (CustomerOrderService.getOrderType(order) === OrderType.import) {
-          importedOrders.push(order);
-        }
-      }
-    }
-    return importedOrders;
   };
 
   static getImportedOrdersByStatus = async (
@@ -97,6 +62,12 @@ class CustomerOrderService {
         CUSTOMER_CODE: order.CUSTOMER_CODE,
         CONTAINER_ID: order.CONTAINER_ID,
         PACKAGE_ID: order.DO_PACKAGE_ID,
+        INV_ID: order.INV_ID,
+        ISSUE_DATE: order.ISSUE_DATE,
+        EXP_DATE: order.EXP_DATE,
+        TOTAL_CBM: order.TOTAL_CBM,
+        JOB_CHK: order.JOB_CHK,
+        NOTE: order.NOTE,
         status: orderStatus,
       };
     };
@@ -105,88 +76,41 @@ class CustomerOrderService {
     return processedOrders.filter(order => order.status === status);
   };
 
-  static getExportedOrders = async (user: User): Promise<DeliverOrderEntity[]> => {
-    const customer = await findCustomerByUserId(user.ROWGUID);
-
-    if (!customer) {
-      throw new BadRequestError(ERROR_MESSAGE.CUSTOMER_NOT_EXIST);
-    }
-
-    const customerCode = customer.CUSTOMER_CODE;
-    const orders = await findOrdersByCustomerCode(customerCode);
-    let exportedOrders: DeliverOrderEntity[] = [];
-
-    if (orders.length) {
-      for (const order of orders) {
-        if (CustomerOrderService.getOrderType(order) === OrderType.export) {
-          exportedOrders.push(order);
-        }
-      }
-    }
-    return exportedOrders;
-  };
-
   static getExportedOrdersByStatus = async (
     status: string,
     user: User,
   ): Promise<ExportedOrder[]> => {
-    const orders = await CustomerOrderService.getExportedOrders(user);
-    let releasedOrders = [];
-    let confirmedOrders = [];
-    let exportedOrders: ExportedOrder[] = [];
+    const customer = await findCustomerByUserId(user.ROWGUID);
+    const orders = await findExportedOrdersByStatus(customer.CUSTOMER_CODE);
 
-    if (orders.length) {
-      for (let order of orders) {
-        const orderDetails: DeliverOrderDetail[] = await findOrderDetailsByOrderNo(
-          order.DE_ORDER_NO,
-        );
-        if (!orderDetails.length) {
-          throw new BadRequestError(ERROR_MESSAGE.ORDER_DETAIL_NOT_EXIST);
-        }
-
-        let pallets: PalletModel[] = [];
-        let jobs: JobQuantityCheck[] = [];
-        for (let orderDetail of orderDetails) {
-          const _jobs: JobQuantityCheck[] = await getAllJobQuantityCheckByPACKAGE_ID(
-            orderDetail.REF_PAKAGE,
-          );
-          jobs = jobs.concat(_jobs);
-          const _pallets: PalletStockEntity[] = (
-            await Promise.all(_jobs.map(job => findPalletsByJob(job.ROWGUID)))
-          ).flat();
-          pallets = pallets.concat(_pallets);
-        }
-
-        if (pallets.every(pallet => pallet.PALLET_STATUS === 'R')) {
-          releasedOrders.push(order);
-        } else {
-          confirmedOrders.push(order);
-        }
+    const processOrder = (order: any): ExportedOrder => {
+      let orderStatus: ExportedOrderStatus;
+      if (
+        order.TOTAL_JOBS === order.TOTAL_PALLETS &&
+        order.TOTAL_PALLETS === order.RELEASED_PALLETS
+      ) {
+        orderStatus = ExportedOrderStatus.isReleased;
+      } else {
+        orderStatus = ExportedOrderStatus.isConfirmed;
       }
 
-      switch (status) {
-        case ExportedOrderStatus.isConfirmed:
-          confirmedOrders = confirmedOrders.map(order => {
-            const status = ExportedOrderStatus.isConfirmed;
-            return Object.assign(order, { status });
-          });
+      return {
+        DE_ORDER_NO: order.DE_ORDER_NO,
+        CUSTOMER_CODE: order.CUSTOMER_CODE,
+        CONTAINER_ID: order.CONTAINER_ID,
+        PACKAGE_ID: order.PACKAGE_ID,
+        INV_ID: order.INV_ID,
+        ISSUE_DATE: order.ISSUE_DATE,
+        EXP_DATE: order.EXP_DATE,
+        TOTAL_CBM: order.TOTAL_CBM,
+        JOB_CHK: order.JOB_CHK,
+        NOTE: order.NOTE,
+        status: orderStatus,
+      };
+    };
 
-          exportedOrders = confirmedOrders;
-          break;
-        case ExportedOrderStatus.isReleased:
-          releasedOrders = releasedOrders.map(order => {
-            const status = ExportedOrderStatus.isReleased;
-            return Object.assign(order, { status });
-          });
-
-          exportedOrders = releasedOrders;
-          break;
-        default:
-          return [];
-      }
-    }
-
-    return exportedOrders;
+    const processedOrders = orders.map(processOrder);
+    return processedOrders.filter(order => order.status === status);
   };
 }
 

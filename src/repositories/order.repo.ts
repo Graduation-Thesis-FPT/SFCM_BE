@@ -9,6 +9,7 @@ import { InvNoEntity } from '../entity/inv_vat.entity';
 import { InvNoDtlEntity } from '../entity/inv_vat_dtl.entity';
 import {
   DeliverOrder,
+  ExportedOrder,
   ImportedOrder,
   OrderReqIn,
   whereExManifest,
@@ -499,6 +500,12 @@ const findImportedOrdersByStatus = async (customerCode: string): Promise<Importe
       do.CUSTOMER_CODE,
       do.CONTAINER_ID,
       do.PACKAGE_ID AS DO_PACKAGE_ID,
+      do.INV_ID,
+      do.ISSUE_DATE,
+      do.EXP_DATE,
+      do.TOTAL_CBM,
+      do.JOB_CHK,
+      do.NOTE, 
       COUNT(DISTINCT dod.REF_PAKAGE) AS TOTAL_PACKAGES,
       COUNT(DISTINCT jqc.PACKAGE_ID) AS TOTAL_JOBS,
       SUM(CASE WHEN jqc.JOB_STATUS = 'C' THEN 1 ELSE 0 END) AS CHECKED_JOBS,
@@ -514,8 +521,49 @@ const findImportedOrdersByStatus = async (customerCode: string): Promise<Importe
       DT_PALLET_STOCK ps ON jqc.ROWGUID = ps.JOB_QUANTITY_ID
   WHERE
       do.CUSTOMER_CODE = '${customerCode}'
+      and do.DE_ORDER_NO like 'NK%'
   GROUP BY
-      do.DE_ORDER_NO, do.CUSTOMER_CODE, do.CONTAINER_ID, do.PACKAGE_ID`;
+      do.DE_ORDER_NO, do.CUSTOMER_CODE, do.CONTAINER_ID, do.PACKAGE_ID, do.INV_ID, 
+    do.ISSUE_DATE, do.EXP_DATE, do.TOTAL_CBM, do.JOB_CHK, do.NOTE`;
+
+  const queryRunner = await mssqlConnection.createQueryRunner();
+  try {
+    const orders = await queryRunner.manager.query(query);
+    return orders;
+  } finally {
+    await queryRunner.release();
+  }
+};
+
+const findExportedOrdersByStatus = async (customerCode: string): Promise<ExportedOrder[]> => {
+  const query = `
+    SELECT 
+      do.DE_ORDER_NO,
+      do.CUSTOMER_CODE,
+      do.CONTAINER_ID,
+      do.PACKAGE_ID,
+      do.INV_ID,
+      do.ISSUE_DATE,
+      do.EXP_DATE,
+      do.TOTAL_CBM,
+      do.JOB_CHK,
+      do.NOTE, 
+      COUNT(DISTINCT jqc.ROWGUID) AS TOTAL_JOBS,
+      COUNT(DISTINCT ps.PALLET_NO) AS TOTAL_PALLETS,
+      SUM(CASE WHEN ps.PALLET_STATUS = 'C' THEN 1 ELSE 0 END) AS RELEASED_PALLETS
+    FROM 
+      DELIVER_ORDER do
+    LEFT JOIN 
+      JOB_QUANTITY_CHECK jqc ON do.PACKAGE_ID = jqc.PACKAGE_ID
+    LEFT JOIN 
+      DT_PALLET_STOCK ps ON jqc.ROWGUID = ps.JOB_QUANTITY_ID
+    WHERE 
+      do.CUSTOMER_CODE = '${customerCode}'
+      AND do.DE_ORDER_NO LIKE 'XK%'
+    GROUP BY 
+      do.DE_ORDER_NO, do.CUSTOMER_CODE, do.CONTAINER_ID, do.PACKAGE_ID, do.INV_ID, 
+    do.ISSUE_DATE, do.EXP_DATE, do.TOTAL_CBM, do.JOB_CHK, do.NOTE
+  `;
 
   const queryRunner = await mssqlConnection.createQueryRunner();
   try {
@@ -543,4 +591,5 @@ export {
   getServicesTariff,
   findOrdersByCustomerCode,
   findImportedOrdersByStatus,
+  findExportedOrdersByStatus,
 };
