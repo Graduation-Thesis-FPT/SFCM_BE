@@ -284,14 +284,37 @@ const saveInOrder = async (
 };
 
 const getExManifest = async (whereObject: whereExManifest) => {
-  const list = await packageRepository
-    .createQueryBuilder('pk')
-    .where('pk.VOYAGEKEY = :voyagekey', { voyagekey: whereObject.VOYAGEKEY })
-    .where('pk.CONTAINER_ID = :container', { container: whereObject.CONTAINER_ID })
-    .where('pk.HOUSE_BILL = :housebill', { housebill: whereObject.HOUSE_BILL })
-    .select(['pk.*'])
+  // const list = await packageRepository
+  //   .createQueryBuilder('pk')
+  //   .where('pk.VOYAGEKEY = :voyagekey', { voyagekey: whereObject.VOYAGEKEY })
+  //   .where('pk.CONTAINER_ID = :container', { container: whereObject.CONTAINER_ID })
+  //   .where('pk.HOUSE_BILL = :housebill', { housebill: whereObject.HOUSE_BILL })
+  //   .select(['pk.*'])
+  //   .getRawMany();
+
+  const results = await containerRepository
+    .createQueryBuilder('cn')
+    .innerJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID')
+    .leftJoin('DT_PACKAGE_MNF_LD', 'pk', 'cn.ROWGUID = pk.CONTAINER_ID')
+    .leftJoin('JOB_QUANTITY_CHECK', 'jq', 'pk.ROWGUID = jq.PACKAGE_ID')
+    .leftJoin('DT_PALLET_STOCK', 'pl', 'jq.ROWGUID = pl.JOB_QUANTITY_ID')
+    .where('pl.PALLET_STATUS = :status', { status: 'S' })
+    .andWhere('cn.VOYAGEKEY = :voyagekey', { voyagekey: whereObject.VOYAGEKEY })
+    .andWhere('cn.CNTRNO = :container', { container: whereObject.CONTAINER_ID })
+    .andWhere('pk.HOUSE_BILL = :housebill', { housebill: whereObject.HOUSE_BILL })
+    .select([
+      'cn.CNTRNO as CNTRNO',
+      'pk.HOUSE_BILL as HOUSE_BILL',
+      'pk.CBM as CBM',
+      'pk.ITEM_TYPE_CODE as ITEM_TYPE_CODE',
+      'pk.CONTAINER_ID as CONTAINER_ID',
+      'pk.ROWGUID as ROWGUID',
+      'pk.DECLARE_NO as DECLARE_NO',
+      'pk.PACKAGE_UNIT_CODE as PACKAGE_UNIT_CODE',
+      'pl.PALLET_STATUS as PALLET_STATUS',
+    ])
     .getRawMany();
-  return list;
+  return results;
 };
 
 const saveExOrder = async (
@@ -409,22 +432,28 @@ const saveExOrder = async (
 };
 
 const getOrderContList = async (VOYAGEKEY: string) => {
-  const list = await containerRepository
+  const results = await containerRepository
     .createQueryBuilder('cn')
-    .leftJoin('DELIVER_ORDER', 'dor', 'cn.ROWGUID = dor.CONTAINER_ID')
-    .where('dor.JOB_CHK = :JOB_CHK', { JOB_CHK: 1 })
+    .innerJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID')
+    .leftJoin('DT_PACKAGE_MNF_LD', 'pk', 'cn.ROWGUID = pk.CONTAINER_ID')
+    .leftJoin('JOB_QUANTITY_CHECK', 'jq', 'pk.ROWGUID = jq.PACKAGE_ID')
+    .leftJoin('DT_PALLET_STOCK', 'pl', 'jq.ROWGUID = pl.JOB_QUANTITY_ID')
+    .where('pl.PALLET_STATUS = :status', { status: 'S' })
     .andWhere('cn.VOYAGEKEY = :VOYAGE_KEY', { VOYAGE_KEY: VOYAGEKEY })
     .select([
-      'cn.BILLOFLADING as BILLOFLADING',
-      'cn.SEALNO as SEALNO',
-      'cn.CNTRSZTP as CNTRSZTP',
-      'cn.ITEM_TYPE_CODE as ITEM_TYPE_CODE',
       'cn.CNTRNO as CNTRNO',
-      'cn.COMMODITYDESCRIPTION as COMMODITYDESCRIPTION',
-      'dor.JOB_CHK as JOB_CHK',
+      'pk.HOUSE_BILL as HOUSE_BILL',
+      'pk.CBM as CBM',
+      'pk.ITEM_TYPE_CODE as ITEM_TYPE_CODE',
+      'pk.CONTAINER_ID as CONTAINER_ID',
+      'pk.ROWGUID as ROWGUID',
+      'pk.DECLARE_NO as DECLARE_NO',
+      'pk.PACKAGE_UNIT_CODE as PACKAGE_UNIT_CODE',
+      'pl.PALLET_STATUS as PALLET_STATUS',
     ])
     .getRawMany();
-  return list;
+
+  return results;
 };
 
 const findOrdersByCustomerCode = async (customerCode: string) => {
