@@ -149,6 +149,14 @@ const getListJobExport = async () => {
     .getRawMany();
 };
 
+const findPalletsByJob = async (jobId: string) => {
+  return await palletRepository.find({
+    where: {
+      JOB_QUANTITY_ID: jobId,
+    },
+  });
+};
+
 export {
   updatePallet,
   findPallet,
@@ -157,4 +165,5 @@ export {
   getListJobExport,
   updateExportPallet,
   checkPalletJobTypeStatus,
+  findPalletsByJob,
 };

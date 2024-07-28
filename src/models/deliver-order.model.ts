@@ -37,3 +37,29 @@ export type whereExManifest = {
   CONTAINER_ID: string;
   HOUSE_BILL: string;
 };
+
+export enum OrderType {
+  import = 'import',
+  export = 'export',
+  undefined = 'undefined',
+}
+
+export enum ImportedOrderStatus {
+  isConfirmed = 'isConfirmed',
+  isChecked = 'isChecked',
+  isStored = 'isStored',
+}
+
+export interface ImportedOrder extends DeliverOrder {
+  status: ImportedOrderStatus;
+}
+
+export enum ExportedOrderStatus {
+  isConfirmed = 'isConfirmed',
+  isReleased = 'isReleased',
+}
+
+export interface ExportedOrder extends DeliverOrder {
+  status: ExportedOrderStatus;
+}
+

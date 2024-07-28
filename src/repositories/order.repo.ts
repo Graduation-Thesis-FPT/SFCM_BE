@@ -7,7 +7,13 @@ import { TariffEntity } from '../entity/tariff.entity';
 import { TariffDisEntity } from '../entity/tariffDis.entity';
 import { InvNoEntity } from '../entity/inv_vat.entity';
 import { InvNoDtlEntity } from '../entity/inv_vat_dtl.entity';
-import { DeliverOrder, OrderReqIn, whereExManifest } from '../models/deliver-order.model';
+import {
+  DeliverOrder,
+  ExportedOrder,
+  ImportedOrder,
+  OrderReqIn,
+  whereExManifest,
+} from '../models/deliver-order.model';
 import moment from 'moment';
 import { DeliverOrderDetail } from '../models/delivery-order-detail.model';
 import { User } from '../entity/user.entity';
@@ -434,10 +440,9 @@ const saveExOrder = async (
 };
 
 const getOrderContList = async (VOYAGEKEY: string) => {
-  const results = await containerRepository
+  let results = await containerRepository
     .createQueryBuilder('cn')
-    .innerJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID')
-    .leftJoin('DT_PACKAGE_MNF_LD', 'pk', 'cn.ROWGUID = pk.CONTAINER_ID')
+    .innerJoin('DT_PACKAGE_MNF_LD', 'pk', 'cn.ROWGUID = pk.CONTAINER_ID')
     .leftJoin('JOB_QUANTITY_CHECK', 'jq', 'pk.ROWGUID = jq.PACKAGE_ID')
     .leftJoin('DT_PALLET_STOCK', 'pl', 'jq.ROWGUID = pl.JOB_QUANTITY_ID')
     .where('pl.PALLET_STATUS = :status', { status: 'S' })
@@ -453,7 +458,30 @@ const getOrderContList = async (VOYAGEKEY: string) => {
       'pk.PACKAGE_UNIT_CODE as PACKAGE_UNIT_CODE',
       'pl.PALLET_STATUS as PALLET_STATUS',
     ])
+    .groupBy('cn.CNTRNO')
+    .addGroupBy('pk.HOUSE_BILL')
+    .addGroupBy('pk.CBM')
+    .addGroupBy('pk.ITEM_TYPE_CODE')
+    .addGroupBy('pk.CONTAINER_ID')
+    .addGroupBy('pk.ROWGUID')
+    .addGroupBy('pk.DECLARE_NO')
+    .addGroupBy('pk.PACKAGE_UNIT_CODE')
+    .addGroupBy('pl.PALLET_STATUS')
     .getRawMany();
+
+  if (results.length) {
+    for (let i = 0; i < results.length; i++) {
+      let temp = await orderRepository
+        .createQueryBuilder()
+        .where('CONTAINER_ID = :contid', { contid: results[i].CONTAINER_ID })
+        .andWhere('PACKAGE_ID = :package', { package: results[i].ROWGUID })
+        .select(['PACKAGE_ID'])
+        .getRawMany();
+      if (temp.length) {
+        results = results.filter(item => item.ROWGUID !== temp[0].PACKAGE_ID);
+      }
+    }
+  }
 
   return results;
 };
@@ -464,6 +492,86 @@ const findOrdersByCustomerCode = async (customerCode: string) => {
     .where('order.CUSTOMER_CODE = :customerCode', { customerCode: customerCode })
     .getMany();
   return order;
+};
+
+const findImportedOrdersByStatus = async (customerCode: string): Promise<ImportedOrder[]> => {
+  const query = `SELECT
+      do.DE_ORDER_NO,
+      do.CUSTOMER_CODE,
+      do.CONTAINER_ID,
+      do.PACKAGE_ID AS DO_PACKAGE_ID,
+      do.INV_ID,
+      do.ISSUE_DATE,
+      do.EXP_DATE,
+      do.TOTAL_CBM,
+      do.JOB_CHK,
+      do.NOTE, 
+      COUNT(DISTINCT dod.REF_PAKAGE) AS TOTAL_PACKAGES,
+      COUNT(DISTINCT jqc.PACKAGE_ID) AS TOTAL_JOBS,
+      SUM(CASE WHEN jqc.JOB_STATUS = 'C' THEN 1 ELSE 0 END) AS CHECKED_JOBS,
+      SUM(CASE WHEN ps.PALLET_STATUS = 'S' THEN 1 ELSE 0 END) AS STORED_PALLETS,
+      COUNT(DISTINCT ps.PALLET_NO) AS TOTAL_PALLETS
+  FROM
+      DELIVER_ORDER do
+  JOIN
+      DELIVERY_ORDER_DETAIL dod ON do.DE_ORDER_NO = dod.DE_ORDER_NO
+  LEFT JOIN
+      JOB_QUANTITY_CHECK jqc ON dod.REF_PAKAGE = jqc.PACKAGE_ID
+  LEFT JOIN
+      DT_PALLET_STOCK ps ON jqc.ROWGUID = ps.JOB_QUANTITY_ID
+  WHERE
+      do.CUSTOMER_CODE = '${customerCode}'
+      and do.DE_ORDER_NO like 'NK%'
+  GROUP BY
+      do.DE_ORDER_NO, do.CUSTOMER_CODE, do.CONTAINER_ID, do.PACKAGE_ID, do.INV_ID, 
+    do.ISSUE_DATE, do.EXP_DATE, do.TOTAL_CBM, do.JOB_CHK, do.NOTE`;
+
+  const queryRunner = await mssqlConnection.createQueryRunner();
+  try {
+    const orders = await queryRunner.manager.query(query);
+    return orders;
+  } finally {
+    await queryRunner.release();
+  }
+};
+
+const findExportedOrdersByStatus = async (customerCode: string): Promise<ExportedOrder[]> => {
+  const query = `
+    SELECT 
+      do.DE_ORDER_NO,
+      do.CUSTOMER_CODE,
+      do.CONTAINER_ID,
+      do.PACKAGE_ID,
+      do.INV_ID,
+      do.ISSUE_DATE,
+      do.EXP_DATE,
+      do.TOTAL_CBM,
+      do.JOB_CHK,
+      do.NOTE, 
+      COUNT(DISTINCT jqc.ROWGUID) AS TOTAL_JOBS,
+      COUNT(DISTINCT ps.PALLET_NO) AS TOTAL_PALLETS,
+      SUM(CASE WHEN ps.PALLET_STATUS = 'C' THEN 1 ELSE 0 END) AS RELEASED_PALLETS
+    FROM 
+      DELIVER_ORDER do
+    LEFT JOIN 
+      JOB_QUANTITY_CHECK jqc ON do.PACKAGE_ID = jqc.PACKAGE_ID
+    LEFT JOIN 
+      DT_PALLET_STOCK ps ON jqc.ROWGUID = ps.JOB_QUANTITY_ID
+    WHERE 
+      do.CUSTOMER_CODE = '${customerCode}'
+      AND do.DE_ORDER_NO LIKE 'XK%'
+    GROUP BY 
+      do.DE_ORDER_NO, do.CUSTOMER_CODE, do.CONTAINER_ID, do.PACKAGE_ID, do.INV_ID, 
+    do.ISSUE_DATE, do.EXP_DATE, do.TOTAL_CBM, do.JOB_CHK, do.NOTE
+  `;
+
+  const queryRunner = await mssqlConnection.createQueryRunner();
+  try {
+    const orders = await queryRunner.manager.query(query);
+    return orders;
+  } finally {
+    await queryRunner.release();
+  }
 };
 
 export {
@@ -482,4 +590,6 @@ export {
   getTariffDis,
   getServicesTariff,
   findOrdersByCustomerCode,
+  findImportedOrdersByStatus,
+  findExportedOrdersByStatus,
 };
