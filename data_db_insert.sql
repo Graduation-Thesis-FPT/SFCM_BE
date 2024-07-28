@@ -59,6 +59,8 @@ VALUES
 ('admin','export-order',1,1,1,1,'sql','sql'),
 ('admin','import-tally',1,1,1,1,'sql','sql'),
 ('admin','fork-lift',1,1,1,1,'sql','sql'),
+('admin','all-orders',1,1,1,1,'sql','sql'),
+('admin','order-tracking',1,1,1,1,'sql','sql'),
 ('procedure-staff','user',1,0,0,0,'sql','sql'),
 ('procedure-staff','permission',1,0,0,0,'sql','sql'),
 ('procedure-staff','warehouse-list',1,1,1,1,'sql','sql'),
