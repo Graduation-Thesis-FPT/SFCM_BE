@@ -62,4 +62,3 @@ export enum ExportedOrderStatus {
 export interface ExportedOrder extends DeliverOrder {
   status: ExportedOrderStatus;
 }
-
