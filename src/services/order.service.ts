@@ -12,6 +12,7 @@ import {
   getOrderContList,
   getTariffDis,
   getServicesTariff,
+  checkPackageStatusOrder,
 } from '../repositories/order.repo';
 import { checkContSize, roundMoney } from '../utils';
 import { Tariff } from '../models/tariff.model';
@@ -23,19 +24,19 @@ class OrderService {
     if (!VOYAGEKEY || !BILLOFLADING) {
       throw new BadRequestError(`Mã tàu ${VOYAGEKEY} hoặc số vận đơn không được rỗng!`);
     }
-    return getContList(VOYAGEKEY, BILLOFLADING);
+    return await getContList(VOYAGEKEY, BILLOFLADING);
   };
 
   static getManifestPackage = async (VOYAGEKEY: string, CNTRNO: string) => {
     if (!VOYAGEKEY || !CNTRNO) {
       throw new BadRequestError(`Mã tàu hoặc số Container không được rỗng!`);
     }
-    const checkStatus = checkContStatus(VOYAGEKEY, CNTRNO);
+    const checkStatus = await checkContStatus(VOYAGEKEY, CNTRNO);
     if (!checkStatus) {
       throw new BadRequestError(`Số cont ${CNTRNO} đã làm lệnh!`);
     }
 
-    return getManifestPackage(VOYAGEKEY, CNTRNO);
+    return await getManifestPackage(VOYAGEKEY, CNTRNO);
   };
 
   static getToBillIn = async (dataReq: Package[], services: string[], addInfo: any) => {
@@ -136,17 +137,25 @@ class OrderService {
   };
 
   static getExManifest = async (whereExManifest: whereExManifest) => {
-    if (!whereExManifest.VOYAGEKEY || !whereExManifest.HOUSE_BILL) {
+    if (
+      !whereExManifest.VOYAGEKEY ||
+      !whereExManifest.HOUSE_BILL ||
+      !whereExManifest.CONTAINER_ID
+    ) {
       throw new BadRequestError(`Mã tàu hoặc số houseBill không được rỗng!`);
     }
-    return getExManifest(whereExManifest);
+    const checkStatus = await checkPackageStatusOrder(whereExManifest);
+    if (!checkStatus) {
+      throw new BadRequestError(`Số House Bill ${whereExManifest.HOUSE_BILL} đã làm lệnh!`);
+    }
+    return await getExManifest(whereExManifest);
   };
 
   static getOrderContList = async (VOYAGEKEY: string) => {
     if (!VOYAGEKEY) {
       throw new BadRequestError(`Vui lòng chuyền số tàu chuyến!`);
     }
-    return getOrderContList(VOYAGEKEY);
+    return await getOrderContList(VOYAGEKEY);
   };
 
   static getToBillEx = async (dataReq_sualai: Package[]) => {

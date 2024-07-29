@@ -69,11 +69,13 @@ const getContList = async (VOYAGEKEY: string, BILLOFLADING: string) => {
     .leftJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID')
     .where('cn.VOYAGEKEY = :voyagekey', { voyagekey: VOYAGEKEY })
     .andWhere('cn.BILLOFLADING = :bill', { bill: BILLOFLADING })
-    .andWhere(
-      new Brackets(subQr => {
-        subQr.where('dto.JOB_CHK is null').orWhere('dto.JOB_CHK = :job', { job: 0 });
-      }),
-    )
+    //điều kiện kép
+    // .andWhere(
+    //   new Brackets(subQr => {
+    //     subQr.where('dto.JOB_CHK is null').orWhere('dto.JOB_CHK = :job', { job: 0 });
+    //   }),
+    // )
+    .andWhere('dto.CONTAINER_ID is null')
     .select([
       'dto.JOB_CHK',
       'cn.BILLOFLADING as BILLOFLADING',
@@ -92,12 +94,15 @@ const getContList = async (VOYAGEKEY: string, BILLOFLADING: string) => {
 const checkContStatus = async (VOYAGEKEY: string, CNTRNO: string) => {
   const contArr = await contRepository
     .createQueryBuilder('cn')
-    .leftJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID and dto.JOB_CHK <> 1')
+    .leftJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID')
     .where('cn.VOYAGEKEY = :voyagekey', { voyagekey: VOYAGEKEY })
     .andWhere('cn.CNTRNO = :cont', { cont: CNTRNO })
-    .select(['cn.*'])
+    .andWhere('dto.CONTAINER_ID is not null')
+    .select(['cn.ROWGUID'])
     .getRawMany();
-  if (contArr.length) return false;
+  if (contArr.length) {
+    return false;
+  }
   return true;
 };
 const getManifestPackage = async (VOYAGEKEY: string, CNTRNO: string) => {
@@ -288,40 +293,27 @@ const saveInOrder = async (
     newInvDtlInfo,
   };
 };
+const checkPackageStatusOrder = async (whereExManifest: whereExManifest) => {
+  const list = await packageRepository
+    .createQueryBuilder('pk')
+    .leftJoin('DT_CNTR_MNF_LD', 'cn', 'pk.CONTAINER_ID = cn.ROWGUID')
+    .leftJoin('DELIVER_ORDER', 'dto', 'dto.PACKAGE_ID = pk.ROWGUID')
+    .where('cn.VOYAGEKEY =:voy', { voy: whereExManifest.VOYAGEKEY })
+    .andWhere('pk.HOUSE_BILL = :pack', { pack: whereExManifest.HOUSE_BILL })
+    .andWhere('cn.ROWGUID = :cntrno', { cntrno: whereExManifest.CONTAINER_ID })
+    .andWhere('dto.PACKAGE_ID is not null')
+    .select(['pk.ROWGUID'])
+    .getRawMany();
+  if (list.length) return false;
+  return true;
+};
 
 const getExManifest = async (whereObject: whereExManifest) => {
-  // const list = await packageRepository
-  //   .createQueryBuilder('pk')
-  //   .where('pk.VOYAGEKEY = :voyagekey', { voyagekey: whereObject.VOYAGEKEY })
-  //   .where('pk.CONTAINER_ID = :container', { container: whereObject.CONTAINER_ID })
-  //   .where('pk.HOUSE_BILL = :housebill', { housebill: whereObject.HOUSE_BILL })
-  //   .select(['pk.*'])
-  //   .getRawMany();
-
-  const results = await containerRepository
-    .createQueryBuilder('cn')
-    .innerJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID')
-    .leftJoin('DT_PACKAGE_MNF_LD', 'pk', 'cn.ROWGUID = pk.CONTAINER_ID')
-    .leftJoin('JOB_QUANTITY_CHECK', 'jq', 'pk.ROWGUID = jq.PACKAGE_ID')
-    .leftJoin('DT_PALLET_STOCK', 'pl', 'jq.ROWGUID = pl.JOB_QUANTITY_ID')
-    .where('pl.PALLET_STATUS = :status', { status: 'S' })
-    .andWhere('cn.VOYAGEKEY = :voyagekey', { voyagekey: whereObject.VOYAGEKEY })
-    .andWhere('cn.CNTRNO = :container', { container: whereObject.CONTAINER_ID })
-    .andWhere('pk.HOUSE_BILL = :housebill', { housebill: whereObject.HOUSE_BILL })
-    .select([
-      'cn.CNTRNO as CNTRNO',
-      'pk.HOUSE_BILL as HOUSE_BILL',
-      'pk.CBM as CBM',
-      'pk.ITEM_TYPE_CODE as ITEM_TYPE_CODE',
-      'pk.CONTAINER_ID as CONTAINER_ID',
-      'pk.ROWGUID as ROWGUID',
-      'pk.DECLARE_NO as DECLARE_NO',
-      'pk.PACKAGE_UNIT_CODE as PACKAGE_UNIT_CODE',
-      'jq.ESTIMATED_CARGO_PIECE as ESTIMATED_CARGO_PIECE',
-      'pl.note as note',
-      'pl.PALLET_STATUS as PALLET_STATUS',
-    ])
-    .getRawMany();
+  const results = await packageRepository
+    .createQueryBuilder()
+    .where('CONTAINER_ID = :cont', { cont: whereObject.CONTAINER_ID })
+    .andWhere('HOUSE_BILL = :house', { house: whereObject.HOUSE_BILL })
+    .getMany();
   return results;
 };
 
@@ -592,4 +584,5 @@ export {
   findOrdersByCustomerCode,
   findImportedOrdersByStatus,
   findExportedOrdersByStatus,
+  checkPackageStatusOrder,
 };
