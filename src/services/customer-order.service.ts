@@ -13,7 +13,7 @@ import {
 } from '../models/deliver-order.model';
 import { Package } from '../models/packageMnfLd.model';
 import { findContainer } from '../repositories/container.repo';
-import { findCustomer, findCustomerByUserId } from '../repositories/customer.repo';
+import { findCustomer, findCustomerByUserName } from '../repositories/customer.repo';
 import { findOrderDetailsByOrderNo } from '../repositories/order-detail.repo';
 import {
   findExportedOrdersByStatus,
@@ -25,7 +25,7 @@ import { findPackage } from '../repositories/package.repo';
 
 class CustomerOrderService {
   static getOrdersByCustomerCode = async (user: User): Promise<DeliverOrder[]> => {
-    const customer = await findCustomerByUserId(user.ROWGUID);
+    const customer = await findCustomerByUserName(user.USER_NAME);
 
     if (!customer) {
       throw new BadRequestError(ERROR_MESSAGE.CUSTOMER_NOT_EXIST);
@@ -45,7 +45,7 @@ class CustomerOrderService {
     status: string,
     user: User,
   ): Promise<ExtendedImportedOrder[]> => {
-    const customer = await findCustomerByUserId(user.ROWGUID);
+    const customer = await findCustomerByUserName(user.USER_NAME);
     if (!customer) {
       throw new BadRequestError(ERROR_MESSAGE.CUSTOMER_NOT_EXIST);
     }
@@ -91,7 +91,7 @@ class CustomerOrderService {
           CUSTOMER_CODE: '',
           CUSTOMER_NAME: '',
           CUSTOMER_TYPE_CODE: '',
-          USER_ID: '',
+          USER_NAME: '',
           ADDRESS: '',
           EMAIL: '',
           TAX_CODE: '',
@@ -129,8 +129,12 @@ class CustomerOrderService {
     status: string,
     user: User,
   ): Promise<ExtendedExportedOrder[]> => {
-    const customer = await findCustomerByUserId(user.ROWGUID ?? '');
-    const orders = await findExportedOrdersByStatus(customer.CUSTOMER_CODE ?? '');
+    const customer = await findCustomerByUserName(user.USER_NAME);
+
+    if (!customer) {
+      throw new BadRequestError(ERROR_MESSAGE.CUSTOMER_NOT_EXIST);
+    }
+    const orders = await findExportedOrdersByStatus(customer.CUSTOMER_CODE);
 
     const processOrder = async (order: any): Promise<ExtendedExportedOrder> => {
       let orderStatus: ExportedOrderStatus;
@@ -168,7 +172,7 @@ class CustomerOrderService {
           CUSTOMER_CODE: '',
           CUSTOMER_NAME: '',
           CUSTOMER_TYPE_CODE: '',
-          USER_ID: '',
+          USER_NAME: '',
           ADDRESS: '',
           EMAIL: '',
           TAX_CODE: '',
@@ -234,7 +238,7 @@ class CustomerOrderService {
         CUSTOMER_CODE: '',
         CUSTOMER_NAME: '',
         CUSTOMER_TYPE_CODE: '',
-        USER_ID: '',
+        USER_NAME: '',
         ADDRESS: '',
         EMAIL: '',
         TAX_CODE: '',

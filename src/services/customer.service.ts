@@ -1,17 +1,18 @@
 import { BadRequestError } from '../core/error.response';
 import { User } from '../entity/user.entity';
-import { manager } from '../repositories/index.repo';
-import { findCustomerTypeByCode } from '../repositories/customer-type.repo';
 import { Customer, CustomerList } from '../models/customer.model';
+import { findCustomerTypeByCode } from '../repositories/customer-type.repo';
 import {
   createCustomer,
   deleteCustomerMany,
   findCustomer,
   findCustomerByCode,
-  findCustomerByUserId,
   getAllCustomer,
   updateCustomer,
 } from '../repositories/customer.repo';
+import { manager } from '../repositories/index.repo';
+import { findUserByUserName } from '../repositories/user.repo';
+import UserService from './user.service';
 
 class CustomerService {
   static createAndUpdateCustomer = async (customerInfo: CustomerList, createBy: User) => {
@@ -41,14 +42,39 @@ class CustomerService {
               `Mã loại khách hàng ${customerInfo.CUSTOMER_TYPE_CODE} không hợp lệ`,
             );
           }
+          const foundUser = await findUserByUserName(customerInfo.EMAIL);
+          if (foundUser) {
+            throw new BadRequestError(
+              `Email ${customerInfo.EMAIL} đã được sử dụng cho tài khoản khác`,
+            );
+          }
 
           customerInfo.CREATE_BY = createBy.ROWGUID;
           customerInfo.CREATE_DATE = new Date();
           customerInfo.UPDATE_BY = createBy.ROWGUID;
           customerInfo.UPDATE_DATE = new Date();
+          customerInfo.USER_NAME = customerInfo.EMAIL;
         }
 
         newCreatedCustomer = await createCustomer(insertData, transactionalEntityManager);
+        for (const customer of newCreatedCustomer) {
+          const userInfo: Partial<User> = {
+            USER_NAME: customer.USER_NAME,
+            EMAIL: customer.EMAIL,
+            FULLNAME: customer.CUSTOMER_NAME,
+            ROLE_CODE: 'customer',
+            IS_ACTIVE: customer.IS_ACTIVE,
+          };
+
+          try {
+            await UserService.createUserAccount(userInfo as User, createBy);
+          } catch (error) {
+            // console.error(`Lối khi tạo tài khoản cho khách hàng ${customer.CUSTOMER_CODE}:`, error);
+            throw new BadRequestError(
+              `Lối khi tạo tài khoản cho khách hàng ${customer.CUSTOMER_CODE}:${error.message}`,
+            );
+          }
+        }
       }
 
       if (updateData) {
@@ -74,6 +100,33 @@ class CustomerService {
 
           customerInfo.UPDATE_BY = createBy.ROWGUID;
           customerInfo.UPDATE_DATE = new Date();
+
+          try {
+            const existingUser = await findUserByUserName(customerInfo.USER_NAME);
+            if (existingUser) {
+              const userUpdateInfo: Partial<User> = {
+                FULLNAME: customerInfo.CUSTOMER_NAME,
+                IS_ACTIVE: customerInfo.IS_ACTIVE,
+                ADDRESS: customerInfo.ADDRESS,
+              };
+
+              // Only update email/username if it has changed
+              if (customerInfo.EMAIL !== existingUser.EMAIL) {
+                userUpdateInfo.EMAIL = customerInfo.EMAIL;
+                userUpdateInfo.USER_NAME = customerInfo.EMAIL;
+              }
+
+              await UserService.updateUser(existingUser.ROWGUID, userUpdateInfo, createBy);
+            }
+          } catch (error) {
+            // console.error(
+            //   `Lỗi khi cập nhật tài khoản khách hàng ${customerInfo.CUSTOMER_CODE}:`,
+            //   error,
+            // );
+            throw new BadRequestError(
+              `Lỗi khi cập nhật tài khoản khách hàng ${customerInfo.CUSTOMER_CODE}: ${error.message}`,
+            );
+          }
         }
 
         newUpdatedCustomer = await updateCustomer(updateData, transactionalEntityManager);
@@ -92,6 +145,19 @@ class CustomerService {
       if (!customer) {
         throw new BadRequestError(`EquipType with ID ${customerCode} not exist!`);
       }
+      try {
+        console.log('customer', customer.USER_NAME);
+        const user = await findUserByUserName(customer.USER_NAME.trim());
+        console.log('user', user);
+        if (user) {
+          await UserService.deleteUser(user.ROWGUID);
+        }
+      } catch (error) {
+        // console.error(`Lỗi khi xoá tài khoản khách hàng ${customerCode}:`, error);
+        throw new BadRequestError(
+          `Lỗi khi xoá tài khoản khách hàng ${customerCode}:${error.message}`,
+        );
+      }
     }
 
     return await deleteCustomerMany(customerCodeList);
@@ -99,10 +165,6 @@ class CustomerService {
 
   static getAllCustomer = async () => {
     return await getAllCustomer();
-  };
-
-  static getCustomerByUserId = async (userId: string) => {
-    return await findCustomerByUserId(userId);
   };
 }
 export default CustomerService;

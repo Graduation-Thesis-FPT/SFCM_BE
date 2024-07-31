@@ -1,5 +1,3 @@
-import { ERROR_MESSAGE } from '../constants';
-import { BadRequestError } from '../core/error.response';
 import mssqlConnection from '../db/mssql.connect';
 import { Role } from '../entity/role.entity';
 import { User as UserEntity } from '../entity/user.entity';
@@ -7,10 +5,9 @@ import { User as UserEntity } from '../entity/user.entity';
 export const userRepository = mssqlConnection.getRepository(UserEntity);
 
 const findUserByUserName = async (userName: string): Promise<UserEntity> => {
-  return await userRepository
-    .createQueryBuilder('SA_USER')
-    .where('SA_USER.USER_NAME = :USER_NAME', { USER_NAME: userName })
-    .getOne();
+  return await userRepository.findOne({
+    where: { USER_NAME: userName },
+  });
 };
 
 const findUserById = async (userId: string): Promise<UserEntity> => {
@@ -129,15 +126,7 @@ const resetPasswordById = async (userId: string) => {
 };
 
 export {
-  findUserByUserName,
-  findUserById,
-  getAllUser,
-  deleteUser,
-  deactiveUser,
-  activeUser,
-  updateUser,
-  checkPasswordIsNullById,
-  updatePasswordById,
-  getUserWithPasswordById,
-  resetPasswordById,
+  activeUser, checkPasswordIsNullById, deactiveUser, deleteUser, findUserById, findUserByUserName, getAllUser, getUserWithPasswordById,
+  resetPasswordById, updatePasswordById, updateUser
 };
+

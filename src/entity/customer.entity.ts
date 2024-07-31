@@ -30,5 +30,5 @@ export class Customer extends Model {
   IS_ACTIVE: boolean;
 
   @Column()
-  USER_ID: string;
+  USER_NAME: string;
 }

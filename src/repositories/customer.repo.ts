@@ -57,11 +57,11 @@ const getAllCustomer = async () => {
   });
 };
 
-const findCustomerByUserId = async (userId: string) => {
+const findCustomerByUserName = async (userName: string) => {
   return await customerRepository
     .createQueryBuilder('customer')
-    .where('customer.USER_ID = :userId', {
-      userId: userId,
+    .where('customer.USER_NAME = :userName', {
+      userName: userName,
     })
     .getOne();
 }
@@ -73,5 +73,5 @@ export {
   deleteCustomerMany,
   getAllCustomer,
   findCustomer,
-  findCustomerByUserId,
+  findCustomerByUserName,
 };
