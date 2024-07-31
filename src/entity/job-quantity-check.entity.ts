@@ -28,7 +28,4 @@ export class JobQuantityCheckEntity extends Model {
 
   @Column()
   JOB_STATUS: string;
-
-  @Column()
-  NOTE: string;
 }

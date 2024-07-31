@@ -122,7 +122,6 @@ class JobQuantityCheckService {
           return {
             ROWGUID: item.ROWGUID,
             ESTIMATED_CARGO_PIECE: item.ESTIMATED_CARGO_PIECE,
-            NOTE: item.NOTE,
           };
         });
         const dataPallet = updateData.map((item: any) => {
@@ -131,6 +130,7 @@ class JobQuantityCheckService {
             PALLET_HEIGHT: item.PALLET_HEIGHT,
             PALLET_LENGTH: item.PALLET_LENGTH,
             PALLET_WIDTH: item.PALLET_WIDTH,
+            NOTE: item.NOTE,
           };
         });
         await Promise.all([

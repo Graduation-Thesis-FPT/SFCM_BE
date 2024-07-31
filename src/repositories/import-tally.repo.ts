@@ -70,11 +70,11 @@ export const getAllJobQuantityCheckByPACKAGE_ID = async (PACKAGE_ID: string) => 
       'job.START_DATE as START_DATE',
       'job.FINISH_DATE as FINISH_DATE',
       'job.JOB_STATUS as JOB_STATUS',
-      'job.NOTE as NOTE',
       'pl.PALLET_NO as PALLET_NO',
       'pl.PALLET_LENGTH as PALLET_LENGTH',
       'pl.PALLET_WIDTH as PALLET_WIDTH',
       'pl.PALLET_HEIGHT as PALLET_HEIGHT',
+      'pl.NOTE as NOTE',
     ])
     .orderBy('job.SEQ', 'ASC')
     .getRawMany();
@@ -119,6 +119,7 @@ export const insertJobAndPallet = async (
         PALLET_NO: `${data.HOUSE_BILL}/${moment().format('DD')}/${moment().format('MM')}/${moment().format('YYYY')}/${data.SEQ}-${newStt}`,
         PALLET_STATUS: 'I',
         JOB_QUANTITY_ID: JOB_QUANTITY_ID,
+        NOTE: data.NOTE,
         PALLET_HEIGHT: data.PALLET_HEIGHT,
         PALLET_LENGTH: data.PALLET_LENGTH,
         PALLET_WIDTH: data.PALLET_WIDTH,
