@@ -80,10 +80,28 @@ export const getAllJobQuantityCheckByPACKAGE_ID = async (PACKAGE_ID: string) => 
     .getRawMany();
 };
 
+function incrementPalletNumber(palletNumber: any) {
+  let number = parseInt(palletNumber, 10);
+  number++;
+  return number.toString().padStart(palletNumber.length, '0');
+}
+
 export const insertJobAndPallet = async (
   listData: any,
   transactionalEntityManager: EntityManager,
 ) => {
+  listData.sort((a: any, b: any) => a.SEQ - b.SEQ);
+
+  const stt = await transactionalEntityManager
+    .createQueryBuilder(PalletStockEntity, 'pallet')
+    .select('pallet.PALLET_NO', 'PALLET_NO')
+    .orderBy("RIGHT(pallet.PALLET_NO, CHARINDEX('/', REVERSE(pallet.PALLET_NO)) - 1)", 'DESC')
+    .limit(1)
+    .getRawOne();
+
+  let newStt = stt?.PALLET_NO?.split('-').pop() ?? '000000';
+  newStt = incrementPalletNumber(newStt);
+
   for (const data of listData) {
     const jobQuantityCheck = await transactionalEntityManager
       .createQueryBuilder()
@@ -98,7 +116,7 @@ export const insertJobAndPallet = async (
       .insert()
       .into(PalletStockEntity)
       .values({
-        PALLET_NO: `${data.HOUSE_BILL}/${moment().format('DD')}/${moment().format('MM')}/${moment().format('YYYY')}/${data.SEQ}`,
+        PALLET_NO: `${data.HOUSE_BILL}/${moment().format('DD')}/${moment().format('MM')}/${moment().format('YYYY')}/${data.SEQ}-${newStt}`,
         PALLET_STATUS: 'I',
         JOB_QUANTITY_ID: JOB_QUANTITY_ID,
         PALLET_HEIGHT: data.PALLET_HEIGHT,
@@ -108,6 +126,8 @@ export const insertJobAndPallet = async (
         UPDATE_BY: data.CREATE_BY,
       })
       .execute();
+
+    newStt = incrementPalletNumber(newStt);
   }
   return [{}];
 };

@@ -66,7 +66,6 @@ class JobQuantityCheckService {
             palletHeight: data.PALLET_HEIGHT,
           });
 
-          console.log(listVaidCell);
           if (listVaidCell.length === 0) {
             throw new BadRequestError(
               `Kích thước Housebill ${data.HOUSE_BILL} không phù hợp với bất kỳ ô nào trong kho`,
@@ -109,7 +108,6 @@ class JobQuantityCheckService {
             palletHeight: data.PALLET_HEIGHT,
           });
 
-          console.log(listVaidCell);
           if (listVaidCell.length === 0) {
             throw new BadRequestError(
               `Kích thước Housebill ${data.HOUSE_BILL} không phù hợp với bất kỳ ô nào trong kho`,
