@@ -29,6 +29,14 @@ class CustomerOrderController {
       metadata: await CustomerOrderService.getExportedOrdersByStatus(status, user),
     }).send(res);
   };
+
+  getOrderByOrderNo = async (req: Request, res: Response) => {
+    const orderNo = req.params.orderNo;
+    new OK({
+      message: SUCCESS_MESSAGE.GET_ORDER_SUCCESS,
+      metadata: await CustomerOrderService.getOrderByOrderNo(orderNo),
+    }).send(res);
+  };
 }
 
 export default new CustomerOrderController();

@@ -1,12 +1,14 @@
+import moment from 'moment';
 import mssqlConnection from '../db/mssql.connect';
+import { ContainerEntity } from '../entity/container.entity';
 import { DeliverOrderEntity } from '../entity/deliver-order.entity';
 import { DeliveryOrderDtlEntity } from '../entity/delivery-order-detail.entity';
-import { ContainerEntity } from '../entity/container.entity';
+import { InvNoEntity } from '../entity/inv_vat.entity';
+import { InvNoDtlEntity } from '../entity/inv_vat_dtl.entity';
 import { Package as PackageEntity } from '../entity/package.entity';
 import { TariffEntity } from '../entity/tariff.entity';
 import { TariffDisEntity } from '../entity/tariffDis.entity';
-import { InvNoEntity } from '../entity/inv_vat.entity';
-import { InvNoDtlEntity } from '../entity/inv_vat_dtl.entity';
+import { User } from '../entity/user.entity';
 import {
   DeliverOrder,
   ExportedOrder,
@@ -14,14 +16,11 @@ import {
   OrderReqIn,
   whereExManifest,
 } from '../models/deliver-order.model';
-import moment from 'moment';
 import { DeliverOrderDetail } from '../models/delivery-order-detail.model';
-import { User } from '../entity/user.entity';
-import { genOrderNo } from '../utils/genKey';
 import { InvVat, Payment } from '../models/inv_vat.model';
 import { InvVatDtl, PaymentDtl } from '../models/inv_vat_dtl.model';
+import { genOrderNo } from '../utils/genKey';
 import { containerRepository } from './container.repo';
-import { Brackets } from 'typeorm';
 import { methodRepository } from './method.repo';
 
 const orderRepository = mssqlConnection.getRepository(DeliverOrderEntity);
@@ -499,10 +498,11 @@ const findImportedOrdersByStatus = async (customerCode: string): Promise<Importe
       do.JOB_CHK,
       do.NOTE, 
       COUNT(DISTINCT dod.REF_PAKAGE) AS TOTAL_PACKAGES,
-      COUNT(DISTINCT jqc.PACKAGE_ID) AS TOTAL_JOBS,
+      COUNT(DISTINCT jqc.PACKAGE_ID) AS TOTAL_JOBS_BY_PACKAGE,
+      COUNT(DISTINCT jqc.ROWGUID) AS TOTAL_JOBS,
       SUM(CASE WHEN jqc.JOB_STATUS = 'C' THEN 1 ELSE 0 END) AS CHECKED_JOBS,
       SUM(CASE WHEN ps.PALLET_STATUS = 'S' THEN 1 ELSE 0 END) AS STORED_PALLETS,
-      COUNT(DISTINCT ps.PALLET_NO) AS TOTAL_PALLETS
+      COUNT(DISTINCT CASE WHEN ps.PALLET_STATUS != 'C' THEN ps.PALLET_NO END) AS TOTAL_PALLETS
   FROM
       DELIVER_ORDER do
   JOIN
@@ -545,7 +545,7 @@ const findExportedOrdersByStatus = async (customerCode: string): Promise<Exporte
       SUM(CASE WHEN ps.PALLET_STATUS = 'C' THEN 1 ELSE 0 END) AS RELEASED_PALLETS
     FROM 
       DELIVER_ORDER do
-    LEFT JOIN 
+    LEFT JOIN
       JOB_QUANTITY_CHECK jqc ON do.PACKAGE_ID = jqc.PACKAGE_ID
     LEFT JOIN 
       DT_PALLET_STOCK ps ON jqc.ROWGUID = ps.JOB_QUANTITY_ID
@@ -566,23 +566,14 @@ const findExportedOrdersByStatus = async (customerCode: string): Promise<Exporte
   }
 };
 
+const findOrderByOrderNo = async (orderNo: string) => {
+  const order = await orderRepository.findOne({
+    where: { DE_ORDER_NO: orderNo },
+  });
+  return order;
+}
+
 export {
-  createfakeOrderData,
-  findOrder,
-  findMaxOrderNo,
-  findMaxDraftNo,
-  getContList,
-  checkContStatus,
-  getManifestPackage,
-  getTariffSTD,
-  saveInOrder,
-  getExManifest,
-  saveExOrder,
-  getOrderContList,
-  getTariffDis,
-  getServicesTariff,
-  findOrdersByCustomerCode,
-  findImportedOrdersByStatus,
-  findExportedOrdersByStatus,
-  checkPackageStatusOrder,
+  checkContStatus, checkPackageStatusOrder, createfakeOrderData, findExportedOrdersByStatus, findImportedOrdersByStatus, findMaxDraftNo, findMaxOrderNo, findOrder, findOrderByOrderNo, findOrdersByCustomerCode, getContList, getExManifest, getManifestPackage, getOrderContList, getServicesTariff, getTariffDis, getTariffSTD, saveExOrder, saveInOrder
 };
+

@@ -13,6 +13,11 @@ router.get(
   asyncHandler(customerOrderController.getOrdersByCustomerId),
 );
 router.get(
+  '/order/:orderNo',
+  asyncHandler(grantPermission),
+  asyncHandler(customerOrderController.getOrderByOrderNo),
+);
+router.get(
   '/import-orders',
   asyncHandler(grantPermission),
   asyncHandler(customerOrderController.getImportedOrders),
