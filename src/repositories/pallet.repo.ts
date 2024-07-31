@@ -3,14 +3,33 @@ import { PalletStockEntity } from '../entity/pallet-stock.entity';
 import { User } from '../entity/user.entity';
 import { Cell as CellEntity } from '../entity/cell.entity';
 import { Package } from '../entity/package.entity';
+import { EntityManager } from 'typeorm';
 
-const palletRepository = mssqlConnection.getRepository(PalletStockEntity);
+export const palletRepository = mssqlConnection.getRepository(PalletStockEntity);
 const cellRepository = mssqlConnection.getRepository(CellEntity);
 const packageRepository = mssqlConnection.getRepository(Package);
 
 const updatePallet = async (cellId: string, PalletNo: string, createBy: User) => {
   return await palletRepository
     .createQueryBuilder('pallet')
+    .update(PalletStockEntity)
+    .set({
+      PALLET_STATUS: 'S', //update lại pallet đó có trạng thái là Stacking
+      CELL_ID: cellId,
+      UPDATE_BY: createBy.ROWGUID,
+    })
+    .where('PALLET_NO = :PalletNo', { PalletNo })
+    .execute();
+};
+
+const updatePalletTransaction = async (
+  transactionalEntityManager: EntityManager,
+  cellId: string,
+  PalletNo: string,
+  createBy: User,
+) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(PalletStockEntity, 'pallet')
     .update(PalletStockEntity)
     .set({
       PALLET_STATUS: 'S', //update lại pallet đó có trạng thái là Stacking
@@ -89,6 +108,7 @@ const getListJobImport = async (palletStatus: string) => {
   return await palletRepository
     .createQueryBuilder('pallet')
     .leftJoinAndSelect('JOB_QUANTITY_CHECK', 'job', 'pallet.JOB_QUANTITY_ID = job.ROWGUID')
+    .leftJoinAndSelect('DT_PACKAGE_MNF_LD', 'package', 'job.PACKAGE_ID = package.ROWGUID')
     .leftJoinAndSelect('BS_CELL', 'cell', 'pallet.CELL_ID = cell.ROWGUID')
     .leftJoinAndSelect('BS_BLOCK', 'block', 'cell.BLOCK_CODE = block.BLOCK_CODE')
     .leftJoinAndSelect(
@@ -97,6 +117,7 @@ const getListJobImport = async (palletStatus: string) => {
       'block.WAREHOUSE_CODE = warehouse.WAREHOUSE_CODE',
     )
     .where('PALLET_STATUS = :palletStatus', { palletStatus }) // truyền I để lấy pallet chưa vào kho
+    .andWhere('package.JOB_TYPE = :jobType', { jobType: 'NK' }) // truyền NK để lấy job nhập kho
     .select([
       'job.ROWGUID as JOB_ROWGUID',
       'job.PACKAGE_ID as PACKAGE_ID',
@@ -166,4 +187,5 @@ export {
   updateExportPallet,
   checkPalletJobTypeStatus,
   findPalletsByJob,
+  updatePalletTransaction,
 };
