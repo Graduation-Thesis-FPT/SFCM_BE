@@ -33,14 +33,10 @@ class PackageService {
         data.CREATE_BY = createBy.ROWGUID;
         data.UPDATE_BY = createBy.ROWGUID;
         data.UPDATE_DATE = new Date();
-        data.TIME_IN = new Date();
+        // data.TIME_IN = new Date();
       }
 
       if (updateData.length > 0) {
-        // const isSuccess = await check4UpdatenDelete(updateData[0].CONTAINER_ID);
-        // if (isSuccess) {
-        //   throw new BadRequestError(`Không thể thay đổi dữ liệu vì đã làm lệnh!`);
-        // }
         for (const data of updateData) {
           const isExecuted = await isContainerExecuted(data.CONTAINER_ID);
           if (isExecuted) {

@@ -1,3 +1,4 @@
+import { EntityManager } from 'typeorm';
 import mssqlConnection from '../db/mssql.connect';
 import { Cell as CellEntity } from '../entity/cell.entity';
 const cellRepository = mssqlConnection.getRepository(CellEntity);
@@ -38,6 +39,19 @@ const updateNewCellStatus = async (cellID: string) => {
     })
     .where('ROWGUID = :cellID', { cellID })
     .execute();
+};
+
+const updateNewCellStatusTransaction = async (
+  transactionalEntityManager: EntityManager,
+  cellID: string,
+) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(CellEntity, 'cell')
+    .update(CellEntity)
+    .set({
+      STATUS: 1,
+    })
+    .where('ROWGUID = :cellID', { cellID });
 };
 
 const updateOldCellStatus = async (cellID: string) => {
@@ -104,4 +118,5 @@ export {
   updateOldCellStatus,
   findCellByWarehouseCode,
   getAllAvailableCell,
+  updateNewCellStatusTransaction,
 };

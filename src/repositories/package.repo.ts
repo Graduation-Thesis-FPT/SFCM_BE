@@ -3,6 +3,7 @@ import mssqlConnection from '../db/mssql.connect';
 import { Package as PackageEntity } from '../entity/package.entity';
 import { Package } from '../models/packageMnfLd.model';
 import { ContainerEntity } from '../entity/container.entity';
+import { palletRepository } from './pallet.repo';
 
 export const containerRepository = mssqlConnection.getRepository(ContainerEntity);
 export const packageRepository = mssqlConnection.getRepository(PackageEntity);
@@ -48,6 +49,30 @@ const updatePackage = async (
   );
 };
 
+const updatePackageTimeIn = async (packageData: Package, createBy: string) => {
+  return await packageRepository
+    .createQueryBuilder('package')
+    .update(PackageEntity)
+    .set({
+      TIME_IN: new Date(),
+      UPDATE_BY: createBy,
+    })
+    .where('ROWGUID = :ROWGUID', { ROWGUID: packageData.ROWGUID })
+    .execute();
+};
+
+const updatePackageTimeOut = async (packageData: Package, createBy: string) => {
+  return await packageRepository
+    .createQueryBuilder('package')
+    .update(PackageEntity)
+    .set({
+      TIME_OUT: new Date(),
+      UPDATE_BY: createBy,
+    })
+    .where('ROWGUID = :ROWGUID', { ROWGUID: packageData.ROWGUID })
+    .execute();
+};
+
 const getPackage = async (refContainer: string) => {
   return await packageRepository.find({
     select: {
@@ -72,6 +97,27 @@ const deletePackage = async (packgeListId: string[]) => {
   return await packageRepository.delete(packgeListId);
 };
 
+const findPackageByPalletNo = async (palletNo: string) => {
+  return await palletRepository
+    .createQueryBuilder('pallet')
+    .innerJoinAndSelect('JOB_QUANTITY_CHECK', 'job', 'job.ROWGUID = pallet.JOB_QUANTITY_ID')
+    .innerJoinAndSelect('DT_PACKAGE_MNF_LD', 'package', 'package.ROWGUID = job.PACKAGE_ID')
+    .where('pallet.PALLET_NO = :palletNo', { palletNo })
+    .select([
+      'package.ROWGUID as ROWGUID',
+      'package.HOUSE_BILL as HOUSE_BILL',
+      'package.ITEM_TYPE_CODE as ITEM_TYPE_CODE',
+      'package.PACKAGE_UNIT_CODE as PACKAGE_UNIT_CODE',
+      'package.CARGO_PIECE as CARGO_PIECE',
+      'package.CBM as CBM',
+      'package.DECLARE_NO as DECLARE_NO',
+      'package.CONTAINER_ID as CONTAINER_ID',
+      'package.NOTE as NOTE',
+    ])
+    .limit(1)
+    .getRawOne();
+};
+
 export {
   check4UpdatenDelete,
   check4AddnUpdate,
@@ -79,4 +125,7 @@ export {
   updatePackage,
   getPackage,
   deletePackage,
+  findPackageByPalletNo,
+  updatePackageTimeIn,
+  updatePackageTimeOut,
 };

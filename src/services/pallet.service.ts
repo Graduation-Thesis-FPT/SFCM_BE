@@ -17,6 +17,11 @@ import {
 } from '../repositories/cell.repo';
 import { PalletReq } from '../models/pallet.model';
 import _ from 'lodash';
+import {
+  findPackageByPalletNo,
+  updatePackageTimeIn,
+  updatePackageTimeOut,
+} from '../repositories/package.repo';
 
 class PalletService {
   static placePalletIntoCell = async (data: PalletReq, createBy: User) => {
@@ -42,6 +47,16 @@ class PalletService {
 
     if (PALLET_HEIGHT > CELL_HEIGHT || PALLET_LENGTH > CELL_LENGTH || PALLET_WIDTH > CELL_WIDTH) {
       throw new BadRequestError(`Kích thước pallet không phù hợp`);
+    }
+
+    const packageInfo = await findPackageByPalletNo(data.PALLET_NO);
+    if (!packageInfo) {
+      throw new BadRequestError(`Kiện hàng không tồn tại, vui lòng kiểm tra lại!`);
+    }
+
+    if (!packageInfo.TIME_IN) {
+      packageInfo.TIME_IN = new Date();
+      await updatePackageTimeIn(packageInfo, createBy.ROWGUID);
     }
 
     return await Promise.all([
@@ -119,6 +134,14 @@ class PalletService {
     if (jobType.JOB_TYPE !== 'XK') {
       throw new BadRequestError(`Pallet chưa được làm lệnh xuất!`);
     }
+
+    const packageInfo = await findPackageByPalletNo(data.PALLET_NO);
+    if (!packageInfo) {
+      throw new BadRequestError(`Kiện hàng không tồn tại, vui lòng kiểm tra lại!`);
+    }
+
+    packageInfo.TIME_OUT = new Date();
+    await updatePackageTimeOut(packageInfo, createBy.ROWGUID);
 
     return await Promise.all([
       updateExportPallet(null, data.PALLET_NO, createBy),
