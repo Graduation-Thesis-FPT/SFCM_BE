@@ -54,7 +54,7 @@ class UserService {
     // if (!user) {
     //   throw new BadRequestError('Error: User not exist!');
     // }
-
+    
     return await deleteUser(userId);
   };
 
@@ -105,11 +105,13 @@ class UserService {
       throw new BadRequestError(ERROR_MESSAGE.USER_NOT_EXIST);
     }
 
-    if (userInfo.USER_NAME) {
+    if (userInfo.USER_NAME && userInfo.USER_NAME !== user.USER_NAME) {
       const isDuplicatedUserName = await findUserByUserName(userInfo.USER_NAME);
 
-      if (isDuplicatedUserName) {
-        throw new BadRequestError(ERROR_MESSAGE.USER_NAME_IS_DUPLICATED);
+      if (isDuplicatedUserName && isDuplicatedUserName.ROWGUID !== userId) {
+        throw new BadRequestError(
+          `${ERROR_MESSAGE.USER_NAME_IS_DUPLICATED} : ${userInfo.USER_NAME}`,
+        );
       }
     }
 

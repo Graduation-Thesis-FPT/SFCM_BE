@@ -1,8 +1,8 @@
 import { EntityManager, Not } from 'typeorm';
 import mssqlConnection from '../db/mssql.connect';
+import { ContainerEntity } from '../entity/container.entity';
 import { Package as PackageEntity } from '../entity/package.entity';
 import { Package } from '../models/packageMnfLd.model';
-import { ContainerEntity } from '../entity/container.entity';
 import { palletRepository } from './pallet.repo';
 
 export const containerRepository = mssqlConnection.getRepository(ContainerEntity);
@@ -118,13 +118,36 @@ const findPackageByPalletNo = async (palletNo: string) => {
     .getRawOne();
 };
 
+const findPackage = async (rowId: string) => {
+  return await packageRepository
+    .createQueryBuilder('package')
+    .leftJoinAndSelect('BS_ITEM_TYPE', 'item', 'package.ITEM_TYPE_CODE = item.ITEM_TYPE_CODE')
+    .where('package.ROWGUID = :rowId', { rowId })
+    .select([
+      'package.ROWGUID as ROWGUID',
+      'package.HOUSE_BILL as HOUSE_BILL',
+      'package.ITEM_TYPE_CODE as ITEM_TYPE_CODE',
+      'package.PACKAGE_UNIT_CODE as PACKAGE_UNIT_CODE',
+      'package.CARGO_PIECE as CARGO_PIECE',
+      'package.CBM as CBM',
+      'package.DECLARE_NO as DECLARE_NO',
+      'package.CONTAINER_ID as CONTAINER_ID',
+      'package.NOTE as NOTE',
+      'item.ITEM_TYPE_NAME as ITEM_TYPE_NAME',
+      'package.TIME_IN as TIME_IN',
+      'package.TIME_OUT as TIME_OUT',
+    ])
+    .getRawOne();
+};
+
 export {
-  check4UpdatenDelete,
   check4AddnUpdate,
+  check4UpdatenDelete,
   createPackage,
-  updatePackage,
-  getPackage,
   deletePackage,
+  findPackage,
+  getPackage,
+  updatePackage,
   findPackageByPalletNo,
   updatePackageTimeIn,
   updatePackageTimeOut,

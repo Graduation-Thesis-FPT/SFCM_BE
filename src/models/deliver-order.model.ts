@@ -1,5 +1,8 @@
-import { StringSchema } from 'joi';
 import { Base } from './base.model';
+import { Container } from './container.model';
+import { Customer } from './customer.model';
+import { ExtendedDeliverOrderDetail } from './delivery-order-detail.model';
+import { Package } from './packageMnfLd.model';
 
 export interface DeliverOrder extends Base {
   DE_ORDER_NO?: string;
@@ -13,6 +16,13 @@ export interface DeliverOrder extends Base {
   TOTAL_CBM?: number;
   JOB_CHK?: boolean;
   NOTE?: string;
+}
+
+export interface ExtendedDeliveryOrder extends DeliverOrder {
+  containerInfo: Container;
+  customerInfo: Customer;
+  orderDetails?: ExtendedDeliverOrderDetail[];
+  packageInfo?: Package;
 }
 
 export interface DeliverOrderList {
@@ -54,6 +64,12 @@ export interface ImportedOrder extends DeliverOrder {
   status: ImportedOrderStatus;
 }
 
+export interface ExtendedImportedOrder extends ImportedOrder {
+  orderDetails: ExtendedDeliverOrderDetail[];
+  containerInfo: Container;
+  customerInfo: Customer;
+}
+
 export enum ExportedOrderStatus {
   isConfirmed = 'isConfirmed',
   isReleased = 'isReleased',
@@ -61,4 +77,10 @@ export enum ExportedOrderStatus {
 
 export interface ExportedOrder extends DeliverOrder {
   status: ExportedOrderStatus;
+}
+
+export interface ExtendedExportedOrder extends ExportedOrder {
+  containerInfo: Container;
+  packageInfo: Package;
+  customerInfo: Customer;
 }
