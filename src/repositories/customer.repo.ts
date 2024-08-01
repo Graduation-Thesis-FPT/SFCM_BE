@@ -26,6 +26,14 @@ const updateCustomer = async (
   );
 };
 
+const updateOneCustomer = async (
+  userName: string,
+  customerInfo: Partial<Customer>,
+  transactionalEntityManager: EntityManager,
+) => {
+  return await transactionalEntityManager.update(CustomerEntity, { USER_NAME: userName }, customerInfo);
+}
+
 const findCustomerByCode = async (
   customerCode: string,
   transactionalEntityManager: EntityManager,
@@ -69,6 +77,7 @@ const findCustomerByUserName = async (userName: string) => {
 export {
   createCustomer,
   updateCustomer,
+  updateOneCustomer,
   findCustomerByCode,
   deleteCustomerMany,
   getAllCustomer,

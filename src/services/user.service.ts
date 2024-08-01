@@ -1,6 +1,13 @@
 import { ERROR_MESSAGE } from '../constants';
 import { BadRequestError } from '../core/error.response';
+import { Customer } from '../entity/customer.entity';
 import { User } from '../entity/user.entity';
+import {
+  findCustomerByUserName,
+  updateCustomer,
+  updateOneCustomer,
+} from '../repositories/customer.repo';
+import { manager } from '../repositories/index.repo';
 import {
   activeUser,
   deactiveUser,
@@ -13,6 +20,7 @@ import {
   userRepository,
 } from '../repositories/user.repo';
 import { isValidInfor, removeUndefinedProperty } from '../utils';
+import CustomerService from './customer.service';
 
 class UserService {
   /**
@@ -54,7 +62,7 @@ class UserService {
     // if (!user) {
     //   throw new BadRequestError('Error: User not exist!');
     // }
-    
+
     return await deleteUser(userId);
   };
 
@@ -99,31 +107,61 @@ class UserService {
    * @returns
    */
   static updateUser = async (userId: string, userInfo: Partial<User>, updateBy: User) => {
-    const user = await findUserById(userId);
+    await manager.transaction(async transactionalEntityManager => {
+      const user = await findUserById(userId);
 
-    if (!user) {
-      throw new BadRequestError(ERROR_MESSAGE.USER_NOT_EXIST);
-    }
-
-    if (userInfo.USER_NAME && userInfo.USER_NAME !== user.USER_NAME) {
-      const isDuplicatedUserName = await findUserByUserName(userInfo.USER_NAME);
-
-      if (isDuplicatedUserName && isDuplicatedUserName.ROWGUID !== userId) {
-        throw new BadRequestError(
-          `${ERROR_MESSAGE.USER_NAME_IS_DUPLICATED} : ${userInfo.USER_NAME}`,
-        );
+      if (!user) {
+        throw new BadRequestError(ERROR_MESSAGE.USER_NOT_EXIST);
       }
-    }
 
-    const objectParams = removeUndefinedProperty(userInfo);
+      if (userInfo.USER_NAME && userInfo.USER_NAME !== user.USER_NAME) {
+        const isDuplicatedUserName = await findUserByUserName(userInfo.USER_NAME);
 
-    if (!objectParams.BIRTHDAY) objectParams.BIRTHDAY = null;
-    objectParams.UPDATE_BY = updateBy.ROWGUID;
-    // const userInstance = userRepository.create(objectParams);
+        if (isDuplicatedUserName && isDuplicatedUserName.ROWGUID !== userId) {
+          throw new BadRequestError(
+            `${ERROR_MESSAGE.USER_NAME_IS_DUPLICATED} : ${userInfo.USER_NAME}`,
+          );
+        }
+      }
 
-    // await isValidInfor(userInstance);
+      const objectParams = removeUndefinedProperty({
+        ...userInfo,
+        BIRTHDAY: userInfo.BIRTHDAY || null,
+        UPDATE_BY: updateBy.ROWGUID,
+      });
 
-    return updateUser(userId, objectParams);
+      if (
+        user.ROLE_CODE === 'customer' &&
+        objectParams.ROLE_CODE &&
+        objectParams.ROLE_CODE !== 'customer'
+      ) {
+        throw new BadRequestError('Khách hàng không thể thay đổi chức vụ!');
+      }
+      if (user.ROLE_CODE !== 'customer' && objectParams.ROLE_CODE === 'customer') {
+        throw new BadRequestError('Chức vụ không thể thay đổi thành khách hàng!');
+      }
+
+      const updatedUser = await updateUser(userId, objectParams);
+      if (user.ROLE_CODE === 'customer') {
+        const customerUpdateInfo: Partial<Customer> = removeUndefinedProperty({
+          CUSTOMER_NAME: objectParams.FULLNAME,
+          IS_ACTIVE: objectParams.IS_ACTIVE,
+          ADDRESS: objectParams.ADDRESS,
+          UPDATE_BY: updateBy.ROWGUID,
+          UPDATE_DATE: new Date(),
+        });
+
+        if (Object.keys(customerUpdateInfo).length > 0) {
+          try {
+            await updateOneCustomer(user.USER_NAME, customerUpdateInfo, transactionalEntityManager);
+          } catch (error) {
+            throw new BadRequestError(`Lỗi khi cập nhật thông tin khách hàng: ${error.message}`);
+          }
+        }
+      }
+
+      return updatedUser;
+    });
   };
 
   static resetPasswordById = async (userId: string, defaultPassword: string) => {

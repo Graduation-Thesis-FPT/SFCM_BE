@@ -106,6 +106,7 @@ class CustomerService {
 
           try {
             const existingUser = await findUserByUserName(customerInfo.USER_NAME);
+
             if (existingUser) {
               const userUpdateInfo: Partial<User> = {
                 FULLNAME: customerInfo.CUSTOMER_NAME,
@@ -118,7 +119,13 @@ class CustomerService {
                 userUpdateInfo.EMAIL = customerInfo.EMAIL;
                 userUpdateInfo.USER_NAME = customerInfo.EMAIL;
               }
-              console.log('userUpdateInfo', userUpdateInfo);
+              const existingUserUpdate = await findUserByUserName(customerInfo.EMAIL);
+              if (existingUserUpdate && existingUserUpdate.ROWGUID !== existingUser.ROWGUID) {
+                throw new BadRequestError(
+                  `Email ${customerInfo.EMAIL} đã được sử dụng cho tài khoản khác`,
+                );
+              }
+
               await UserService.updateUser(existingUser.ROWGUID, userUpdateInfo, createBy);
             }
             customerInfo.USER_NAME = customerInfo.EMAIL;
