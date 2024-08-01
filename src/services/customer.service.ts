@@ -97,6 +97,9 @@ class CustomerService {
               `Mã loại khách hàng ${customerInfo.CUSTOMER_TYPE_CODE} không hợp lệ`,
             );
           }
+          if (!customerInfo.EMAIL) {
+            throw new BadRequestError(`Email không được để trống`);
+          }
 
           customerInfo.UPDATE_BY = createBy.ROWGUID;
           customerInfo.UPDATE_DATE = new Date();
@@ -115,14 +118,11 @@ class CustomerService {
                 userUpdateInfo.EMAIL = customerInfo.EMAIL;
                 userUpdateInfo.USER_NAME = customerInfo.EMAIL;
               }
-
+              console.log('userUpdateInfo', userUpdateInfo);
               await UserService.updateUser(existingUser.ROWGUID, userUpdateInfo, createBy);
             }
+            customerInfo.USER_NAME = customerInfo.EMAIL;
           } catch (error) {
-            // console.error(
-            //   `Lỗi khi cập nhật tài khoản khách hàng ${customerInfo.CUSTOMER_CODE}:`,
-            //   error,
-            // );
             throw new BadRequestError(
               `Lỗi khi cập nhật tài khoản khách hàng ${customerInfo.CUSTOMER_CODE}: ${error.message}`,
             );
