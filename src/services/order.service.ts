@@ -13,6 +13,7 @@ import {
   getTariffDis,
   getServicesTariff,
   checkPackageStatusOrder,
+  checkLifecycleHouseBill,
 } from '../repositories/order.repo';
 import { checkContSize, roundMoney } from '../utils';
 import { Tariff } from '../models/tariff.model';
@@ -119,7 +120,7 @@ class OrderService {
           VAT_PRICE: roundMoney(vatPrice),
           AMOUNT: roundMoney(cost),
           TAMOUNT: roundMoney(totalPrice),
-          QTY: (Math.round(quanlity * 100) / 100).toFixed(2),
+          QTY: null,
         };
         arrReturn.push(Object.assign(tempObj, serviceTariff));
       }
@@ -148,6 +149,7 @@ class OrderService {
     if (!checkStatus) {
       throw new BadRequestError(`Số House Bill ${whereExManifest.HOUSE_BILL} đã làm lệnh!`);
     }
+    // const checkLifecycle = await checkLifecycleHouseBill(whereExManifest);
     return await getExManifest(whereExManifest);
   };
 
