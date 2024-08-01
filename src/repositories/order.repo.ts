@@ -22,6 +22,7 @@ import { InvVatDtl, PaymentDtl } from '../models/inv_vat_dtl.model';
 import { genOrderNo } from '../utils/genKey';
 import { containerRepository } from './container.repo';
 import { methodRepository } from './method.repo';
+import { Tariff } from '../models/tariff.model';
 
 const orderRepository = mssqlConnection.getRepository(DeliverOrderEntity);
 const orderDtlRepository = mssqlConnection.getRepository(DeliveryOrderDtlEntity);
@@ -165,13 +166,19 @@ const getTariffSTD = async (whereObj: object) => {
   return tariffInfo;
 };
 
-const getServicesTariff = async (services: string[], ITEM_TYPE_CODE: string) => {
-  const list = await methodRepository
+const getServicesTariff = async (
+  services: string,
+  ITEM_TYPE_CODE: string,
+  CUSTOMER_CODE: string,
+) => {
+  let tariff;
+  tariff = await methodRepository
     .createQueryBuilder('mt')
     .innerJoin('CONFIG_ATTACH_SRV', 'atr', 'mt.METHOD_CODE = atr.ATTACH_SERVICE_CODE')
-    .leftJoin('TRF_STD', 'trd', 'mt.METHOD_CODE = trd.METHOD_CODE')
+    .leftJoin('TRF_DIS', 'trd', 'mt.METHOD_CODE = trd.METHOD_CODE')
     .where('trd.ITEM_TYPE_CODE = :itemType', { itemType: ITEM_TYPE_CODE })
-    .andWhere('atr.ROWGUID IN (:...ids)', { ids: services })
+    .andWhere('atr.ROWGUID = :rowg', { rowg: services })
+    .andWhere('trd.CUSTOMER_CODE = :customer', { customer: CUSTOMER_CODE })
     .select([
       'mt.METHOD_CODE as METHOD_CODE',
       'trd.TRF_DESC as TRF_DESC',
@@ -180,7 +187,23 @@ const getServicesTariff = async (services: string[], ITEM_TYPE_CODE: string) => 
       'trd.INCLUDE_VAT as INCLUDE_VAT',
     ])
     .getRawMany();
-  return list;
+  if (tariff.length !== 1) {
+    tariff = await methodRepository
+      .createQueryBuilder('mt')
+      .innerJoin('CONFIG_ATTACH_SRV', 'atr', 'mt.METHOD_CODE = atr.ATTACH_SERVICE_CODE')
+      .leftJoin('TRF_STD', 'trd', 'mt.METHOD_CODE = trd.METHOD_CODE')
+      .where('trd.ITEM_TYPE_CODE = :itemType', { itemType: ITEM_TYPE_CODE })
+      .andWhere('atr.ROWGUID = :rowg', { rowg: services })
+      .select([
+        'mt.METHOD_CODE as METHOD_CODE',
+        'trd.TRF_DESC as TRF_DESC',
+        'trd.AMT_CBM as AMT_CBM',
+        'trd.VAT as VAT',
+        'trd.INCLUDE_VAT as INCLUDE_VAT',
+      ])
+      .getRawMany();
+  }
+  return tariff;
 };
 
 const saveInOrder = async (

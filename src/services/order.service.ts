@@ -100,14 +100,18 @@ class OrderService {
 
     //Tính tiền dịch vụ đính kèm
     if (services.length) {
-      const serviceTariffs = await getServicesTariff(services, addInfo.ITEM_TYPE_CODE_CNTR);
-      if (serviceTariffs.length != services.length) {
-        throw new BadRequestError(
-          `Không tìm thấy cước chuẩn của dịch vụ đính kèm! Vui lòng kiểm tra lại`,
+      for (let i = 0; i < services.length; i++) {
+        const serviceTariffs = await getServicesTariff(
+          services[i],
+          addInfo.ITEM_TYPE_CODE_CNTR,
+          addInfo.PAYER,
         );
-      }
-      for (let i = 0; i < serviceTariffs.length; i++) {
-        let serviceTariff = serviceTariffs[i];
+        if (!serviceTariffs.length) {
+          throw new BadRequestError(
+            `Không tìm thấy cước của dịch vụ đính kèm! Vui lòng kiểm tra lại`,
+          );
+        }
+        let serviceTariff = serviceTariffs[0];
 
         let quanlity: number = 1;
         let vatPrice: number = serviceTariff.AMT_CBM * (serviceTariff.VAT / 100) * quanlity;
