@@ -239,22 +239,22 @@ const saveInOrder = async (
   };
 
   let invVatDtlSave: InvVatDtl[] = paymentInfoDetail.map((item, idx) => ({
-    AMOUNT: item.AMOUNT,
-    CARGO_TYPE: item.CARGO_TYPE,
+    AMOUNT: item.AMOUNT ? item.AMOUNT : null,
+    CARGO_TYPE: item.CARGO_TYPE ? item.CARGO_TYPE : null,
     INV_ID: paymentInfoHeader.INV_NO ? paymentInfoHeader.INV_NO : null,
-    QTY: item.QTY,
+    QTY: item.QTY ? item.QTY : null,
     TAMOUNT: item.TAMOUNT,
-    TRF_DESC: item.TRF_DESC,
-    UNIT_RATE: item.UNIT_RATE,
-    VAT: item.VAT,
-    VAT_RATE: item.VAT_RATE,
+    TRF_DESC: item.TRF_DESC ? item.TRF_DESC : null,
+    UNIT_RATE: item.UNIT_RATE ? item.UNIT_RATE : null,
+    VAT: item.VAT ? item.VAT : null,
+    VAT_RATE: item.VAT_RATE ? item.VAT_RATE : null,
   }));
 
   const order = orderRepository.create(deliveryOrder);
   const orderDtl = orderDtlRepository.create(deliveryOrderDtl);
   const invInfo = invNoRepository.create(inv_vatSave);
   const invDtlInfo = invNoRepository.create(invVatDtlSave);
-  const neworder = await orderRepository.save(order);
+  const neworder = await invNoDtlRepository.save(order);
   const neworderDtlTemp = await orderDtlRepository.save(orderDtl);
   const newInvInfo = await invNoRepository.save(invInfo);
   const newInvDtlInfo = await invNoDtlRepository.save(invDtlInfo);
@@ -305,6 +305,21 @@ const checkPackageStatusOrder = async (whereExManifest: whereExManifest) => {
     .getRawMany();
   if (list.length) return false;
   return true;
+};
+
+const checkLifecycleHouseBill = async (whereExManifest: whereExManifest) => {
+  const list = await packageRepository
+    .createQueryBuilder('pk')
+    .leftJoin('DT_CNTR_MNF_LD', 'cn', 'pk.CONTAINER_ID = cn.ROWGUID')
+    .leftJoin('JOB_QUANTITY_CHECK', 'jk', 'pk.ROWGUID = jk.PACKAGE_ID')
+    .leftJoin('DT_PALLET_STOCK', 'pl', 'jk.ROWGUID = pl.JOB_QUANTITY_ID')
+    .where('cn.VOYAGEKEY =:voy', { voy: whereExManifest.VOYAGEKEY })
+    .andWhere('pk.HOUSE_BILL = :pack', { pack: whereExManifest.HOUSE_BILL })
+    .andWhere('cn.ROWGUID = :cntrno', { cntrno: whereExManifest.CONTAINER_ID })
+    .select(['jk.JOB_STATUS as JOB_STATUS, pl.PALLET_STATUS  as PALLET_STATUS'])
+    .getRawMany();
+  if (list.length) {
+  }
 };
 
 const getExManifest = async (whereObject: whereExManifest) => {
@@ -391,7 +406,7 @@ const saveExOrder = async (
   const orderDtl = orderDtlRepository.create(deliveryOrderDtl);
   const invInfo = invNoRepository.create(inv_vatSave);
   const invDtlInfo = invNoRepository.create(invVatDtlSave);
-  const neworder = await orderRepository.save(order);
+  const neworder = await invNoDtlRepository.save(order);
   const neworderDtlTemp = await orderDtlRepository.save(orderDtl);
   const newInvInfo = await invNoRepository.save(invInfo);
   const newInvDtlInfo = await invNoDtlRepository.save(invDtlInfo);
@@ -571,9 +586,27 @@ const findOrderByOrderNo = async (orderNo: string) => {
     where: { DE_ORDER_NO: orderNo },
   });
   return order;
-}
-
-export {
-  checkContStatus, checkPackageStatusOrder, createfakeOrderData, findExportedOrdersByStatus, findImportedOrdersByStatus, findMaxDraftNo, findMaxOrderNo, findOrder, findOrderByOrderNo, findOrdersByCustomerCode, getContList, getExManifest, getManifestPackage, getOrderContList, getServicesTariff, getTariffDis, getTariffSTD, saveExOrder, saveInOrder
 };
 
+export {
+  checkContStatus,
+  checkPackageStatusOrder,
+  createfakeOrderData,
+  findExportedOrdersByStatus,
+  findImportedOrdersByStatus,
+  findMaxDraftNo,
+  findMaxOrderNo,
+  findOrder,
+  findOrderByOrderNo,
+  findOrdersByCustomerCode,
+  getContList,
+  getExManifest,
+  getManifestPackage,
+  getOrderContList,
+  getServicesTariff,
+  getTariffDis,
+  getTariffSTD,
+  saveExOrder,
+  saveInOrder,
+  checkLifecycleHouseBill,
+};

@@ -263,7 +263,8 @@ class InvoiceManagementMisa {
     } catch (error: any) {
       console.error(error);
       this.data.success = false;
-      this.data['error'] = `[Misa] ${error.message}`;
+      this.data['error'] =
+        `[Misa] ${error.message || 'Hệ thống đang bảo trì vui lòng thực hiện sau'}`;
       if (this.responseContent) {
         const response = JSON.parse(this.responseContent) || {};
         const errorMsg =
