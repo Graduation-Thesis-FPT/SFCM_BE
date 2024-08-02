@@ -15,7 +15,7 @@ class CellService {
       throw new BadRequestError('Pallet phải có đủ chiều dài, rộng, cao');
     }
 
-    const cell = await findCellByWarehouseCode(warehouseCode);
+    const cell = await findCellByWarehouseCode(warehouseCode); // tìm cell theo warehouseCode có status = 0
 
     if (!cell.length) {
       throw new BadRequestError(`Không tìm thấy cell trong kho ${warehouseCode}`);
@@ -25,7 +25,7 @@ class CellService {
 
     const newListCell = [];
     for (const block in groupCellByBlock) {
-      newListCell.push(groupCellByBlock[block][0]);
+      newListCell.push(groupCellByBlock[block].sort((a, b) => a.TIER_ORDERED - b.TIER_ORDERED)[0]);
     }
 
     const cellVolume = newListCell.map(item => {
@@ -34,9 +34,6 @@ class CellService {
         VOLUME: item.CELL_LENGTH * item.CELL_WIDTH * item.CELL_HEIGHT,
       };
     });
-
-    // const palletVolum =
-    //   palletInfo.PALLET_LENGTH * palletInfo.PALLET_WIDTH * palletInfo.PALLET_HEIGHT;
 
     const cellVolumeFilter: Cell[] = cellVolume
       .filter(
@@ -48,13 +45,10 @@ class CellService {
       .sort((a, b) => a.VOLUME - b.VOLUME);
     const match = cellVolumeFilter.length > 0 ? cellVolumeFilter[0] : null;
 
-    // console.log('after filter: ', cellVolumeFilter);
-
     if (!match) {
       throw new BadRequestError('Không tìm thấy ô phù hợp');
     }
 
-    // console.log('match: ', match);
     if (
       palletInfo.PALLET_HEIGHT > match.CELL_HEIGHT ||
       palletInfo.PALLET_LENGTH > match.CELL_LENGTH ||

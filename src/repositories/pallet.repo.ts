@@ -117,7 +117,7 @@ const getListJobImport = async (palletStatus: string) => {
       'block.WAREHOUSE_CODE = warehouse.WAREHOUSE_CODE',
     )
     .where('PALLET_STATUS = :palletStatus', { palletStatus }) // truyền I để lấy pallet chưa vào kho
-    .andWhere('package.JOB_TYPE = :jobType', { jobType: 'NK' }) // truyền NK để lấy job nhập kho
+    .andWhere('job.JOB_STATUS = :jobQuantityStatus', { jobQuantityStatus: 'C' }) // job Quantity check phải là complate mới lấy đc danh sách cv xe nâng
     .select([
       'job.ROWGUID as JOB_ROWGUID',
       'job.PACKAGE_ID as PACKAGE_ID',
