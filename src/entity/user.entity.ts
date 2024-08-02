@@ -15,8 +15,8 @@ export class User extends Model {
   @PrimaryGeneratedColumn('uuid')
   ROWGUID: string;
 
-  @MaxLength(15, {
-    message: 'USER_NAME have max length is 10 character',
+  @MaxLength(450, {
+    message: 'USER_NAME have max length is 100 character',
   })
   @Column()
   @IsNotEmpty()

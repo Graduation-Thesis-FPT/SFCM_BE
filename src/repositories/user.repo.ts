@@ -70,6 +70,15 @@ const deleteUser = async (userId: string) => {
     .execute();
 };
 
+const deleteUsers = async (userNames: string[]): Promise<void> => {
+  await userRepository
+    .createQueryBuilder()
+    .delete()
+    .from('user_table')
+    .where('userName IN (:...names)', { names: userNames })
+    .execute();
+};
+
 // deactive
 const deactiveUser = async (userId: string) => {
   return await userRepository
@@ -125,8 +134,26 @@ const resetPasswordById = async (userId: string) => {
   return await userRepository.update(userId, { PASSWORD: null });
 };
 
-export {
-  activeUser, checkPasswordIsNullById, deactiveUser, deleteUser, findUserById, findUserByUserName, getAllUser, getUserWithPasswordById,
-  resetPasswordById, updatePasswordById, updateUser
+const getUsersByUserNames = async (userNames: string[]): Promise<UserEntity[]> => {
+  return await userRepository
+    .createQueryBuilder('user')
+    .select(['user.ROWGUID', 'user.USER_NAME'])
+    .where("user.USER_NAME IN (:...names)", { names: userNames })
+    .getMany();
 };
 
+export {
+  activeUser,
+  checkPasswordIsNullById,
+  deactiveUser,
+  deleteUser,
+  deleteUsers,
+  findUserById,
+  findUserByUserName,
+  getAllUser,
+  getUserWithPasswordById,
+  resetPasswordById,
+  updatePasswordById,
+  updateUser,
+  getUsersByUserNames
+};

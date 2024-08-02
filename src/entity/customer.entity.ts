@@ -30,5 +30,6 @@ export class Customer extends Model {
   IS_ACTIVE: boolean;
 
   @Column()
+  @IsNotEmpty()
   USER_NAME: string;
 }

@@ -147,27 +147,43 @@ class CustomerService {
   };
 
   static deleteCustomer = async (customerCodeList: string[]) => {
-    for (const customerCode of customerCodeList) {
-      const customer = await findCustomer(customerCode.trim());
-      if (!customer) {
-        throw new BadRequestError(`EquipType with ID ${customerCode} not exist!`);
-      }
-      try {
-        console.log('customer', customer.USER_NAME);
-        const user = await findUserByUserName(customer.USER_NAME.trim());
-        console.log('user', user);
-        if (user) {
-          await UserService.deleteUser(user.ROWGUID);
-        }
-      } catch (error) {
-        // console.error(`Lỗi khi xoá tài khoản khách hàng ${customerCode}:`, error);
-        throw new BadRequestError(
-          `Lỗi khi xoá tài khoản khách hàng ${customerCode}:${error.message}`,
-        );
-      }
-    }
+    try {
+      // First, fetch all customers to be deleted
+      const customersToDelete = await Promise.all(
+        customerCodeList.map(async code => {
+          const customer = await findCustomer(code.trim());
+          if (!customer) {
+            throw new BadRequestError(`Mã khách ${code} không tồn tại!`);
+          }
+          return customer;
+        }),
+      );
 
-    return await deleteCustomerMany(customerCodeList);
+      // Delete customers
+      const deleteResult = await deleteCustomerMany(customerCodeList);
+
+      if (deleteResult === true) {
+        // If customers were successfully deleted, proceed to delete associated users
+        for (const customer of customersToDelete) {
+          
+          if (customer.USER_NAME) {
+            try {
+              const user = await findUserByUserName(customer.USER_NAME.trim());
+              if (user) {
+                await UserService.deleteUser(user.ROWGUID);
+              }
+            } catch (error) {
+              throw new BadRequestError(
+                `Lỗi khi xoá tài khoản của khách hàng ${customer.CUSTOMER_CODE}:${error.message}`,
+              );
+            }
+          }
+        }
+        return true;
+      }
+    } catch (error) {
+      throw new BadRequestError(`Lỗi khi xoá khách hàng: ${error.message}`);
+    }
   };
 
   static getAllCustomer = async () => {

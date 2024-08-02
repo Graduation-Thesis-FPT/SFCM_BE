@@ -1,4 +1,4 @@
-import { EntityManager } from 'typeorm';
+import { DeleteResult, EntityManager } from 'typeorm';
 import mssqlConnection from '../db/mssql.connect';
 import { Customer as CustomerEntity } from '../entity/customer.entity';
 import { Customer } from '../models/customer.model';
@@ -31,8 +31,12 @@ const updateOneCustomer = async (
   customerInfo: Partial<Customer>,
   transactionalEntityManager: EntityManager,
 ) => {
-  return await transactionalEntityManager.update(CustomerEntity, { USER_NAME: userName }, customerInfo);
-}
+  return await transactionalEntityManager.update(
+    CustomerEntity,
+    { USER_NAME: userName },
+    customerInfo,
+  );
+};
 
 const findCustomerByCode = async (
   customerCode: string,
@@ -53,8 +57,13 @@ const findCustomer = async (customerCode: string) => {
     .getOne();
 };
 
-const deleteCustomerMany = async (customerCode: string[]) => {
-  return await customerRepository.delete(customerCode);
+const deleteCustomerMany = async (customerCode: string[]): Promise<true | DeleteResult> => {
+  const result = await customerRepository.delete(customerCode);
+  if (result.affected === customerCode.length) {
+    return true;
+  } else {
+    return result;
+  }
 };
 
 const getAllCustomer = async () => {
@@ -72,7 +81,23 @@ const findCustomerByUserName = async (userName: string) => {
       userName: userName,
     })
     .getOne();
-}
+};
+
+const getCustomers = async (customerCodes: string[]): Promise<Customer[]> => {
+  return await customerRepository
+    .createQueryBuilder('customer')
+    .where('customer.CUSTOMER_CODE IN (:...codes)', {
+      codes: customerCodes.map(code => code.trim()),
+    })
+    .getMany();
+};
+const getCustomersWithUserNames = async (customerCodes: string[]): Promise<CustomerEntity[]> => {
+  return await customerRepository
+    .createQueryBuilder('customer')
+    .select(['customer.CUSTOMER_CODE', 'customer.USER_NAME']) // Adjust field names if necessary
+    .where('customer.CUSTOMER_CODE IN (:...codes)', { codes: customerCodes })
+    .getMany();
+};
 
 export {
   createCustomer,
@@ -83,4 +108,6 @@ export {
   getAllCustomer,
   findCustomer,
   findCustomerByUserName,
+  getCustomers,
+  getCustomersWithUserNames,
 };
