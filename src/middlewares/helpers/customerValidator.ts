@@ -16,9 +16,15 @@ const validateInsertCustomer = (data: Customer) => {
       'any.required': 'Tên loại khách hàng không được để trống #thêm',
     }),
     ADDRESS: Joi.string().trim(),
-    TAX_CODE: Joi.string().trim().required().messages({
-      'any.required': 'Mã số thuế không được để trống #thêm',
-    }),
+    TAX_CODE: Joi.string()
+      .trim()
+      .regex(/^\d{10}(-\d{3})?$/)
+      .required()
+      .messages({
+        'string.pattern.base':
+          'Mã số thuế phải là 10 chữ số hoặc 10 chữ số theo sau là dấu gạch nối và 3 chữ số',
+        'any.required': 'Mã số thuế không được để trống #thêm',
+      }),
     EMAIL: Joi.string().trim().email().messages({
       'string.email': 'Email phải hợp lệ',
     }),
@@ -36,7 +42,14 @@ const validateUpdateCustomer = (data: Customer) => {
     CUSTOMER_NAME: Joi.string().trim().optional(),
     CUSTOMER_TYPE_CODE: Joi.string().trim().optional(),
     ADDRESS: Joi.string().trim().optional(),
-    TAX_CODE: Joi.string().trim().optional(),
+    TAX_CODE: Joi.string()
+      .trim()
+      .regex(/^\d{10}(-\d{3})?$/)
+      .optional()
+      .messages({
+        'string.pattern.base':
+          'Mã số thuế phải là 10 chữ số hoặc 10 chữ số theo sau là dấu gạch nối và 3 chữ số',
+      }),
     IS_ACTIVE: Joi.boolean().optional(),
     EMAIL: Joi.string()
       .trim()
