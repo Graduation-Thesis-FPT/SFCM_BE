@@ -7,7 +7,7 @@ export interface InvVatDtl extends Base {
   UNIT_RATE: number;
   AMOUNT: number;
   VAT: number;
-  VAT_RATE: string;
+  VAT_RATE: number;
   TAMOUNT: number;
   CARGO_TYPE: string;
   TRF_DESC: string;
@@ -18,7 +18,7 @@ export type PaymentDtl = {
   UNIT_RATE: number;
   AMOUNT: number;
   VAT: number;
-  VAT_RATE: string;
+  VAT_RATE: number;
   TAMOUNT: number;
   CARGO_TYPE: string;
   TRF_DESC: string;
