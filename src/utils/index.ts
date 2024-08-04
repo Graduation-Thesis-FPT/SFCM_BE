@@ -22,7 +22,7 @@ const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => a
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const removeUndefinedProperty = (obj: Record<string, any>) => {
   Object.keys(obj).forEach((key: string) => {
-    if (obj[key] === null || obj[key] === undefined) {
+    if (obj[key] === null || obj[key] === undefined || obj[key] === '') {
       delete obj[key];
     }
 
@@ -33,6 +33,7 @@ const removeUndefinedProperty = (obj: Record<string, any>) => {
 
   return obj;
 };
+
 
 const getInfoData = (object: object, fields: string[]) => {
   return _.pick(object, fields);

@@ -165,7 +165,6 @@ class CustomerService {
       if (deleteResult === true) {
         // If customers were successfully deleted, proceed to delete associated users
         for (const customer of customersToDelete) {
-          
           if (customer.USER_NAME) {
             try {
               const user = await findUserByUserName(customer.USER_NAME.trim());
@@ -174,7 +173,7 @@ class CustomerService {
               }
             } catch (error) {
               throw new BadRequestError(
-                `Lỗi khi xoá tài khoản của khách hàng ${customer.CUSTOMER_CODE}:${error.message}`,
+                error.message || `Lỗi khi xoá tài khoản khách hàng ${customer.CUSTOMER_CODE}`,
               );
             }
           }

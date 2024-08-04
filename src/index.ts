@@ -71,10 +71,10 @@ app.use((error: Error | any, req: Request, res: Response, next: NextFunction) =>
     error.message = ERROR_MESSAGE.INVALID_TOKEN_PLEASE_LOGIN_AGAIN;
   }
 
-  if (error.name === 'QueryFailedError') {
+  if (error.name === 'QueryFailedError' || error.name === 'Error') {
     if (error.message.includes('The DELETE statement conflicted with the REFERENCE constraint')) {
       statusCode = 409;
-      error.message = 'Không thể xóa dữ liệu vì nó đang được tham chiếu trong một bảng khác.';
+      error.message = 'Không thể xóa dữ liệu vì nó đang được tham chiếu trong một bảng khác.'
     } else if (error.message.includes('Cannot insert duplicate key in object')) {
       statusCode = 409;
       error.message = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.';
