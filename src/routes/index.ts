@@ -28,6 +28,7 @@ import jobQuantityCheckRouter from './job-quantity-check/index';
 import palletRouter from './pallet/index';
 import cellRouter from './cell/index';
 import customerOrderRouter from './customer-order/index';
+import mailRouter from './mail/index';
 
 const routes = Router();
 
@@ -97,4 +98,7 @@ routes.use('/api/v1/pallet', palletRouter);
 routes.use('/api/v1/cell', cellRouter);
 
 routes.use('/api/v1/customer-order', customerOrderRouter);
+
+// test mail route
+routes.use('/api/v1/mail', mailRouter);
 export default routes;
