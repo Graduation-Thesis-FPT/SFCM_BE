@@ -50,6 +50,10 @@ class JobQuantityCheckService {
     await manager.transaction(async transactionalEntityManager => {
       if (insertData.length) {
         for (const data of insertData) {
+          if (!data.PALLET_LENGTH || !data.PALLET_WIDTH || !data.PALLET_HEIGHT) {
+            throw new BadRequestError(`Kích thước Pallet không được để trống`);
+          }
+
           const isExist = await checkPackageIdExist(data.PACKAGE_ID);
           if (!isExist) {
             throw new BadRequestError(`Kiện hàng không tồn tại. Vui lòng kiểm tra lại`);
@@ -67,9 +71,7 @@ class JobQuantityCheckService {
           });
 
           if (listVaidCell.length === 0) {
-            throw new BadRequestError(
-              `Kích thước Housebill ${data.HOUSE_BILL} không phù hợp với bất kỳ ô nào trong kho`,
-            );
+            throw new BadRequestError(`Kích thước Pallet không phù hợp với bất kỳ ô nào trong kho`);
           }
 
           data.CREATE_BY = createBy.ROWGUID;
