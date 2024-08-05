@@ -19,4 +19,7 @@ router.post('/getToBillEx', asyncHandler(orderController.getToBillEx));
 router.post('/publishInvoiceEx', asyncHandler(orderController.invoicePublishEx));
 router.post('/saveExOrder', asyncHandler(orderController.saveExOrder));
 
+//report xuất nhập kho
+router.get('/getReportInExOrder', asyncHandler(orderController.getReportInExOrder));
+
 export default router;

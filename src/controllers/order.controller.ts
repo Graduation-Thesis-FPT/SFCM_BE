@@ -4,6 +4,7 @@ import { SUCCESS_MESSAGE } from '../constants';
 import OrderService from '../services/order.service';
 import InvoiceManagementMisa from '../services/InvoiceMisa.service';
 import { whereExManifest } from '../models/deliver-order.model';
+import { ReportInEx } from '../repositories/order.repo';
 class orderController {
   getContList = async (req: Request, res: Response) => {
     const VOYAGEKEY = req.query.VOYAGEKEY as string;
@@ -113,6 +114,35 @@ class orderController {
     new OK({
       message: SUCCESS_MESSAGE.PUBLISH_INVOICE_SUCCESS,
       metadata: data,
+    }).send(res);
+  };
+
+  getReportInExOrder = async (req: Request, res: Response) => {
+    let rule: ReportInEx = {
+      fromDate: new Date(),
+      toDate: new Date(),
+      isInEx: '',
+      CUSTOMER_CODE: '',
+      CNTRNO: '',
+    };
+    if (req.query.from && req.query.to) {
+      const fromDate = new Date(req.query?.from as string);
+      const toDate = new Date(req.query?.to as string);
+      rule.fromDate = fromDate;
+      rule.toDate = toDate;
+    }
+    if (req.query.isInEx) {
+      rule.isInEx = String(req.query.isInEx) == 'I' ? 'I' : 'E';
+    }
+    if (req.query.CUSTOMER_CODE) {
+      rule.CUSTOMER_CODE = String(req.query.CUSTOMER_CODE);
+    }
+    if (req.query.CNTRNO) {
+      rule.CNTRNO = String(req.query.CNTRNO);
+    }
+    new OK({
+      message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
+      metadata: await OrderService.getReportInExOrder(rule),
     }).send(res);
   };
 }
