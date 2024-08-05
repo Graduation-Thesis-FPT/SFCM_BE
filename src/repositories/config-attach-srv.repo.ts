@@ -26,7 +26,6 @@ export const createAndUpdateConfigAttachSrvByMethodCode = async (
   data: any,
   createBy: User,
 ) => {
-  console.log(data);
   return await tbConfigAttachSrv.find({
     where: {
       METHOD_CODE: METHOD_CODE,

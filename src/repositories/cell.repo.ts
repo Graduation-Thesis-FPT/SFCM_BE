@@ -108,7 +108,6 @@ const getAllAvailableCell = async ({
     .addSelect('cell.CELL_LENGTH', 'CELL_LENGTH')
     .addSelect('cell.BLOCK_CODE', 'BLOCK_CODE')
     .getRawMany();
-  console.log(maxCellDimention);
   return maxCellDimention;
 };
 

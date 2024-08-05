@@ -46,7 +46,6 @@ const createBlockandCell = async (blockListInfo: Block[], statusCreateBlock: boo
   if (statusCreateBlock) {
     newBlock = await blockRepository.save(blockListInfo);
   }
-  console.log(arrayCell);
   await cellRepository.save(arrayCell);
   return newBlock;
 };

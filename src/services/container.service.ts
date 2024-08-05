@@ -106,8 +106,6 @@ class ContainerService {
               transactionalEntityManager,
             );
 
-            console.log(container);
-
             if (container)
               if (container.CNTRNO === containerReqInfo.CNTRNO) {
                 throw new BadRequestError(

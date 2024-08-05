@@ -16,8 +16,6 @@ class TariffTempService {
       for (const data of insertData) {
         const from = data.FROM_DATE ? new Date(data.FROM_DATE) : null;
         const to = data.TO_DATE ? new Date(data.TO_DATE) : null;
-        console.log(from);
-        console.log(to);
         if (from > to) {
           throw new BadRequestError(`Ngày hiệu lực biểu cước phải nhỏ hơn ngày hết hạn`);
         }

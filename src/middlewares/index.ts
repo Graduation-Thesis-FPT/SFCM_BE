@@ -57,7 +57,6 @@ const isContainerExecute = async (req: Request, res: Response, next: NextFunctio
   for (const containerInfo of updateData) {
     const { ROWGUID } = containerInfo;
     const isExecuted = await isContainerExecuted(ROWGUID);
-    console.log(isExecuted);
     if (isExecuted) {
       throw new BadRequestError('Container đã được làm lệnh');
     }

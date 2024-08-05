@@ -33,6 +33,25 @@ export const getImportTallyContainerInfoByCONTAINER_ID = async (CONTAINER_ID: st
     .createQueryBuilder('pk')
     .leftJoinAndSelect('DT_CNTR_MNF_LD', 'cn', 'pk.CONTAINER_ID = cn.ROWGUID')
     .leftJoinAndSelect('BS_PACKAGE_UNIT', 'pku', 'pk.PACKAGE_UNIT_CODE = pku.PACKAGE_UNIT_CODE')
+    .leftJoinAndSelect('JOB_QUANTITY_CHECK', 'job', 'pk.ROWGUID = job.PACKAGE_ID')
+    .groupBy('cn.BILLOFLADING')
+    .addGroupBy('cn.CNTRNO')
+    .addGroupBy('cn.CNTRSZTP')
+    .addGroupBy('cn.COMMODITYDESCRIPTION')
+    .addGroupBy('cn.CONSIGNEE')
+    .addGroupBy('cn.SEALNO')
+    .addGroupBy('cn.STATUSOFGOOD')
+    .addGroupBy('cn.VOYAGEKEY')
+    .addGroupBy('pk.CARGO_PIECE')
+    .addGroupBy('pk.CBM')
+    .addGroupBy('pk.CONTAINER_ID')
+    .addGroupBy('pk.DECLARE_NO')
+    .addGroupBy('pk.HOUSE_BILL')
+    .addGroupBy('pk.NOTE')
+    .addGroupBy('pk.PACKAGE_UNIT_CODE')
+    .addGroupBy('pku.PACKAGE_UNIT_NAME')
+    .addGroupBy('pk.ROWGUID')
+    .addGroupBy('job.JOB_STATUS')
     .where('cn.ROWGUID = :rowguid', { rowguid: CONTAINER_ID })
     .select([
       'cn.BILLOFLADING as BILLOFLADING',
@@ -52,6 +71,7 @@ export const getImportTallyContainerInfoByCONTAINER_ID = async (CONTAINER_ID: st
       'pk.PACKAGE_UNIT_CODE as PACKAGE_UNIT_CODE',
       'pku.PACKAGE_UNIT_NAME as PACKAGE_UNIT_NAME',
       'pk.ROWGUID as PK_ROWGUID',
+      'job.JOB_STATUS as JOB_STATUS',
     ])
     .getRawMany();
 };
@@ -80,10 +100,8 @@ export const getAllJobQuantityCheckByPACKAGE_ID = async (PACKAGE_ID: string) => 
     .getRawMany();
 };
 
-function incrementPalletNumber(palletNumber: any) {
-  let number = parseInt(palletNumber, 10);
-  number++;
-  return number.toString().padStart(palletNumber.length, '0');
+function formatNewStt(newStt: number) {
+  return newStt.toString().padStart(4, '0');
 }
 
 export const insertJobAndPallet = async (
@@ -94,13 +112,9 @@ export const insertJobAndPallet = async (
 
   const stt = await transactionalEntityManager
     .createQueryBuilder(PalletStockEntity, 'pallet')
-    .select('pallet.PALLET_NO', 'PALLET_NO')
-    .orderBy("RIGHT(pallet.PALLET_NO, CHARINDEX('/', REVERSE(pallet.PALLET_NO)) - 1)", 'DESC')
-    .limit(1)
+    .select('COUNT(*)', 'count')
     .getRawOne();
-
-  let newStt = stt?.PALLET_NO?.split('-').pop() ?? '000000';
-  newStt = incrementPalletNumber(newStt);
+  let newStt = stt?.count + 1;
 
   for (const data of listData) {
     const jobQuantityCheck = await transactionalEntityManager
@@ -116,7 +130,7 @@ export const insertJobAndPallet = async (
       .insert()
       .into(PalletStockEntity)
       .values({
-        PALLET_NO: `${data.HOUSE_BILL}/${moment().format('DD')}/${moment().format('MM')}/${moment().format('YYYY')}/${data.SEQ}-${newStt}`,
+        PALLET_NO: `${data.HOUSE_BILL}/${moment().format('DD')}/${moment().format('MM')}/${moment().format('YYYY')}/${data.SEQ}-${formatNewStt(newStt)}`,
         PALLET_STATUS: 'I',
         JOB_QUANTITY_ID: JOB_QUANTITY_ID,
         NOTE: data.NOTE,
@@ -128,7 +142,7 @@ export const insertJobAndPallet = async (
       })
       .execute();
 
-    newStt = incrementPalletNumber(newStt);
+    newStt++;
   }
   return [{}];
 };

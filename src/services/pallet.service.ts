@@ -129,8 +129,6 @@ class PalletService {
 
     const jobType = await checkPalletJobTypeStatus(data.PALLET_NO);
 
-    console.log(jobType.JOB_TYPE);
-
     if (jobType.JOB_TYPE !== 'XK') {
       throw new BadRequestError(`Pallet chưa được làm lệnh xuất!`);
     }
