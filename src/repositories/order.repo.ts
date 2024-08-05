@@ -10,6 +10,7 @@ import { TariffEntity } from '../entity/tariff.entity';
 import { TariffDisEntity } from '../entity/tariffDis.entity';
 import { User } from '../entity/user.entity';
 import {
+  DateRange,
   DeliverOrder,
   ExportedOrder,
   ImportedOrder,
@@ -515,12 +516,17 @@ const getOrderContList = async (VOYAGEKEY: string) => {
   return results;
 };
 
-const findOrdersByCustomerCode = async (customerCode: string) => {
-  const order = await orderRepository
+const findOrdersByCustomerCode = async (customerCode: string, date: DateRange) => {
+  const queryBuilder = orderRepository
     .createQueryBuilder('order')
-    .where('order.CUSTOMER_CODE = :customerCode', { customerCode: customerCode })
-    .getMany();
-  return order;
+    .where('order.CUSTOMER_CODE = :customerCode', { customerCode: customerCode });
+
+  if (date.from && date.to) {
+    queryBuilder.andWhere('order.ISSUE_DATE >= :fromDate', { fromDate: date['from'] });
+    queryBuilder.andWhere('order.ISSUE_DATE <= :toDate', { toDate: date['to'] });
+  }
+
+  return await queryBuilder.getMany();
 };
 
 const findImportedOrdersByStatus = async (customerCode: string): Promise<ImportedOrder[]> => {

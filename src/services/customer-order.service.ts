@@ -4,6 +4,7 @@ import { User } from '../entity/user.entity';
 import { Container } from '../models/container.model';
 import { Customer } from '../models/customer.model';
 import {
+  DateRange,
   DeliverOrder,
   ExportedOrderStatus,
   ExtendedDeliveryOrder,
@@ -24,7 +25,7 @@ import {
 import { findPackage } from '../repositories/package.repo';
 
 class CustomerOrderService {
-  static getOrdersByCustomerCode = async (user: User): Promise<DeliverOrder[]> => {
+  static getOrdersByCustomerCode = async (user: User, date: DateRange): Promise<DeliverOrder[]> => {
     const customer = await findCustomerByUserName(user.USER_NAME);
 
     if (!customer) {
@@ -32,7 +33,7 @@ class CustomerOrderService {
     }
 
     const customerCode = customer.CUSTOMER_CODE;
-    const orders = await findOrdersByCustomerCode(customerCode);
+    const orders = await findOrdersByCustomerCode(customerCode, date);
 
     if (orders.length) {
       return orders;
@@ -44,12 +45,22 @@ class CustomerOrderService {
   static getImportedOrdersByStatus = async (
     status: string,
     user: User,
+    filterDate: DateRange,
   ): Promise<ExtendedImportedOrder[]> => {
     const customer = await findCustomerByUserName(user.USER_NAME);
     if (!customer) {
       throw new BadRequestError(ERROR_MESSAGE.CUSTOMER_NOT_EXIST);
     }
-    const orders = await findImportedOrdersByStatus(customer.CUSTOMER_CODE);
+    let orders = await findImportedOrdersByStatus(customer.CUSTOMER_CODE);
+
+    if (filterDate.from && filterDate.to) {
+      orders = orders.filter(order => {
+        return (
+          order.ISSUE_DATE >= new Date(filterDate.from) &&
+          order.ISSUE_DATE <= new Date(filterDate.to)
+        );
+      });
+    }
 
     const processOrder = async (order: any): Promise<ExtendedImportedOrder> => {
       let orderStatus: ImportedOrderStatus;
@@ -128,13 +139,24 @@ class CustomerOrderService {
   static getExportedOrdersByStatus = async (
     status: string,
     user: User,
+    filterDate: DateRange,
   ): Promise<ExtendedExportedOrder[]> => {
     const customer = await findCustomerByUserName(user.USER_NAME);
 
     if (!customer) {
       throw new BadRequestError(ERROR_MESSAGE.CUSTOMER_NOT_EXIST);
     }
-    const orders = await findExportedOrdersByStatus(customer.CUSTOMER_CODE);
+
+    let orders = await findExportedOrdersByStatus(customer.CUSTOMER_CODE);
+
+    if (filterDate.from && filterDate.to) {
+      orders = orders.filter(order => {
+        return (
+          order.ISSUE_DATE >= new Date(filterDate.from) &&
+          order.ISSUE_DATE <= new Date(filterDate.to)
+        );
+      });
+    }
 
     const processOrder = async (order: any): Promise<ExtendedExportedOrder> => {
       let orderStatus: ExportedOrderStatus;

@@ -84,3 +84,8 @@ export interface ExtendedExportedOrder extends ExportedOrder {
   packageInfo: Package;
   customerInfo: Customer;
 }
+
+export interface DateRange {
+  from: string;
+  to: string;
+}
