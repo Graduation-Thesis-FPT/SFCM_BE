@@ -33,6 +33,7 @@ export const getImportTallyContainerInfoByCONTAINER_ID = async (CONTAINER_ID: st
     .createQueryBuilder('pk')
     .leftJoinAndSelect('DT_CNTR_MNF_LD', 'cn', 'pk.CONTAINER_ID = cn.ROWGUID')
     .leftJoinAndSelect('BS_PACKAGE_UNIT', 'pku', 'pk.PACKAGE_UNIT_CODE = pku.PACKAGE_UNIT_CODE')
+    .leftJoinAndSelect('BS_ITEM_TYPE', 'item', 'pk.ITEM_TYPE_CODE = item.ITEM_TYPE_CODE')
     .leftJoinAndSelect('JOB_QUANTITY_CHECK', 'job', 'pk.ROWGUID = job.PACKAGE_ID')
     .groupBy('cn.BILLOFLADING')
     .addGroupBy('cn.CNTRNO')
@@ -52,6 +53,7 @@ export const getImportTallyContainerInfoByCONTAINER_ID = async (CONTAINER_ID: st
     .addGroupBy('pku.PACKAGE_UNIT_NAME')
     .addGroupBy('pk.ROWGUID')
     .addGroupBy('job.JOB_STATUS')
+    .addGroupBy('item.ITEM_TYPE_NAME')
     .where('cn.ROWGUID = :rowguid', { rowguid: CONTAINER_ID })
     .select([
       'cn.BILLOFLADING as BILLOFLADING',
@@ -72,7 +74,11 @@ export const getImportTallyContainerInfoByCONTAINER_ID = async (CONTAINER_ID: st
       'pku.PACKAGE_UNIT_NAME as PACKAGE_UNIT_NAME',
       'pk.ROWGUID as PK_ROWGUID',
       'job.JOB_STATUS as JOB_STATUS',
+      'item.ITEM_TYPE_NAME as ITEM_TYPE_NAME',
     ])
+    .orderBy(
+      `CASE WHEN job.JOB_STATUS = 'C' THEN 1 WHEN job.JOB_STATUS = 'I' THEN 2 WHEN job.JOB_STATUS IS NULL THEN 3 ELSE 4 END`,
+    )
     .getRawMany();
 };
 

@@ -4,7 +4,7 @@ VALUES ('admin',N'Quản trị viên','sql','sql'),
 ('gate-operator',N'Điều hành cổng','sql','sql'),
 ('tally-operator',N'Điều hành kiểm đếm','sql','sql'),
 ('warehouse-operator',N'Điều hành kho','sql','sql'),
-('customer',N'Khách hàng','sql','sql'),
+('customer',N'Khách hàng','sql','sql')
 
 
 INSERT INTO SA_MENU (PARENT_CODE,MENU_CODE,MENU_NAME,MENU_ICON,IS_VISIBLE,ORDER_BY,VIEW_PAGE,CREATE_BY,UPDATE_BY)
@@ -35,7 +35,13 @@ VALUES
 ('procedure','export-order',N'Lệnh xuất kho',NULL,1,502,'ExportOrder','sql','sql'),
 (NULL,'warehouse-operation',N'Điều hành kho','ReplaceAll',1,600,NULL,'sql','sql'),
 ('warehouse-operation','import-tally',N'Kiểm đếm nhập kho',NULL,1,601,'ImportTally','sql','sql'),
-('warehouse-operation','fork-lift',N'Quản lý hàng nhập/xuất kho',NULL,1,602,'ForkLift','sql','sql')
+('warehouse-operation','fork-lift',N'Quản lý hàng nhập/xuất kho',NULL,1,602,'ForkLift','sql','sql'),
+(NULL,'report',N'Báo cáo','Library',1,700,NULL,'sql','sql'),
+('report','in-ex-order',N'Báo cáo đơn hàng',NULL,1,701,'InExOrder','sql','sql'),
+(NULL,'customer-order',N'Đơn hàng của tôi','ClipboardList',1,800,NULL,'sql','sql'),
+('customer-order','all-orders',N'Tất cả đơn hàng',NULL,1,801,'Order','sql','sql'),
+('customer-order','order-tracking',N'Trạng thái đơn hàng',NULL,1,802,'OrderTracking','sql','sql')
+
 
 INSERT INTO SA_PERMISSION (ROLE_CODE,MENU_CODE,IS_VIEW,IS_ADD_NEW,IS_MODIFY,IS_DELETE,CREATE_BY,UPDATE_BY)
 VALUES 
@@ -61,6 +67,7 @@ VALUES
 ('admin','fork-lift',1,1,1,1,'sql','sql'),
 ('admin','all-orders',1,1,1,1,'sql','sql'),
 ('admin','order-tracking',1,1,1,1,'sql','sql'),
+('admin','in-ex-order',1,1,1,1,'sql','sql'),
 ('procedure-staff','user',1,0,0,0,'sql','sql'),
 ('procedure-staff','permission',1,0,0,0,'sql','sql'),
 ('procedure-staff','warehouse-list',1,1,1,1,'sql','sql'),
@@ -69,7 +76,10 @@ VALUES
 ('procedure-staff','item-type',1,1,1,1,'sql','sql'),
 ('procedure-staff','package-unit-list',1,1,1,1,'sql','sql'),
 ('procedure-staff','customer-type',1,1,1,1,'sql','sql'),
-('procedure-staff','customer-list',1,1,1,1,'sql','sql')
+('procedure-staff','customer-list',1,1,1,1,'sql','sql'),
+('customer','all-orders',1,1,1,1,'sql','sql'),
+('customer','order-tracking',1,1,1,1,'sql','sql')
+
 
 INSERT INTO SA_USER (ROLE_CODE, USER_NAME,CREATE_BY,UPDATE_BY)
 VALUES ('admin','superadmin','sql','sql'),
