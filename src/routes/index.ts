@@ -29,6 +29,7 @@ import palletRouter from './pallet/index';
 import cellRouter from './cell/index';
 import customerOrderRouter from './customer-order/index';
 import mailRouter from './mail/index';
+import invVatRouter from './inv-vat/index';
 
 const routes = Router();
 
@@ -101,4 +102,7 @@ routes.use('/api/v1/customer-order', customerOrderRouter);
 
 // test mail route
 routes.use('/api/v1/mail', mailRouter);
+
+routes.use('/api/v1/inv-vat', invVatRouter);
+
 export default routes;

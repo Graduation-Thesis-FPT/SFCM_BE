@@ -617,6 +617,44 @@ const findOrderByOrderNo = async (orderNo: string) => {
   return order;
 };
 
+export type ReportInEx = {
+  fromDate: Date;
+  toDate: Date;
+  CNTRNO?: string;
+  CUSTOMER_CODE?: string;
+  isInEx: '' | 'I' | 'E';
+};
+const getReportInExOrder = async (whereObj: ReportInEx) => {
+  let query = orderRepository
+    .createQueryBuilder('dto')
+    .leftJoin('DT_CNTR_MNF_LD', 'cn', 'cn.ROWGUID = dto.CONTAINER_ID')
+    .leftJoin('BS_CUSTOMER', 'cus', 'cus.CUSTOMER_CODE = dto.CUSTOMER_CODE')
+    .select([
+      'dto.DE_ORDER_NO as DE_ORDER_NO',
+      'dto.INV_ID as INV_ID',
+      'cn.CNTRNO as CNTRNO',
+      'cus.CUSTOMER_NAME as CUSTOMER_NAME',
+      'dto.ISSUE_DATE as ISSUE_DATE',
+    ])
+    .where('dto.ISSUE_DATE >= :fromDate', { fromDate: whereObj.fromDate })
+    .andWhere('dto.ISSUE_DATE <= :toDate', { toDate: whereObj.toDate });
+  if (whereObj.CNTRNO) {
+    query = query.andWhere('cn.CNTRNO = :cnt', { cnt: whereObj.CNTRNO });
+  }
+  if (whereObj.CUSTOMER_CODE) {
+    query = query.andWhere('cus.CUSTOMER_CODE = :customer', { customer: whereObj.CUSTOMER_CODE });
+  }
+  let temp = await query.getRawMany();
+  if (whereObj.isInEx) {
+    if (whereObj.isInEx == 'I') {
+      temp = temp.filter(item => item.DE_ORDER_NO.includes('NK'));
+    } else {
+      temp = temp.filter(item => item.DE_ORDER_NO.includes('Xk'));
+    }
+  }
+  return temp;
+};
+
 export {
   checkContStatus,
   checkPackageStatusOrder,
@@ -638,4 +676,5 @@ export {
   saveExOrder,
   saveInOrder,
   checkLifecycleHouseBill,
+  getReportInExOrder,
 };

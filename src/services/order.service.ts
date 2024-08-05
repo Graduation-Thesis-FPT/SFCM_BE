@@ -14,6 +14,8 @@ import {
   getServicesTariff,
   checkPackageStatusOrder,
   checkLifecycleHouseBill,
+  getReportInExOrder,
+  ReportInEx,
 } from '../repositories/order.repo';
 import { checkContSize, roundMoney } from '../utils';
 import { Tariff } from '../models/tariff.model';
@@ -233,6 +235,13 @@ class OrderService {
     createBy: User,
   ) => {
     return await saveExOrder(req, paymentInfo, paymentInfoDetail, createBy);
+  };
+
+  static getReportInExOrder = async (whereObj: ReportInEx) => {
+    if (!whereObj.fromDate || !whereObj.toDate) {
+      throw new BadRequestError(`Vui lòng chọn từ ngày đến ngày!`);
+    }
+    return await getReportInExOrder(whereObj);
   };
 }
 
