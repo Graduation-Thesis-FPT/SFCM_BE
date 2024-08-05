@@ -14,6 +14,10 @@ const initializeSocket = (server: Server, origins: string[]): SocketIOServer => 
       socket.broadcast.emit('receiveSaveInOrderSuccess', 'Có lệnh mới được tạo thành công');
     });
 
+    socket.on('saveExOrderSuccess', () => {
+      socket.broadcast.emit('receiveSaveExOrderSuccess', 'Có lệnh xuất mới được tạo thành công');
+    });
+
     socket.on('completeJobQuantityCheck', () => {
       socket.broadcast.emit('receiveCompleteJobQuantityCheck', 'Có pallet mới hoàn thành kiểm đếm');
     });
