@@ -170,6 +170,8 @@ class InvoiceManagementMisa {
         return 'Không có SubjectName trên file XML đã ký';
       case 'X509Certificate':
         return 'Không có chứng thư số';
+      case 'BuyerTaxCode_TaxCodeInvalid':
+        return 'Mã số thuế không hợp lệ!';
       default:
         return 'Phát sinh lỗi! Vui lòng liên hệ bộ phận kĩ thuật!';
     }
