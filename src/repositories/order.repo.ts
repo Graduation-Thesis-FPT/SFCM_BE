@@ -340,6 +340,7 @@ const checkPalletOfHouseBill = async (whereExManifest: whereExManifest) => {
     .where('cn.VOYAGEKEY =:voy', { voy: whereExManifest.VOYAGEKEY })
     .andWhere('pk.HOUSE_BILL = :pack', { pack: whereExManifest.HOUSE_BILL })
     .andWhere('cn.ROWGUID = :cntrno', { cntrno: whereExManifest.CONTAINER_ID })
+    .andWhere('pl.PALLET_STATUS = :status', { status: 'I' })
     .select(['jk.JOB_STATUS as JOB_STATUS, pl.PALLET_STATUS  as PALLET_STATUS'])
     .getRawMany();
   if (list.length) return false;
