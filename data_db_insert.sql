@@ -38,6 +38,7 @@ VALUES
 ('warehouse-operation','fork-lift',N'Quản lý hàng nhập/xuất kho',NULL,1,602,'ForkLift','sql','sql'),
 (NULL,'report',N'Báo cáo','Library',1,700,NULL,'sql','sql'),
 ('report','in-ex-order',N'Báo cáo đơn hàng',NULL,1,701,'InExOrder','sql','sql'),
+('report','revenue',N'Báo cáo doanh thu',NULL,1,702,'Revenue','sql','sql'),
 (NULL,'customer-order',N'Đơn hàng của tôi','ClipboardList',1,800,NULL,'sql','sql'),
 ('customer-order','all-orders',N'Tất cả đơn hàng',NULL,1,801,'Order','sql','sql'),
 ('customer-order','order-tracking',N'Trạng thái đơn hàng',NULL,1,802,'OrderTracking','sql','sql')
@@ -68,6 +69,7 @@ VALUES
 ('admin','all-orders',1,1,1,1,'sql','sql'),
 ('admin','order-tracking',1,1,1,1,'sql','sql'),
 ('admin','in-ex-order',1,1,1,1,'sql','sql'),
+('admin','revenue',1,1,1,1,'sql','sql'),
 ('procedure-staff','user',1,0,0,0,'sql','sql'),
 ('procedure-staff','permission',1,0,0,0,'sql','sql'),
 ('procedure-staff','warehouse-list',1,1,1,1,'sql','sql'),

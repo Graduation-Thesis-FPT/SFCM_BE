@@ -15,6 +15,7 @@ const getReportRevenue = async (whereObj: whereRevenue) => {
   let results = invVatReporsitory
     .createQueryBuilder('iv')
     .leftJoin('DELIVER_ORDER', 'dl', 'iv.INV_NO = dl.INV_ID')
+    .leftJoin('BS_CUSTOMER', 'cus', 'iv.PAYER = cus.CUSTOMER_CODE')
     .select([
       'dl.DE_ORDER_NO as DE_ORDER_NO',
       'iv.INV_NO as INV_NO',
@@ -23,12 +24,16 @@ const getReportRevenue = async (whereObj: whereRevenue) => {
       'iv.TAMOUNT as TAMOUNT',
       'iv.INV_DATE as INV_DATE',
       'iv.PAYER as PAYER',
+      'iv.ACC_CD as ACC_CD',
+      'iv.PAYMENT_STATUS as PAYMENT_STATUS',
+      'cus.CUSTOMER_NAME as CUSTOMER_NAME',
     ])
     .where('iv.INV_DATE >= :fromDate', { fromDate: whereObj.fromDate })
     .andWhere('iv.INV_DATE <= :toDate', { toDate: whereObj.toDate })
-    .andWhere('iv.PAYMENT_STATUS = :payment', { payment: 'Y' });
+    .andWhere('iv.PAYMENT_STATUS = :payment', { payment: 'Y' })
+    .orderBy('iv.INV_DATE', 'DESC');
   if (whereObj.INV_NO) {
-    results = results.andWhere('iv.INV_NO = :invNo', { invNo: whereObj.INV_NO });
+    results = results.andWhere('iv.INV_NO LIKE :invNo', { invNo: `%${whereObj.INV_NO}%` });
   }
   if (whereObj.PAYER) {
     results = results.andWhere('iv.PAYER = :payer', { payer: whereObj.PAYER });
@@ -38,7 +43,7 @@ const getReportRevenue = async (whereObj: whereRevenue) => {
     if (whereObj.isInEx == 'I') {
       temp = temp.filter(item => item.DE_ORDER_NO.includes('NK'));
     } else {
-      temp = temp.filter(item => item.DE_ORDER_NO.includes('Xk'));
+      temp = temp.filter(item => item.DE_ORDER_NO.includes('XK'));
     }
   }
   return temp;
