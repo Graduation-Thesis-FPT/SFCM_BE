@@ -193,7 +193,7 @@ class InvoiceManagementMisa {
         res.on('data', (chunk: any) => {
           endWithoutData = false;
           if (!chunk) {
-            reject('Failed to get response data');
+            reject('[MS] :Không tìm thấy dữ liệu');
           } else {
             response += chunk;
           }
@@ -201,7 +201,7 @@ class InvoiceManagementMisa {
 
         res.on('end', () => {
           if (endWithoutData) {
-            reject('No more data in response.');
+            reject('[MS] :Không có dữ liệu trả về.');
             return;
           }
           resolve(response);
@@ -210,7 +210,7 @@ class InvoiceManagementMisa {
 
       const req = url ? https.request(url, options, cb) : https.request(options, cb);
       req.on('error', e => {
-        reject(`problem with request: ${e.message}`);
+        reject(`Lỗi: ${e.message}`);
       });
 
       req.write(data);
@@ -820,7 +820,8 @@ class InvoiceManagementMisa {
 
     var retrieveInv = await this.retrieveInvoiceTransId(orderNo);
     if (!this.data.success) {
-      this.data.error = this.data.error || 'Can not retrieve transaction id';
+      this.data.error =
+        this.data.error || '[MS] : Không tìm thấy mã giao dịch từ hệ thống hóa đơn(transactionId)';
       this.data['warning_html'] =
         `<div style='width: 100vw;text-align: center;margin: -8px 0 0 -8px;font-weight: 600;font-size: 27px;color: white;background-color:#614040;line-height: 2;'>
             ${this.data.error}
@@ -830,7 +831,7 @@ class InvoiceManagementMisa {
 
     if (!retrieveInv || !retrieveInv.TransactionID) {
       this.data.success = false;
-      this.data.error = 'Can not find transaction id!';
+      this.data.error = '[MS] : Không tìm thấy mã giao dịch từ hệ thống hóa đơn(transactionId)!';
       this.data['warning_html'] =
         `<div style='width: 100vw;text-align: center;margin: -8px 0 0 -8px;font-weight: 600;font-size: 27px;color: white;background-color:#614040;line-height: 2;'>
             ${this.data.error}
@@ -854,7 +855,7 @@ class InvoiceManagementMisa {
     var dataa = this.responseData['Data'];
     if (!dataa) {
       this.data.success = false;
-      this.data.error = 'Can not download data from Invoice System!';
+      this.data.error = 'Không thể xem hóa đơn từ hệ thống!';
       this.data['warning_html'] =
         `<div style='width: 100vw;text-align: center;margin: -8px 0 0 -8px;font-weight: 600;font-size: 27px;color: white;background-color:#614040;line-height: 2;'>
             ${this.data.error}
@@ -866,7 +867,7 @@ class InvoiceManagementMisa {
       var result = JSON.parse(dataa);
       if (!result[0]?.Data) {
         this.data.success = false;
-        this.data.error = 'Can not read data from downloaded!';
+        this.data.error = 'Không thể xem hóa đơn từ hệ thống!';
         this.data['warning_html'] =
           `<div style='width: 100vw;text-align: center;margin: -8px 0 0 -8px;font-weight: 600;font-size: 27px;color: white;background-color:#614040;line-height: 2;'>
                 ${this.data.error}

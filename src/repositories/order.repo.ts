@@ -331,7 +331,7 @@ const checkPackageStatusOrder = async (whereExManifest: whereExManifest) => {
   return true;
 };
 
-const checkLifecycleHouseBill = async (whereExManifest: whereExManifest) => {
+const checkPalletOfHouseBill = async (whereExManifest: whereExManifest) => {
   const list = await packageRepository
     .createQueryBuilder('pk')
     .leftJoin('DT_CNTR_MNF_LD', 'cn', 'pk.CONTAINER_ID = cn.ROWGUID')
@@ -342,8 +342,8 @@ const checkLifecycleHouseBill = async (whereExManifest: whereExManifest) => {
     .andWhere('cn.ROWGUID = :cntrno', { cntrno: whereExManifest.CONTAINER_ID })
     .select(['jk.JOB_STATUS as JOB_STATUS, pl.PALLET_STATUS  as PALLET_STATUS'])
     .getRawMany();
-  if (list.length) {
-  }
+  if (list.length) return false;
+  return true;
 };
 
 const getExManifest = async (whereObject: whereExManifest) => {
@@ -676,6 +676,6 @@ export {
   getTariffSTD,
   saveExOrder,
   saveInOrder,
-  checkLifecycleHouseBill,
+  checkPalletOfHouseBill,
   getReportInExOrder,
 };

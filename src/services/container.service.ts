@@ -131,9 +131,7 @@ class ContainerService {
           );
 
           if (!isValidCustomerCode) {
-            throw new BadRequestError(
-              `Mã loại khách hàng ${containerReqInfo.CONSIGNEE} không hợp lệ`,
-            );
+            throw new BadRequestError(`Mã khách hàng ${containerReqInfo.CONSIGNEE} không hợp lệ`);
           }
 
           if (containerReqInfo.BILLOFLADING === '') containerReqInfo.BILLOFLADING = null;

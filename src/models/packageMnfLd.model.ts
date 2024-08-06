@@ -12,8 +12,9 @@ export interface Package extends Base {
   NOTE: string;
   ITEM_TYPE_CODE_CNTR?: string;
   CUSTOMER_CODE?: string;
-  TIME_IN: Date;
-  TIME_OUT: Date;
+  TIME_IN?: Date;
+  TIME_OUT?: Date;
+  EXP_DATE?: Date;
 }
 
 export interface PackageInfo {
