@@ -1,4 +1,4 @@
-import { EntityManager } from 'typeorm';
+import { Brackets, EntityManager } from 'typeorm';
 import mssqlConnection from '../db/mssql.connect';
 import { DeliverOrderEntity } from '../entity/deliver-order.entity';
 import { JobQuantityCheckEntity } from '../entity/job-quantity-check.entity';
@@ -15,17 +15,42 @@ const tbPalletStock = mssqlConnection.getRepository(PalletStockEntity);
 
 export const getAllImportTallyContainer = async () => {
   return await tbDeliverOrder
-    .createQueryBuilder('do')
-    .leftJoinAndSelect('DT_CNTR_MNF_LD', 'cn', 'do.CONTAINER_ID = cn.ROWGUID')
-    .where('do.JOB_CHK = :job_chk', { job_chk: 0 })
-    .andWhere('do.DE_ORDER_NO like :de_order_no', { de_order_no: 'NK%' })
+    .createQueryBuilder('deo')
     .select([
-      'cn.CNTRNO as CNTRNO',
-      'do.CONTAINER_ID as CONTAINER_ID',
-      'do.ISSUE_DATE as ISSUE_DATE',
-      'do.EXP_DATE as EXP_DATE',
+      'cont.CNTRNO as CNTRNO',
+      'deo.CONTAINER_ID as CONTAINER_ID',
+      'deo.ISSUE_DATE as ISSUE_DATE',
+      'deo.EXP_DATE as EXP_DATE',
     ])
+    .innerJoin('DT_CNTR_MNF_LD', 'cont', 'deo.CONTAINER_ID = cont.ROWGUID')
+    .innerJoin('DT_PACKAGE_MNF_LD', 'pk', 'pk.CONTAINER_ID = cont.ROWGUID')
+    .leftJoin('JOB_QUANTITY_CHECK', 'job', 'job.PACKAGE_ID = pk.ROWGUID')
+    .leftJoin('DT_PALLET_STOCK', 'pallet', 'pallet.JOB_QUANTITY_ID = job.ROWGUID')
+    .where('deo.DE_ORDER_NO LIKE :orderNo', { orderNo: '%NK%' })
+    .andWhere(
+      new Brackets((qb: any) => {
+        qb.where('pallet.PALLET_STATUS IS NULL').orWhere('pallet.PALLET_STATUS = :status', {
+          status: 'I',
+        });
+      }),
+    )
+    .groupBy('cont.CNTRNO')
+    .addGroupBy('deo.CONTAINER_ID')
+    .addGroupBy('deo.ISSUE_DATE')
+    .addGroupBy('deo.EXP_DATE')
     .getRawMany();
+  // return await tbDeliverOrder
+  //   .createQueryBuilder('do')
+  //   .leftJoinAndSelect('DT_CNTR_MNF_LD', 'cn', 'do.CONTAINER_ID = cn.ROWGUID')
+  //   .where('do.JOB_CHK = :job_chk', { job_chk: 0 })
+  //   .andWhere('do.DE_ORDER_NO like :de_order_no', { de_order_no: 'NK%' })
+  //   .select([
+  //     'cn.CNTRNO as CNTRNO',
+  //     'do.CONTAINER_ID as CONTAINER_ID',
+  //     'do.ISSUE_DATE as ISSUE_DATE',
+  //     'do.EXP_DATE as EXP_DATE',
+  //   ])
+  //   .getRawMany();
 };
 
 export const getImportTallyContainerInfoByCONTAINER_ID = async (CONTAINER_ID: string) => {
