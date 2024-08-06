@@ -637,9 +637,10 @@ const getReportInExOrder = async (whereObj: ReportInEx) => {
       'dto.ISSUE_DATE as ISSUE_DATE',
     ])
     .where('dto.ISSUE_DATE >= :fromDate', { fromDate: whereObj.fromDate })
-    .andWhere('dto.ISSUE_DATE <= :toDate', { toDate: whereObj.toDate });
+    .andWhere('dto.ISSUE_DATE <= :toDate', { toDate: whereObj.toDate })
+    .orderBy('dto.UPDATE_DATE', 'DESC');
   if (whereObj.CNTRNO) {
-    query = query.andWhere('cn.CNTRNO = :cnt', { cnt: whereObj.CNTRNO });
+    query = query.andWhere('cn.CNTRNO LIKE :cnt', { cnt: `%${whereObj.CNTRNO}%` });
   }
   if (whereObj.CUSTOMER_CODE) {
     query = query.andWhere('cus.CUSTOMER_CODE = :customer', { customer: whereObj.CUSTOMER_CODE });
@@ -649,7 +650,7 @@ const getReportInExOrder = async (whereObj: ReportInEx) => {
     if (whereObj.isInEx == 'I') {
       temp = temp.filter(item => item.DE_ORDER_NO.includes('NK'));
     } else {
-      temp = temp.filter(item => item.DE_ORDER_NO.includes('Xk'));
+      temp = temp.filter(item => item.DE_ORDER_NO.includes('XK'));
     }
   }
   return temp;
