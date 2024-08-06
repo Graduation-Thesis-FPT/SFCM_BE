@@ -59,10 +59,10 @@ class orderController {
   };
 
   getToBillEx = async (req: Request, res: Response) => {
-    const { arrayPackage, addInfo } = req.body;
+    const { arrayPackage, services, addInfo } = req.body;
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await OrderService.getToBillEx(arrayPackage),
+      metadata: await OrderService.getToBillEx(arrayPackage, services, addInfo),
     }).send(res);
   };
 

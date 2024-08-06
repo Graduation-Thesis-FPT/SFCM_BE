@@ -13,7 +13,7 @@ import {
   getTariffDis,
   getServicesTariff,
   checkPackageStatusOrder,
-  checkLifecycleHouseBill,
+  checkPalletOfHouseBill,
   getReportInExOrder,
   ReportInEx,
 } from '../repositories/order.repo';
@@ -22,6 +22,7 @@ import { Tariff } from '../models/tariff.model';
 import { Package } from '../models/packageMnfLd.model';
 import { Payment } from '../models/inv_vat.model';
 import { PaymentDtl } from '../models/inv_vat_dtl.model';
+import moment from 'moment';
 class OrderService {
   static getContList = async (VOYAGEKEY: string, BILLOFLADING: string) => {
     if (!VOYAGEKEY || !BILLOFLADING) {
@@ -155,7 +156,12 @@ class OrderService {
     if (!checkStatus) {
       throw new BadRequestError(`Số House Bill ${whereExManifest.HOUSE_BILL} đã làm lệnh!`);
     }
-    // const checkLifecycle = await checkLifecycleHouseBill(whereExManifest);
+    const checkLifecycle = await checkPalletOfHouseBill(whereExManifest);
+    if (!checkLifecycle) {
+      throw new BadRequestError(
+        `Bạn cần đưa các Pallet của số House Bill ${whereExManifest.HOUSE_BILL} vào kho để được làm lệnh!`,
+      );
+    }
     return await getExManifest(whereExManifest);
   };
 
@@ -166,52 +172,50 @@ class OrderService {
     return await getOrderContList(VOYAGEKEY);
   };
 
-  static getToBillEx = async (dataReq_sualai: Package[]) => {
+  static getToBillEx = async (dataReq: Package[], services: string[], addInfo: any) => {
     const arrReturn = [];
-    const addInfo = {
-      ITEM_TYPE_CODE_CNTR: 'GP',
-      METHOD_CODE: 'XK',
+    addInfo = {
+      METHOD_CODE: 'LK',
+      ITEM_TYPE_CODE: dataReq[0].ITEM_TYPE_CODE,
+      PAYER: dataReq[0].CUSTOMER_CODE,
     };
-    const dataReq = [
-      {
-        HOUSE_BILL: 'HB01',
-        LOT_NO: '1',
-        ITEM_TYPE_CODE: 'GP',
-        UNIT_CODE: 'MTK',
-        CARGO_PIECE: 12,
-        CBM: 12,
-        DECLARE_NO: '12',
-        NOTE: '112',
-        REF_CONTAINER: 'B4225CEC-EFEE-4A63-9151-25E2241ECD85',
-      },
-      {
-        HOUSE_BILL: 'HB01',
-        LOT_NO: '2',
-        ITEM_TYPE_CODE: 'GP',
-        UNIT_CODE: 'MTK',
-        CARGO_PIECE: 13,
-        CBM: 14,
-        DECLARE_NO: '14',
-        NOTE: '14',
-        REF_CONTAINER: 'B4225CEC-EFEE-4A63-9151-25E2241ECD85',
-      },
-    ];
-    if (!dataReq.length || !Object.keys(addInfo).length) {
+
+    //Tính tiền lưu kho-begin
+    if (!dataReq.length) {
       throw new BadRequestError(`Không có dữ liệu tính cước!`);
     }
-    const totalCbm = dataReq.reduce((accumulator, item) => accumulator + item.CBM, 0);
-    //kiểm tra xem có biểu cước ở bảng cấu hình giảm giá không- Nếu kh có thì tìm giá trị ở biểu cước chuẩn
-    let whereObj = {
-      METHOD_CODE: addInfo.METHOD_CODE,
-      ITEM_TYPE_CODE: addInfo.ITEM_TYPE_CODE_CNTR,
-    };
-    let tariffInfo: Tariff = await getTariffSTD(whereObj);
-    if (!tariffInfo) {
+    if (!dataReq[0].CUSTOMER_CODE) {
+      throw new BadRequestError(`Vui lòng chọn đối tượng thanh toán!`);
+    }
+    if (!dataReq[0].TIME_IN) {
       throw new BadRequestError(
-        `Không tìm thấy biểu cước phù hợp! Vui lòng cấu hình tính cước lại Mã : ${whereObj['METHOD_CODE']} và loại hàng ${whereObj['ITEM_TYPE_CODE']}`,
+        `Không tìm thấy thời gian nhập kho của HouseBill : ${dataReq[0].HOUSE_BILL}!`,
       );
     }
-    let quanlity: number = totalCbm;
+    if (!dataReq[0].EXP_DATE) {
+      throw new BadRequestError(
+        `Không tìm thấy thời gian hạn lệnh của HouseBill : ${dataReq[0].HOUSE_BILL}!`,
+      );
+    }
+    let tempEXP_DATE = moment(dataReq[0].EXP_DATE, 'YYYY-MM-DDTHH:mm:ss.SSSZ');
+    let tempTINE_IN = moment(dataReq[0].TIME_IN, 'YYYY-MM-DDTHH:mm:ss.SSSZ').startOf('day');
+    let numberOfStorageDays: number = tempEXP_DATE.diff(tempTINE_IN, 'days') + 1;
+
+    let whereStorageTarif = {
+      METHOD_CODE: addInfo.METHOD_CODE,
+      ITEM_TYPE_CODE: addInfo.ITEM_TYPE_CODE,
+    };
+    let tariffInfo: Tariff;
+    tariffInfo = await getTariffDis({ ...whereStorageTarif, CUSTOMER_CODE: addInfo.PAYER });
+    if (!tariffInfo) {
+      tariffInfo = await getTariffSTD(whereStorageTarif);
+    }
+    if (!tariffInfo) {
+      throw new BadRequestError(
+        `Không tìm thấy biểu cước phù hợp! Vui lòng cấu hình tính cước lại Mã : ${whereStorageTarif['METHOD_CODE']} và loại hàng ${whereStorageTarif['ITEM_TYPE_CODE']}`,
+      );
+    }
+    let quanlity: number = numberOfStorageDays;
     let vatPrice: number = tariffInfo.AMT_CBM * (tariffInfo.VAT / 100) * quanlity;
     let unitPrice: number = tariffInfo.AMT_CBM * (1 - tariffInfo.VAT / 100);
     let cost: number = tariffInfo.AMT_CBM * (1 - tariffInfo.VAT / 100) * quanlity;
@@ -225,6 +229,42 @@ class OrderService {
       QTY: (Math.round(quanlity * 100) / 100).toFixed(2),
     };
     arrReturn.push(Object.assign(tempObj, tariffInfo));
+    //Tính tiền lưu kho-End
+    //Tính tiền chênh lệch-begin
+
+    //Tính tiền chênh lệch-end
+
+    //Tính tiền dịch vụ đính kèm
+    if (services.length) {
+      for (let i = 0; i < services.length; i++) {
+        const serviceTariffs = await getServicesTariff(
+          services[i],
+          addInfo.ITEM_TYPE_CODE_CNTR,
+          addInfo.PAYER,
+        );
+        if (!serviceTariffs.length) {
+          throw new BadRequestError(
+            `Không tìm thấy cước của dịch vụ đính kèm! Vui lòng kiểm tra lại`,
+          );
+        }
+        let serviceTariff = serviceTariffs[0];
+
+        let quanlity: number = 1;
+        let vatPrice: number = serviceTariff.AMT_CBM * (serviceTariff.VAT / 100) * quanlity;
+        let unitPrice: number = serviceTariff.AMT_CBM * (1 - serviceTariff.VAT / 100);
+        let cost: number = serviceTariff.AMT_CBM * (1 - serviceTariff.VAT / 100) * quanlity;
+        let totalPrice: number = vatPrice + cost;
+
+        let tempObj: any = {
+          UNIT_RATE: roundMoney(unitPrice),
+          VAT_PRICE: roundMoney(vatPrice),
+          AMOUNT: roundMoney(cost),
+          TAMOUNT: roundMoney(totalPrice),
+          QTY: null,
+        };
+        arrReturn.push(Object.assign(tempObj, serviceTariff));
+      }
+    }
     return arrReturn;
   };
 

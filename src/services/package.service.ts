@@ -17,6 +17,12 @@ class PackageService {
     const insertData = reqData.insert;
     const updateData = reqData.update;
 
+    let checkDuplicateHouseBill = [...insertData, ...updateData]
+      .map(item => item.HOUSE_BILL)
+      .filter((value, index, self) => self.indexOf(value) === index);
+    if (checkDuplicateHouseBill.length !== insertData.length + updateData.length) {
+      throw new BadRequestError(`Không thể trùng số HouseBill trên cùng Container`);
+    }
     let newCreated;
     let newUpdated;
 
