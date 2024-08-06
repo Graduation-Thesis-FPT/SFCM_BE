@@ -1,7 +1,6 @@
 INSERT INTO SA_ROLE (ROLE_CODE, ROLE_NAME,CREATE_BY,UPDATE_BY)
 VALUES ('admin',N'Quản trị viên','sql','sql'),
 ('procedure-staff',N'Thủ tục','sql','sql'),
-('gate-operator',N'Điều hành cổng','sql','sql'),
 ('tally-operator',N'Điều hành kiểm đếm','sql','sql'),
 ('warehouse-operator',N'Điều hành kho','sql','sql'),
 ('customer',N'Khách hàng','sql','sql')
@@ -62,16 +61,9 @@ VALUES
 ('admin','standard-tariff',1,1,1,1,'sql','sql'),
 ('admin','discount-tariff',1,1,1,1,'sql','sql'),
 ('admin','config-attach-srv',1,1,1,1,'sql','sql'),
-('admin','import-order',1,1,1,1,'sql','sql'),
-('admin','export-order',1,1,1,1,'sql','sql'),
-('admin','import-tally',1,1,1,1,'sql','sql'),
-('admin','fork-lift',1,1,1,1,'sql','sql'),
-('admin','all-orders',1,1,1,1,'sql','sql'),
-('admin','order-tracking',1,1,1,1,'sql','sql'),
 ('admin','in-ex-order',1,1,1,1,'sql','sql'),
 ('admin','revenue',1,1,1,1,'sql','sql'),
-('procedure-staff','user',1,0,0,0,'sql','sql'),
-('procedure-staff','permission',1,0,0,0,'sql','sql'),
+
 ('procedure-staff','warehouse-list',1,1,1,1,'sql','sql'),
 ('procedure-staff','warehouse-design',1,1,1,1,'sql','sql'),
 ('procedure-staff','method-list',1,1,1,1,'sql','sql'),
@@ -79,6 +71,21 @@ VALUES
 ('procedure-staff','package-unit-list',1,1,1,1,'sql','sql'),
 ('procedure-staff','customer-type',1,1,1,1,'sql','sql'),
 ('procedure-staff','customer-list',1,1,1,1,'sql','sql'),
+('procedure-staff','vessel-info',1,1,1,1,'sql','sql'),
+('procedure-staff','manifest-loading-list',1,1,1,1,'sql','sql'),
+('procedure-staff','goods-manifest',1,1,1,1,'sql','sql'),
+('procedure-staff','tariff-code',1,1,1,1,'sql','sql'),
+('procedure-staff','standard-tariff',1,1,1,1,'sql','sql'),
+('procedure-staff','discount-tariff',1,1,1,1,'sql','sql'),
+('procedure-staff','config-attach-srv',1,1,1,1,'sql','sql'),
+('procedure-staff','import-order',1,1,1,1,'sql','sql'),
+('procedure-staff','export-order',1,1,1,1,'sql','sql'),
+('procedure-staff','in-ex-order',1,1,1,1,'sql','sql'),
+('procedure-staff','revenue',1,1,1,1,'sql','sql'),
+
+('warehouse-operator','import-tally',1,1,1,1,'sql','sql'),
+('warehouse-operator','fork-lift',1,1,1,1,'sql','sql'),
+
 ('customer','all-orders',1,1,1,1,'sql','sql'),
 ('customer','order-tracking',1,1,1,1,'sql','sql')
 
