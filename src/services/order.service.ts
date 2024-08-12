@@ -92,6 +92,7 @@ class OrderService {
     let totalPrice: number = vatPrice + cost;
 
     let tempObj: any = {
+      INV_UNIT: 'CBM',
       UNIT_RATE: roundMoney(unitPrice),
       VAT_PRICE: roundMoney(vatPrice),
       AMOUNT: roundMoney(cost),
@@ -123,6 +124,7 @@ class OrderService {
         let totalPrice: number = vatPrice + cost;
 
         let tempObj: any = {
+          INV_UNIT: 'BOX',
           UNIT_RATE: roundMoney(unitPrice),
           VAT_PRICE: roundMoney(vatPrice),
           AMOUNT: roundMoney(cost),
@@ -222,6 +224,7 @@ class OrderService {
     let totalPrice: number = vatPrice + cost;
 
     let tempObj: any = {
+      INV_UNIT: 'DAY',
       UNIT_RATE: roundMoney(unitPrice),
       VAT_PRICE: roundMoney(vatPrice),
       AMOUNT: roundMoney(cost),
@@ -239,7 +242,7 @@ class OrderService {
       for (let i = 0; i < services.length; i++) {
         const serviceTariffs = await getServicesTariff(
           services[i],
-          addInfo.ITEM_TYPE_CODE_CNTR,
+          addInfo.ITEM_TYPE_CODE,
           addInfo.PAYER,
         );
         if (!serviceTariffs.length) {
@@ -256,6 +259,7 @@ class OrderService {
         let totalPrice: number = vatPrice + cost;
 
         let tempObj: any = {
+          INV_UNIT: 'BOX',
           UNIT_RATE: roundMoney(unitPrice),
           VAT_PRICE: roundMoney(vatPrice),
           AMOUNT: roundMoney(cost),
