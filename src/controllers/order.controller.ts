@@ -3,6 +3,7 @@ import { CREATED, OK, SuccessResponse } from '../core/success.response';
 import { SUCCESS_MESSAGE } from '../constants';
 import OrderService from '../services/order.service';
 import InvoiceManagementMisa from '../services/InvoiceMisa.service';
+import InvoiceManagementBkav from '../services/invoiceBKAV.service';
 import { whereExManifest } from '../models/deliver-order.model';
 import { ReportInEx } from '../repositories/order.repo';
 class orderController {
@@ -90,7 +91,7 @@ class orderController {
 
   //Phát hành hóa đơn
   invoicePublish = async (req: Request, res: Response) => {
-    let temp = new InvoiceManagementMisa();
+    let temp = new InvoiceManagementBkav();
     let data = await temp.publish(req, 'NK');
     new OK({
       message: SUCCESS_MESSAGE.PUBLISH_INVOICE_SUCCESS,
@@ -99,7 +100,7 @@ class orderController {
   };
   //In hóa đơn
   viewInvoice = async (req: Request, res: Response) => {
-    let temp = new InvoiceManagementMisa();
+    let temp = new InvoiceManagementBkav();
     let data = await temp.getInvView(req);
     new OK({
       message: SUCCESS_MESSAGE.SUCCESS,
@@ -109,7 +110,7 @@ class orderController {
 
   //phát hành hóa đơn xuất
   invoicePublishEx = async (req: Request, res: Response) => {
-    let temp = new InvoiceManagementMisa();
+    let temp = new InvoiceManagementBkav();
     let data = await temp.publish(req, 'XK');
     new OK({
       message: SUCCESS_MESSAGE.PUBLISH_INVOICE_SUCCESS,

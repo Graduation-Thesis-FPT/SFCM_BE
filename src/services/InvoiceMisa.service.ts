@@ -640,7 +640,7 @@ class InvoiceManagementMisa {
         var urate = parseFloat(String(item['UnitRate']).replace(',', ''));
         var i_amt = parseFloat(String(item['Amount']).replace(',', ''));
 
-        var qty = parseFloat(item['Qty']); //lam tron so luong+don gia theo yeu cau KT
+        var qty = parseFloat(item['QTY']); //lam tron so luong+don gia theo yeu cau KT
         var unitPrice = urate * exchange_rate; //lam tron so luong+don gia theo yeu cau KT
         var amount = i_amt * exchange_rate;
 
@@ -984,7 +984,7 @@ class InvoiceManagementMisa {
         var urate = parseFloat(item['UnitRate']);
         var i_amt = parseFloat(item['Amount']);
 
-        var qty = parseFloat(item['Qty']); //lam tron so luong+don gia theo yeu cau KT
+        var qty = parseFloat(item['QTY']) || 1; //lam tron so luong+don gia theo yeu cau KT
         var unitPrice = urate * exchange_rate; //lam tron so luong+don gia theo yeu cau KT
         var amount = i_amt * exchange_rate;
 
