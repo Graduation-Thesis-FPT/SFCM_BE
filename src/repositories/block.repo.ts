@@ -1,4 +1,4 @@
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { Block as BlockEntity } from '../entity/block.entity';
 import { Cell as CellEntity } from '../entity/cell.entity';
 import { Block } from '../models/block.model';

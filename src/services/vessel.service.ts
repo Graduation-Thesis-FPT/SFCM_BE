@@ -30,7 +30,7 @@ class VesselService {
     };
 
     await manager.transaction(async transactionalEntityManager => {
-      if (insertData) {
+      if (insertData.length > 0) {
         for (const vesselInfo of insertData) {
           vesselInfo.VOYAGEKEY = generateKeyVessel(
             vesselInfo.VESSEL_NAME,
@@ -47,7 +47,7 @@ class VesselService {
         newCreatedVessel = await createVessel(insertData, transactionalEntityManager);
       }
 
-      if (updateData) {
+      if (updateData.length > 0) {
         for (const vesselInfo of updateData) {
           const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY, transactionalEntityManager);
           if (!vessel) {

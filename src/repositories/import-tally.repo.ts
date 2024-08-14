@@ -1,5 +1,5 @@
 import { Brackets, EntityManager } from 'typeorm';
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { DeliverOrderEntity } from '../entity/deliver-order.entity';
 import { JobQuantityCheckEntity } from '../entity/job-quantity-check.entity';
 import { Package as PackageEntity } from '../entity/package.entity';
@@ -107,7 +107,7 @@ export const getImportTallyContainerInfoByCONTAINER_ID = async (CONTAINER_ID: st
     .getRawMany();
 };
 
-export const getAllJobQuantityCheckByPACKAGE_ID = async (PACKAGE_ID: string) => {
+export const getAllJobQuantityCheckByPackageId = async (PACKAGE_ID: string) => {
   return await tbJobQuantityCheck
     .createQueryBuilder('job')
     .leftJoinAndSelect('DT_PALLET_STOCK', 'pl', 'job.ROWGUID = pl.JOB_QUANTITY_ID')

@@ -1,5 +1,5 @@
 import { EntityManager, Not } from 'typeorm';
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { ContainerEntity } from '../entity/container.entity';
 import { Package as PackageEntity } from '../entity/package.entity';
 import { Package } from '../models/packageMnfLd.model';

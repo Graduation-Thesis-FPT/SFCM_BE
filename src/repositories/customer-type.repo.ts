@@ -1,5 +1,5 @@
 import { EntityManager } from 'typeorm';
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { CustomerType as CustomerTypeEntity } from '../entity/customer-type.entity';
 import { CustomerType } from '../models/customer-type.model';
 

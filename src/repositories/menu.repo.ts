@@ -1,4 +1,4 @@
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { Menu as MenuEntity } from '../entity/menu.entity';
 import { manager } from './index.repo';
 

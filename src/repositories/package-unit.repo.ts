@@ -1,4 +1,4 @@
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { PackageUnit as PackageUnitEntity } from '../entity/packge-unit.entity';
 import { PackageUnit } from '../models/package-unit.model';
 

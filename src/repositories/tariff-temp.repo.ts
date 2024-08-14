@@ -1,5 +1,5 @@
 import { EntityManager } from 'typeorm';
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { TariffCode } from '../models/tariff-code.model';
 import { TariffTempEntity } from '../entity/tariff-temp.entity';
 import { TariffTemp } from '../models/tariff-temp.model';

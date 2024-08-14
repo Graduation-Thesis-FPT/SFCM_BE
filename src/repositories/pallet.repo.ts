@@ -1,4 +1,4 @@
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { PalletStockEntity } from '../entity/pallet-stock.entity';
 import { User } from '../entity/user.entity';
 import { Cell as CellEntity } from '../entity/cell.entity';

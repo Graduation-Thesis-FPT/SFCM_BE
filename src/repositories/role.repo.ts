@@ -1,4 +1,4 @@
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { Role as RoleEntity } from '../entity/role.entity';
 
 export const roleRepository = mssqlConnection.getRepository(RoleEntity);

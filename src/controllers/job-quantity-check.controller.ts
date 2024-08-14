@@ -20,11 +20,11 @@ class JobQuantityCheckController {
     }).send(res);
   };
 
-  getAllJobQuantityCheckByPACKAGE_ID = async (req: Request, res: Response) => {
+  getAllJobQuantityCheckByPackageId = async (req: Request, res: Response) => {
     const { PACKAGE_ID } = req.params;
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await JobQuantityCheckService.getAllJobQuantityCheckByPACKAGE_ID(PACKAGE_ID),
+      metadata: await JobQuantityCheckService.getAllJobQuantityCheckByPackageId(PACKAGE_ID),
     }).send(res);
   };
 

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { findMaxDraftNo, findMaxOrderNo } from '../repositories/order.repo';
+import { findMaxDraftNo, findMaxOrderNo } from '../repositories/delivery-order.repo';
 import moment from 'moment';
 
 const genOrderNo = async (methodCode: string) => {

@@ -1,5 +1,5 @@
 import { Between, EntityManager } from 'typeorm';
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { Vessel as VesselEntity } from '../entity/vessel.entity';
 import { Vessel } from '../models/vessel.model';
 

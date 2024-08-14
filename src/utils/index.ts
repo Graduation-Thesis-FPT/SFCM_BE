@@ -34,7 +34,6 @@ const removeUndefinedProperty = (obj: Record<string, any>) => {
   return obj;
 };
 
-
 const getInfoData = (object: object, fields: string[]) => {
   return _.pick(object, fields);
 };

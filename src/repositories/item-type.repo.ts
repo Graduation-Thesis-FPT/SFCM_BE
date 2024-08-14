@@ -1,5 +1,5 @@
 import { EntityManager } from 'typeorm';
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { ItemType as ItemTypeEntity } from '../entity/item-type.entity';
 import { ItemType } from '../models/item-type.model';
 

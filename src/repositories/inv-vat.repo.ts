@@ -1,5 +1,5 @@
 import moment from 'moment';
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { InvNoEntity } from '../entity/inv_vat.entity';
 
 const invVatReporsitory = mssqlConnection.getRepository(InvNoEntity);

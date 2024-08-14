@@ -21,7 +21,7 @@ import {
   findImportedOrdersByStatus,
   findOrderByOrderNo,
   findOrdersByCustomerCode,
-} from '../repositories/order.repo';
+} from '../repositories/delivery-order.repo';
 import { findPackage } from '../repositories/package.repo';
 
 class CustomerOrderService {

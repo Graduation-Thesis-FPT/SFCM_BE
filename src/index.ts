@@ -12,7 +12,7 @@ dotenv.config({ path: '.env' });
 
 import routes from './routes';
 import { ErrorResponse } from './core/error.response';
-import mssqlConnection from './db/mssql.connect';
+import mssqlConnection from './dbs/mssql.connect';
 import { ERROR_MESSAGE } from './constants';
 import initializeSocket from './socket.io';
 
@@ -74,7 +74,7 @@ app.use((error: Error | any, req: Request, res: Response, next: NextFunction) =>
   if (error.name === 'QueryFailedError' || error.name === 'Error') {
     if (error.message.includes('The DELETE statement conflicted with the REFERENCE constraint')) {
       statusCode = 409;
-      error.message = 'Không thể xóa dữ liệu vì nó đang được tham chiếu trong một bảng khác.'
+      error.message = 'Không thể xóa dữ liệu vì nó đang được tham chiếu trong một bảng khác.';
     } else if (error.message.includes('Cannot insert duplicate key in object')) {
       statusCode = 409;
       error.message = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.';

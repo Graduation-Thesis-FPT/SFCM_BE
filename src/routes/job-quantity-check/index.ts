@@ -29,7 +29,7 @@ router.get(
 router.get(
   '/import-tally/:PACKAGE_ID',
   asyncHandler(grantPermission),
-  asyncHandler(jobQuantityCheckController.getAllJobQuantityCheckByPACKAGE_ID),
+  asyncHandler(jobQuantityCheckController.getAllJobQuantityCheckByPackageId),
 );
 
 router.post(

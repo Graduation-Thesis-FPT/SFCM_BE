@@ -16,14 +16,14 @@ import {
   checkPalletOfHouseBill,
   getReportInExOrder,
   ReportInEx,
-} from '../repositories/order.repo';
+} from '../repositories/delivery-order.repo';
 import { checkContSize, roundMoney } from '../utils';
 import { Tariff } from '../models/tariff.model';
 import { Package } from '../models/packageMnfLd.model';
 import { Payment } from '../models/inv_vat.model';
 import { PaymentDtl } from '../models/inv_vat_dtl.model';
 import moment from 'moment';
-class OrderService {
+class DeliveryOrderService {
   static getContList = async (VOYAGEKEY: string, BILLOFLADING: string) => {
     if (!VOYAGEKEY || !BILLOFLADING) {
       throw new BadRequestError(`Mã tàu ${VOYAGEKEY} hoặc số vận đơn không được rỗng!`);
@@ -44,7 +44,7 @@ class OrderService {
   };
 
   static getToBillIn = async (dataReq: Package[], services: string[], addInfo: any) => {
-    const arrReturn = [];
+    const billInfo = [];
     //Tính tiền nhập kho-begin
     if (!dataReq.length) {
       throw new BadRequestError(`Không có dữ liệu tính cước!`);
@@ -92,14 +92,13 @@ class OrderService {
     let totalPrice: number = vatPrice + cost;
 
     let tempObj: any = {
-      INV_UNIT: 'CBM',
       UNIT_RATE: roundMoney(unitPrice),
       VAT_PRICE: roundMoney(vatPrice),
       AMOUNT: roundMoney(cost),
       TAMOUNT: roundMoney(totalPrice),
       QTY: (Math.round(quanlity * 100) / 100).toFixed(2),
     };
-    arrReturn.push(Object.assign(tempObj, tariffInfo));
+    billInfo.push(Object.assign(tempObj, tariffInfo));
     //Tính tiền nhập kho-end
 
     //Tính tiền dịch vụ đính kèm
@@ -124,17 +123,16 @@ class OrderService {
         let totalPrice: number = vatPrice + cost;
 
         let tempObj: any = {
-          INV_UNIT: 'BOX',
           UNIT_RATE: roundMoney(unitPrice),
           VAT_PRICE: roundMoney(vatPrice),
           AMOUNT: roundMoney(cost),
           TAMOUNT: roundMoney(totalPrice),
           QTY: null,
         };
-        arrReturn.push(Object.assign(tempObj, serviceTariff));
+        billInfo.push(Object.assign(tempObj, serviceTariff));
       }
     }
-    return arrReturn;
+    return billInfo;
   };
 
   static saveInOrder = async (
@@ -224,7 +222,6 @@ class OrderService {
     let totalPrice: number = vatPrice + cost;
 
     let tempObj: any = {
-      INV_UNIT: 'DAY',
       UNIT_RATE: roundMoney(unitPrice),
       VAT_PRICE: roundMoney(vatPrice),
       AMOUNT: roundMoney(cost),
@@ -242,7 +239,7 @@ class OrderService {
       for (let i = 0; i < services.length; i++) {
         const serviceTariffs = await getServicesTariff(
           services[i],
-          addInfo.ITEM_TYPE_CODE,
+          addInfo.ITEM_TYPE_CODE_CNTR,
           addInfo.PAYER,
         );
         if (!serviceTariffs.length) {
@@ -259,7 +256,6 @@ class OrderService {
         let totalPrice: number = vatPrice + cost;
 
         let tempObj: any = {
-          INV_UNIT: 'BOX',
           UNIT_RATE: roundMoney(unitPrice),
           VAT_PRICE: roundMoney(vatPrice),
           AMOUNT: roundMoney(cost),
@@ -289,4 +285,4 @@ class OrderService {
   };
 }
 
-export default OrderService;
+export default DeliveryOrderService;

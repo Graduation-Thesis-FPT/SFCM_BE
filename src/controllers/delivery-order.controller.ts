@@ -1,19 +1,18 @@
 import { Request, Response } from 'express';
 import { CREATED, OK, SuccessResponse } from '../core/success.response';
 import { SUCCESS_MESSAGE } from '../constants';
-import OrderService from '../services/order.service';
 import InvoiceManagementMisa from '../services/InvoiceMisa.service';
-import InvoiceManagementBkav from '../services/invoiceBKAV.service';
 import { whereExManifest } from '../models/deliver-order.model';
-import { ReportInEx } from '../repositories/order.repo';
-class orderController {
+import { ReportInEx } from '../repositories/delivery-order.repo';
+import DeliveryOrderService from '../services/delivery-order.service';
+class DeliveryOrderController {
   getContList = async (req: Request, res: Response) => {
     const VOYAGEKEY = req.query.VOYAGEKEY as string;
     const BILLOFLADING = req.query.BILLOFLADING as string;
 
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await OrderService.getContList(VOYAGEKEY, BILLOFLADING),
+      metadata: await DeliveryOrderService.getContList(VOYAGEKEY, BILLOFLADING),
     }).send(res);
   };
 
@@ -21,7 +20,7 @@ class orderController {
     const { VOYAGEKEY, CNTRNO } = req.query;
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await OrderService.getManifestPackage(String(VOYAGEKEY), String(CNTRNO)),
+      metadata: await DeliveryOrderService.getManifestPackage(String(VOYAGEKEY), String(CNTRNO)),
     }).send(res);
   };
 
@@ -29,7 +28,7 @@ class orderController {
     const { arrayPackage, services, addInfo } = req.body;
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await OrderService.getToBillIn(arrayPackage, services, addInfo),
+      metadata: await DeliveryOrderService.getToBillIn(arrayPackage, services, addInfo),
     }).send(res);
   };
 
@@ -38,7 +37,7 @@ class orderController {
     const createBy = res.locals.user;
     new OK({
       message: SUCCESS_MESSAGE.SAVE_ORDER_SUCCESS,
-      metadata: await OrderService.saveInOrder(
+      metadata: await DeliveryOrderService.saveInOrder(
         arrayPackage,
         paymentInfoHeader,
         paymentInfoDtl,
@@ -51,7 +50,7 @@ class orderController {
     const { VOYAGEKEY, CONTAINER_ID, HOUSE_BILL } = req.query;
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await OrderService.getExManifest({
+      metadata: await DeliveryOrderService.getExManifest({
         CONTAINER_ID: String(CONTAINER_ID),
         HOUSE_BILL: String(HOUSE_BILL),
         VOYAGEKEY: String(VOYAGEKEY),
@@ -63,7 +62,7 @@ class orderController {
     const { arrayPackage, services, addInfo } = req.body;
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await OrderService.getToBillEx(arrayPackage, services, addInfo),
+      metadata: await DeliveryOrderService.getToBillEx(arrayPackage, services, addInfo),
     }).send(res);
   };
 
@@ -71,7 +70,7 @@ class orderController {
     const { VOYAGEKEY } = req.query;
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await OrderService.getOrderContList(String(VOYAGEKEY)),
+      metadata: await DeliveryOrderService.getOrderContList(String(VOYAGEKEY)),
     }).send(res);
   };
 
@@ -80,7 +79,7 @@ class orderController {
     const createBy = res.locals.user;
     new OK({
       message: SUCCESS_MESSAGE.SAVE_ORDER_SUCCESS,
-      metadata: await OrderService.saveExOrder(
+      metadata: await DeliveryOrderService.saveExOrder(
         arrayPackage,
         paymentInfoHeader,
         paymentInfoDtl,
@@ -90,8 +89,8 @@ class orderController {
   };
 
   //Phát hành hóa đơn
-  invoicePublish = async (req: Request, res: Response) => {
-    let temp = new InvoiceManagementBkav();
+  publishInvoice = async (req: Request, res: Response) => {
+    let temp = new InvoiceManagementMisa();
     let data = await temp.publish(req, 'NK');
     new OK({
       message: SUCCESS_MESSAGE.PUBLISH_INVOICE_SUCCESS,
@@ -100,7 +99,7 @@ class orderController {
   };
   //In hóa đơn
   viewInvoice = async (req: Request, res: Response) => {
-    let temp = new InvoiceManagementBkav();
+    let temp = new InvoiceManagementMisa();
     let data = await temp.getInvView(req);
     new OK({
       message: SUCCESS_MESSAGE.SUCCESS,
@@ -110,7 +109,7 @@ class orderController {
 
   //phát hành hóa đơn xuất
   invoicePublishEx = async (req: Request, res: Response) => {
-    let temp = new InvoiceManagementBkav();
+    let temp = new InvoiceManagementMisa();
     let data = await temp.publish(req, 'XK');
     new OK({
       message: SUCCESS_MESSAGE.PUBLISH_INVOICE_SUCCESS,
@@ -143,9 +142,9 @@ class orderController {
     }
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await OrderService.getReportInExOrder(rule),
+      metadata: await DeliveryOrderService.getReportInExOrder(rule),
     }).send(res);
   };
 }
 
-export default new orderController();
+export default new DeliveryOrderController();

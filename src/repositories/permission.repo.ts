@@ -1,4 +1,4 @@
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { Permission as PermissionEntity } from '../entity/permission.entity';
 import { User } from '../entity/user.entity';
 import { Permission } from '../models/permission.model';

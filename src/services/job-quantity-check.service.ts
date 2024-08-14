@@ -3,7 +3,6 @@ import { User } from '../entity/user.entity';
 import { getAllAvailableCell } from '../repositories/cell.repo';
 import {
   getAllImportTallyContainer,
-  getAllJobQuantityCheckByPACKAGE_ID,
   getImportTallyContainerInfoByCONTAINER_ID,
   checkPackageIdExist,
   checkJobQuantityIdExist,
@@ -16,6 +15,7 @@ import {
   checkSEQExist,
   checkJobStatus,
   checkCanCompoleteJobQuantityCheck,
+  getAllJobQuantityCheckByPackageId,
 } from '../repositories/import-tally.repo';
 import { manager } from '../repositories/index.repo';
 
@@ -28,8 +28,8 @@ class JobQuantityCheckService {
     return await getImportTallyContainerInfoByCONTAINER_ID(CONTAINER_ID);
   };
 
-  static getAllJobQuantityCheckByPACKAGE_ID = async (PACKAGE_ID: string) => {
-    return await getAllJobQuantityCheckByPACKAGE_ID(PACKAGE_ID);
+  static getAllJobQuantityCheckByPackageId = async (PACKAGE_ID: string) => {
+    return await getAllJobQuantityCheckByPackageId(PACKAGE_ID);
   };
 
   static insertAndUpdateJobQuantityCheck = async (

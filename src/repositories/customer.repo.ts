@@ -1,5 +1,5 @@
 import { DeleteResult, EntityManager } from 'typeorm';
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { Customer as CustomerEntity } from '../entity/customer.entity';
 import { Customer } from '../models/customer.model';
 

@@ -1,5 +1,5 @@
 import { EntityManager } from 'typeorm';
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { Gate as GateEntity } from '../entity/gate.entity';
 import { Gate } from '../models/gate.model';
 

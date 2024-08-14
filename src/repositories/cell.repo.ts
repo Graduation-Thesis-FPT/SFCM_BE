@@ -1,5 +1,5 @@
 import { EntityManager } from 'typeorm';
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { Cell as CellEntity } from '../entity/cell.entity';
 const cellRepository = mssqlConnection.getRepository(CellEntity);
 

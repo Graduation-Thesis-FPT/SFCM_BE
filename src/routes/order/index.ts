@@ -1,25 +1,24 @@
 import { Router } from 'express';
 import { asyncHandler } from '../../utils';
-// import { authentication } from '../../auth/authUtils';
-import orderController from '../../controllers/order.controller';
+import deliveryOrderController from '../../controllers/delivery-order.controller';
 
 const router = Router();
 
 // router.use(authentication);
-router.get('/getcont', asyncHandler(orderController.getContList));
-router.get('/getPackageData', asyncHandler(orderController.getManifestPackage));
-router.post('/getToBillIn', asyncHandler(orderController.getToBillIn));
-router.post('/saveInOrder', asyncHandler(orderController.saveInOrder));
-router.post('/publishInvoice', asyncHandler(orderController.invoicePublish));
-router.get('/viewInvoice', asyncHandler(orderController.viewInvoice));
+router.get('/getcont', asyncHandler(deliveryOrderController.getContList));
+router.get('/getPackageData', asyncHandler(deliveryOrderController.getManifestPackage));
+router.post('/getToBillIn', asyncHandler(deliveryOrderController.getToBillIn));
+router.post('/saveInOrder', asyncHandler(deliveryOrderController.saveInOrder));
+router.post('/publishInvoice', asyncHandler(deliveryOrderController.publishInvoice));
+router.get('/viewInvoice', asyncHandler(deliveryOrderController.viewInvoice));
 
-router.get('/getContainerList', asyncHandler(orderController.getOrderContList));
-router.get('/getExManifest', asyncHandler(orderController.getExManifest));
-router.post('/getToBillEx', asyncHandler(orderController.getToBillEx));
-router.post('/publishInvoiceEx', asyncHandler(orderController.invoicePublishEx));
-router.post('/saveExOrder', asyncHandler(orderController.saveExOrder));
+router.get('/getContainerList', asyncHandler(deliveryOrderController.getOrderContList));
+router.get('/getExManifest', asyncHandler(deliveryOrderController.getExManifest));
+router.post('/getToBillEx', asyncHandler(deliveryOrderController.getToBillEx));
+router.post('/publishInvoiceEx', asyncHandler(deliveryOrderController.invoicePublishEx));
+router.post('/saveExOrder', asyncHandler(deliveryOrderController.saveExOrder));
 
 //report xuất nhập kho
-router.get('/getReportInExOrder', asyncHandler(orderController.getReportInExOrder));
+router.get('/getReportInExOrder', asyncHandler(deliveryOrderController.getReportInExOrder));
 
 export default router;

@@ -1,4 +1,4 @@
-import mssqlConnection from '../db/mssql.connect';
+import mssqlConnection from '../dbs/mssql.connect';
 import { Role } from '../entity/role.entity';
 import { User as UserEntity } from '../entity/user.entity';
 
@@ -138,7 +138,7 @@ const getUsersByUserNames = async (userNames: string[]): Promise<UserEntity[]> =
   return await userRepository
     .createQueryBuilder('user')
     .select(['user.ROWGUID', 'user.USER_NAME'])
-    .where("user.USER_NAME IN (:...names)", { names: userNames })
+    .where('user.USER_NAME IN (:...names)', { names: userNames })
     .getMany();
 };
 
@@ -155,5 +155,5 @@ export {
   resetPasswordById,
   updatePasswordById,
   updateUser,
-  getUsersByUserNames
+  getUsersByUserNames,
 };
