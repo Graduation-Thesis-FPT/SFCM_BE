@@ -22,10 +22,10 @@ const validateData = (data: Package) => {
     }),
     CARGO_PIECE: Joi.number().positive().greater(0).messages({
       'number.positive': 'Số lượng hàng hóa phải là số dương',
-      'string.base': 'Số lượng hàng hóa phải là số!',
+      'number.base': 'Số lượng hàng hóa không được để trống!',
     }),
     CBM: Joi.number().positive().required().messages({
-      'string.base': 'Số khối phải là số!',
+      'number.base': 'Số khối không được để trống!',
       'number.positive': 'Số khối phải là số dương',
       'string.empty': 'Số khối không được để trống',
     }),

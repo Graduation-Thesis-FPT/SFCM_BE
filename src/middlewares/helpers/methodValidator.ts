@@ -7,10 +7,12 @@ import { BadRequestError } from '../../core/error.response';
 const validateInsertMethod = (data: Method) => {
   const methodSchema = Joi.object({
     METHOD_CODE: Joi.string().uppercase().trim().required().messages({
+      'string.empty': 'Mã phương án không được để trống #thêm',
       'any.required': 'Mã phương án không được để trống #thêm',
     }),
     METHOD_NAME: Joi.string().trim().required().messages({
       'any.required': 'Tên phương án không được để trống #thêm',
+      'string.empty': 'Tên phương án không được để trống #thêm',
     }),
     IS_IN_OUT: Joi.string().trim().valid('I', 'O').required().messages({
       'any.required': 'Trạng thái ra vào không được trống',
@@ -55,7 +57,6 @@ const validateMethodRequest = (req: Request, res: Response, next: NextFunction) 
       const { error, value } = validateInsertMethod(methodInfo);
 
       if (error) {
-        console.log(error.details);
         throw new BadRequestError(error.message);
       }
 
@@ -68,7 +69,6 @@ const validateMethodRequest = (req: Request, res: Response, next: NextFunction) 
       const { error, value } = validateUpdateMethod(methodInfo);
 
       if (error) {
-        console.log(error.details);
         throw new BadRequestError(error.message);
       }
 

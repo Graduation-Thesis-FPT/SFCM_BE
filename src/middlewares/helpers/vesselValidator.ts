@@ -7,9 +7,11 @@ const validateInsertVessel = (data: Vessel) => {
   const methodSchema = Joi.object({
     VESSEL_NAME: Joi.string().trim().required().messages({
       'any.required': 'Tên tàu không được để trống #thêm',
+      'string.empty': 'Tên tàu không được để trống #thêm',
     }),
     INBOUND_VOYAGE: Joi.string().trim().required().messages({
       'any.required': 'Chuyến nhập không được để trống #thêm',
+      'string.empty': 'Chuyến nhập không được để trống #thêm',
     }),
     ETA: Joi.date().required().messages({
       'any.required': 'Ngày tàu đến không được để trống #thêm',

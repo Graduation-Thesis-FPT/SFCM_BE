@@ -60,30 +60,35 @@ const validateUpdateBlock = (data: Block) => {
       .positive()
       .messages({
         'number.positive': 'Số tầng phải lớn hơn 0 #cập nhật',
+        'number.base': 'Số tầng không được để trống #cập nhật',
       })
       .optional(),
     SLOT_COUNT: Joi.number()
       .positive()
       .messages({
         'number.positive': 'Số ô phải lớn hơn 0 #cập nhật',
+        'number.base': 'Số ô không được để trống #cập nhật',
       })
       .optional(),
     BLOCK_WIDTH: Joi.number()
       .positive()
       .messages({
         'number.positive': 'Chiều rộng phải lớn hơn 0 #cập nhật',
+        'number.base': 'Chiều rộng không được để trống #cập nhật',
       })
       .optional(),
     BLOCK_HEIGHT: Joi.number()
       .positive()
       .messages({
         'number.positive': 'Chiều cao phải lớn hơn 0 #cập nhật',
+        'number.base': 'Chiều cao không được để trống #cập nhật',
       })
       .optional(),
     BLOCK_LENGTH: Joi.number()
       .positive()
       .messages({
         'number.positive': 'Chiều dài phải lớn hơn 0 #cập nhật',
+        'number.base': 'Chiều dài không được để trống #cập nhật',
       })
       .optional(),
   });

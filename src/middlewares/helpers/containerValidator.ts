@@ -13,6 +13,7 @@ const validateInsertContainer = (data: Container) => {
     CNTRNO: Joi.string().required().pattern(new RegExp('^[a-zA-Z]{4}[0-9]{7}$')).messages({
       'any.required': 'Số container không được để trống #thêm',
       'string.pattern.base': 'Số container không hợp lệ #thêm',
+      'string.empty': 'Số container không được để trống #thêm',
     }),
     CNTRSZTP: Joi.string().max(5).trim().required().messages({
       'any.required': 'Kích cỡ container không được để trống #thêm',
