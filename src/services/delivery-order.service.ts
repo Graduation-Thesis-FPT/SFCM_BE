@@ -16,6 +16,7 @@ import {
   checkPalletOfHouseBill,
   getReportInExOrder,
   ReportInEx,
+  getCancelInvoice,
 } from '../repositories/delivery-order.repo';
 import { checkContSize, roundMoney } from '../utils';
 import { Tariff } from '../models/tariff.model';
@@ -282,6 +283,13 @@ class DeliveryOrderService {
       throw new BadRequestError(`Vui lòng chọn từ ngày đến ngày!`);
     }
     return await getReportInExOrder(whereObj);
+  };
+
+  static getCancelInvoice = async () => {
+    // if (!whereObj.fromDate || !whereObj.toDate) {
+    //   throw new BadRequestError(`Vui lòng chọn từ ngày đến ngày!`);
+    // }
+    return await getCancelInvoice();
   };
 }
 

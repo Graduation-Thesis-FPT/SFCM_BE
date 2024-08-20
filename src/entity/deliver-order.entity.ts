@@ -40,4 +40,7 @@ export class DeliverOrderEntity extends Model {
 
   @Column()
   NOTE: string;
+
+  @Column()
+  IS_VALID: boolean;
 }

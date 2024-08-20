@@ -117,6 +117,25 @@ class DeliveryOrderController {
     }).send(res);
   };
 
+  // Hủy hóa đơn
+  cancelInvoice = async (req: Request, res: Response) => {
+    let { fkey, reason, cancelDate, invNo } = req.body;
+    let temp = new InvoiceManagementMisa();
+    let data = await temp.cancelInv(fkey, reason, cancelDate, invNo);
+    new OK({
+      message: SUCCESS_MESSAGE.CANCEL_INVOICE_SUCCESS,
+      metadata: data,
+    }).send(res);
+  };
+
+  // Get thông tin hủy hóa đơn
+  getCancelInvoice = async (req: Request, res: Response) => {
+    new OK({
+      message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
+      metadata: await DeliveryOrderService.getCancelInvoice(),
+    }).send(res);
+  };
+
   getReportInExOrder = async (req: Request, res: Response) => {
     let rule: ReportInEx = {
       fromDate: new Date(),
