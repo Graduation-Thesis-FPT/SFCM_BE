@@ -18,7 +18,10 @@ router.post('/getToBillEx', asyncHandler(deliveryOrderController.getToBillEx));
 router.post('/publishInvoiceEx', asyncHandler(deliveryOrderController.invoicePublishEx));
 router.post('/saveExOrder', asyncHandler(deliveryOrderController.saveExOrder));
 
+router.post('/cancel', asyncHandler(deliveryOrderController.cancelInvoice));
+router.get('/getCancelInvoice', asyncHandler(deliveryOrderController.cancelInvoice));
+
 //report xuất nhập kho
-router.get('/getReportInExOrder', asyncHandler(deliveryOrderController.getReportInExOrder));
+router.get('/getReportInExOrder', asyncHandler(deliveryOrderController.getCancelInvoice));
 
 export default router;
