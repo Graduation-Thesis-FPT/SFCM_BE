@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import Model from './model.entity';
+import BaseModel from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('JOB_QUANTITY_CHECK')
-export class JobQuantityCheckEntity extends Model {
+export class JobQuantityCheckEntity extends BaseModel {
   @PrimaryGeneratedColumn('uuid')
   @IsNotEmpty()
   ROWGUID: string;

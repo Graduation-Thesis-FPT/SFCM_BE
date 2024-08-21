@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import Model from './model.entity';
+import BaseModel from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('DT_CNTR_MNF_LD')
-export class ContainerEntity extends Model {
+export class ContainerEntity extends BaseModel {
   @PrimaryGeneratedColumn('uuid')
   ROWGUID: string;
 

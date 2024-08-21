@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import Model from './model.entity';
+import BaseModel from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('BS_GATE')
-export class Gate extends Model {
+export class Gate extends BaseModel {
   @PrimaryColumn()
   @IsNotEmpty()
   GATE_CODE: string;

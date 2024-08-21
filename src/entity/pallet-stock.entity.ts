@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import Model from './model.entity';
+import BaseModel from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('DT_PALLET_STOCK')
-export class PalletStockEntity extends Model {
+export class PalletStockEntity extends BaseModel {
   @PrimaryColumn()
   @IsNotEmpty()
   PALLET_NO: string;

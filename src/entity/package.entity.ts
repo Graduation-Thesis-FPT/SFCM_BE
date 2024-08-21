@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import Model from './model.entity';
+import BaseModel from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('DT_PACKAGE_MNF_LD')
-export class Package extends Model {
+export class Package extends BaseModel {
   @PrimaryGeneratedColumn('uuid')
   @IsNotEmpty()
   ROWGUID: string;

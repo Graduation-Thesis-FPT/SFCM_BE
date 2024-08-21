@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import Model from './model.entity';
+import BaseModel from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('CONFIG_ATTACH_SRV')
-export class ConfigAttachSrvEntity extends Model {
+export class ConfigAttachSrvEntity extends BaseModel {
   @PrimaryGeneratedColumn('uuid')
   @IsNotEmpty()
   ROWGUID: string;

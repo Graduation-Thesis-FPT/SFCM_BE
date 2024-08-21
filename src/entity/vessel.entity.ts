@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import Model from './model.entity';
+import BaseModel from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('DT_VESSEL_VISIT')
-export class Vessel extends Model {
+export class Vessel extends BaseModel {
   @PrimaryColumn()
   VOYAGEKEY: string;
 

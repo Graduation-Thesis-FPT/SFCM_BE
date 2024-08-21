@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import Model from './model.entity';
+import BaseModel from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('TRF_DIS')
-export class TariffDisEntity extends Model {
+export class TariffDisEntity extends BaseModel {
   @PrimaryGeneratedColumn('uuid')
   @IsNotEmpty()
   ROWGUID: string;

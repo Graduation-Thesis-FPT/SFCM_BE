@@ -8,10 +8,10 @@ import {
   MaxLength,
 } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import Model from './model.entity';
+import BaseModel from './model.entity';
 
 @Entity('SA_USER')
-export class User extends Model {
+export class User extends BaseModel {
   @PrimaryGeneratedColumn('uuid')
   ROWGUID: string;
 

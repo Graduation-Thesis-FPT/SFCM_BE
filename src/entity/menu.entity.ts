@@ -1,9 +1,9 @@
 import { IsNotEmpty } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import Model from './model.entity';
+import BaseModel from './model.entity';
 
 @Entity('SA_MENU')
-export class Menu extends Model {
+export class Menu extends BaseModel {
   @PrimaryGeneratedColumn('uuid')
   ROWGUID: string;
 

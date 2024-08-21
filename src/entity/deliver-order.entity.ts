@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import Model from './model.entity';
+import BaseModel from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('DELIVER_ORDER')
-export class DeliverOrderEntity extends Model {
+export class DeliverOrderEntity extends BaseModel {
   @PrimaryColumn()
   @IsNotEmpty()
   DE_ORDER_NO: string;

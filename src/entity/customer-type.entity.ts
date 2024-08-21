@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-import Model from './model.entity';
+import BaseModel from './model.entity';
 import { IsNotEmpty } from 'class-validator';
 
 @Entity('BS_CUSTOMER_TYPE')
-export class CustomerType extends Model {
+export class CustomerType extends BaseModel {
   @PrimaryColumn()
   CUSTOMER_TYPE_CODE: string;
 

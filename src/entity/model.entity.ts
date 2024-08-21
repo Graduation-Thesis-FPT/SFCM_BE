@@ -1,7 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 import { CreateDateColumn, UpdateDateColumn, BaseEntity, Column } from 'typeorm';
 
-export default abstract class Model extends BaseEntity {
+export default abstract class BaseModel extends BaseEntity {
   @Column()
   @IsNotEmpty()
   CREATE_BY: string;
