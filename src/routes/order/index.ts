@@ -19,7 +19,7 @@ router.post('/publishInvoiceEx', asyncHandler(deliveryOrderController.invoicePub
 router.post('/saveExOrder', asyncHandler(deliveryOrderController.saveExOrder));
 
 router.post('/cancel', asyncHandler(deliveryOrderController.cancelInvoice));
-router.get('/getCancelInvoice', asyncHandler(deliveryOrderController.cancelInvoice));
+router.get('/getCancelInvoice', asyncHandler(deliveryOrderController.getCancelInvoice));
 
 //report xuất nhập kho
 router.get('/getReportInExOrder', asyncHandler(deliveryOrderController.getCancelInvoice));
