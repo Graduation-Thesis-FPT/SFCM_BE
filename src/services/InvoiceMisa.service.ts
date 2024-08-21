@@ -2,6 +2,7 @@
 import moment from 'moment';
 import { genOrderNo } from '../utils/genKey';
 import * as https from 'https';
+import { cancelOrder } from '../repositories/delivery-order.repo';
 
 class InvoiceManagementMisa {
   private _access_token: any = null;
@@ -755,11 +756,12 @@ class InvoiceManagementMisa {
     return this.data;
   };
 
-  cancelInv = async (fkey: any, reason: any, cancelDate: any) => {
+  cancelInv = async (fkey: any, reason: any, cancelDate: any, invNo: any = '') => {
     return await this.cancelInvDirectly({
       fkey: fkey,
       cancelDate: cancelDate,
       cancelReason: reason,
+      invNo: invNo,
     });
   };
 
@@ -797,6 +799,8 @@ class InvoiceManagementMisa {
       }),
     );
 
+    //update delicvery_order
+    await cancelOrder(InvNo);
     this.data.success = isSuccess;
     return this.data;
   };

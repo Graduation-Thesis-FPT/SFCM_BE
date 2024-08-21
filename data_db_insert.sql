@@ -32,6 +32,7 @@ VALUES
 (NULL,'procedure',N'Thủ tục','FilePen',1,500,NULL,'sql','sql'),
 ('procedure','import-order',N'Lệnh nhập kho',NULL,1,501,'ImportOrder','sql','sql'),
 ('procedure','export-order',N'Lệnh xuất kho',NULL,1,502,'ExportOrder','sql','sql'),
+('procedure','cancel-invoice',N'Hủy lệnh',NULL,1,503,'CancelInvoice','sql','sql'),
 (NULL,'warehouse-operation',N'Điều hành kho','ReplaceAll',1,600,NULL,'sql','sql'),
 ('warehouse-operation','import-tally',N'Kiểm đếm nhập kho',NULL,1,601,'ImportTally','sql','sql'),
 ('warehouse-operation','fork-lift',N'Quản lý hàng nhập/xuất kho',NULL,1,602,'ForkLift','sql','sql'),
@@ -80,6 +81,7 @@ VALUES
 ('procedure-staff','config-attach-srv',1,1,1,1,'sql','sql'),
 ('procedure-staff','import-order',1,1,1,1,'sql','sql'),
 ('procedure-staff','export-order',1,1,1,1,'sql','sql'),
+('procedure-staff','cancel-invoice',1,1,1,1,'sql','sql'),
 ('procedure-staff','in-ex-order',1,1,1,1,'sql','sql'),
 ('procedure-staff','revenue',1,1,1,1,'sql','sql'),
 

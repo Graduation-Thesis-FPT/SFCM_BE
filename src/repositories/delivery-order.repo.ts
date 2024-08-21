@@ -657,6 +657,36 @@ const getReportInExOrder = async (whereObj: ReportInEx) => {
   return temp;
 };
 
+const cancelOrder = async (InvNo: string) => {
+  return await orderRepository
+    .createQueryBuilder()
+    .update(DeliverOrderEntity)
+    .set({ IS_VALID: false })
+    .where('INV_ID = :invno', { invno: InvNo })
+    .execute();
+};
+
+const getCancelInvoice = async () => {
+  const results = orderRepository
+    .createQueryBuilder('dt')
+    .leftJoin('INV_VAT', 'iv', 'iv.INV_NO = dt.INV_ID')
+    .leftJoin('BS_CUSTOMER', 'cus', 'iv.PAYER = cus.CUSTOMER_CODE')
+    .select([
+      'dt.INV_ID as INV_ID',
+      'dt.DE_ORDER_NO as DE_ORDER_NO',
+      'iv.INV_DATE as INV_DATE',
+      'iv.AMOUNT as AMOUNT',
+      'iv.VAT as VAT',
+      'iv.TAMOUNT as TAMOUNT',
+      'cus.CUSTOMER_NAME as CUSTOMER_NAME',
+      'iv.PAYMENT_STATUS as PAYMENT_STATUS',
+      'iv.CANCEL_DATE as CANCEL_DATE',
+      'iv.CANCLE_REMARK as CANCLE_REMARK',
+    ])
+    .getRawMany();
+  return await results;
+};
+
 export {
   checkContStatus,
   checkPackageStatusOrder,
@@ -679,4 +709,6 @@ export {
   saveInOrder,
   checkPalletOfHouseBill,
   getReportInExOrder,
+  cancelOrder,
+  getCancelInvoice,
 };
