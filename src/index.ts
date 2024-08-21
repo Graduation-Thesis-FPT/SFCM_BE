@@ -28,6 +28,7 @@ const allowedOrigins = [
   'https://sfcm-fe.onrender.com',
   'https://sfcmfe.up.railway.app',
   'https://sfcmfe-nhi-test-production.up.railway.app',
+  "https://alert-enhanced-swift.ngrok-free.app"
 ];
 const corsOptions = {
   credentials: true,
