@@ -11,7 +11,8 @@ import {
   updateCustomer,
 } from '../repositories/customer.repo';
 import { manager } from '../repositories/index.repo';
-import { findUserByUserName } from '../repositories/user.repo';
+import { createUser, findUserByUserName, userRepository } from '../repositories/user.repo';
+import EmailService from './email.service';
 import UserService from './user.service';
 
 class CustomerService {
@@ -64,10 +65,22 @@ class CustomerService {
             FULLNAME: customer.CUSTOMER_NAME,
             ROLE_CODE: 'customer',
             IS_ACTIVE: customer.IS_ACTIVE,
+            CREATE_BY: createBy.ROWGUID,
+            UPDATE_BY: createBy.ROWGUID,
           };
-
           try {
-            await UserService.createUserAccount(userInfo as User, createBy);
+            const user = userRepository.create(userInfo);
+            const userAccount = await createUser(user, transactionalEntityManager);
+            if (userAccount) {
+              await EmailService.sendEmailAccountToCustomer(
+                {
+                  account: userAccount.USER_NAME,
+                  password: process.env.DEFAULT_PASSWORD,
+                  webUrl: process.env.WEB_URL,
+                },
+                customer.EMAIL,
+              );
+            }
           } catch (error) {
             // console.error(`Lối khi tạo tài khoản cho khách hàng ${customer.CUSTOMER_CODE}:`, error);
             throw new BadRequestError(

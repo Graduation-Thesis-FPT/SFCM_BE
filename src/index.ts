@@ -78,7 +78,7 @@ app.use((error: Error | any, req: Request, res: Response, next: NextFunction) =>
       error.message = 'Không thể xóa dữ liệu vì nó đang được tham chiếu trong một bảng khác.';
     } else if (error.message.includes('Cannot insert duplicate key in object')) {
       statusCode = 409;
-      error.message = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.';
+      error.message = 'Dữ liệu bị trùng. Vui lòng kiểm tra lại.';
     } else if (error.message.includes('Cannot insert the value NULL into column')) {
       statusCode = 409;
       error.message = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.';

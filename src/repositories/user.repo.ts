@@ -1,3 +1,4 @@
+import { EntityManager } from 'typeorm';
 import mssqlConnection from '../dbs/mssql.connect';
 import { Role } from '../entity/role.entity';
 import { User as UserEntity } from '../entity/user.entity';
@@ -142,6 +143,10 @@ const getUsersByUserNames = async (userNames: string[]): Promise<UserEntity[]> =
     .getMany();
 };
 
+const createUser = async (user: UserEntity, transactionalEntityManager: EntityManager) => {
+  return await transactionalEntityManager.save(user);
+};
+
 export {
   activeUser,
   checkPasswordIsNullById,
@@ -156,4 +161,5 @@ export {
   updatePasswordById,
   updateUser,
   getUsersByUserNames,
+  createUser,
 };
