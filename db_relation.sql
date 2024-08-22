@@ -1,21 +1,21 @@
 USE MASTER
 GO
 -- Kiểm tra xem cơ sở dữ liệu 'SFCM' đã tồn tại chưa
-IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'SFCM_NEW')
+IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'SFCM')
 BEGIN
     -- Nếu tồn tại, thì xóa cơ sở dữ liệu 'SFCM'
-    DROP DATABASE SFCM_NEW
+    DROP DATABASE SFCM
 END
 -- Tạo mới cơ sở dữ liệu 'SFCM'
 GO
-CREATE DATABASE SFCM_NEW
+CREATE DATABASE SFCM
 
 -- Sử dụng cơ sở dữ liệu 'SFCM' để tạo các bảng
 GO
-USE SFCM_NEW
+USE SFCM
 GO
 
-USE [SFCM_NEW]
+USE [SFCM]
 GO
 /****** Object:  Table [dbo].[BS_CUSTOMER]    Script Date: 8/20/2024 11:05:05 PM ******/
 SET ANSI_NULLS ON
