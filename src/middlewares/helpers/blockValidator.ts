@@ -11,15 +11,15 @@ const validateInsertBlock = (data: Block) => {
       'string.empty': 'Mã kho không được để trống #thêm',
       'string.base': 'Mã kho không được để trống #thêm',
     }),
-    BLOCK_NAME: Joi.string().uppercase().trim().required().messages({
-      'any.required': 'Tên dãy không được để trống #thêm',
-      'string.empty': 'Tên dãy không được để trống #thêm',
-      'string.base': 'Tên dãy không được để trống #thêm',
-    }),
     BLOCK_CODE: Joi.string().uppercase().trim().required().messages({
       'any.required': 'Mã dãy không được để trống #thêm',
       'string.empty': 'Mã dãy không được để trống #thêm',
       'string.base': 'Mã dãy không được để trống #thêm',
+    }),
+    BLOCK_NAME: Joi.string().uppercase().trim().required().messages({
+      'any.required': 'Tên dãy không được để trống #thêm',
+      'string.empty': 'Tên dãy không được để trống #thêm',
+      'string.base': 'Tên dãy không được để trống #thêm',
     }),
     TIER_COUNT: Joi.number().required().positive().messages({
       'number.positive': 'Số tầng phải lớn hơn 0 #thêm',

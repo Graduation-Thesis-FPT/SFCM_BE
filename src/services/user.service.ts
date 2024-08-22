@@ -1,3 +1,4 @@
+import { EntityManager } from 'typeorm';
 import { ERROR_MESSAGE } from '../constants';
 import { BadRequestError } from '../core/error.response';
 import { Customer } from '../entity/customer.entity';
@@ -10,6 +11,7 @@ import {
 import { manager } from '../repositories/index.repo';
 import {
   activeUser,
+  createUser,
   deactiveUser,
   deleteUser,
   findUserById,
@@ -20,29 +22,26 @@ import {
   userRepository,
 } from '../repositories/user.repo';
 import { isValidInfor, removeUndefinedProperty } from '../utils';
-import CustomerService from './customer.service';
 
 class UserService {
-  /**
-   * Create User
-   * @param userInfo
-   * @returns
-   */
   static createUserAccount = async (userInfo: User, createBy: User): Promise<User> => {
-    const foundUser = await findUserByUserName(userInfo.USER_NAME);
+    let newUser: User;
+    await manager.transaction(async transactionalEntityManager => {
+      const foundUser = await findUserByUserName(userInfo.USER_NAME);
 
-    if (foundUser) {
-      throw new BadRequestError(ERROR_MESSAGE.USER_ALREADY_EXIST);
-    }
+      if (foundUser) {
+        throw new BadRequestError(ERROR_MESSAGE.USER_ALREADY_EXIST);
+      }
 
-    if (userInfo.BIRTHDAY) userInfo.BIRTHDAY = new Date(userInfo.BIRTHDAY);
-    userInfo.CREATE_BY = createBy.ROWGUID;
-    userInfo.UPDATE_BY = createBy.ROWGUID;
-    const user = userRepository.create(userInfo);
+      if (userInfo.BIRTHDAY) userInfo.BIRTHDAY = new Date(userInfo.BIRTHDAY);
+      userInfo.CREATE_BY = createBy.ROWGUID;
+      userInfo.UPDATE_BY = createBy.ROWGUID;
+      const user = userRepository.create(userInfo);
 
-    await isValidInfor(user);
+      await isValidInfor(user);
 
-    const newUser = await userRepository.save(user);
+      newUser = await createUser(user, transactionalEntityManager);
+    });
 
     return newUser;
   };

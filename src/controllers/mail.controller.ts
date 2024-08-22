@@ -8,7 +8,7 @@ class mailController {
   testSendMail = async (req: Request, res: Response) => {
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await EmailService.sendEmail(req.body.data),
+      metadata: await EmailService.sendEmailInvoice(req.body),
     }).send(res);
   };
 }
