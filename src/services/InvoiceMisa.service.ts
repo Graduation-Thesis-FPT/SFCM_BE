@@ -783,7 +783,8 @@ class InvoiceManagementMisa {
       return this.data;
     }
 
-    var InvNo = args['inv'] || '';
+    var InvNo = args['invNo'] || '';
+    var newInvNo = InvNo.replace('1', '');
     var cancelReason = args['cancelReason'] || '';
     var RefDate = moment().format('YYYY-MM-DD');
 
@@ -793,14 +794,14 @@ class InvoiceManagementMisa {
       path,
       JSON.stringify({
         TransactionID: retrieveInv.TransactionID,
-        InvNo: InvNo,
+        InvNo: newInvNo,
         RefDate: RefDate,
         CancelReason: cancelReason,
       }),
     );
 
     //update delicvery_order
-    await cancelOrder(InvNo);
+    await cancelOrder(InvNo, cancelReason);
     this.data.success = isSuccess;
     return this.data;
   };

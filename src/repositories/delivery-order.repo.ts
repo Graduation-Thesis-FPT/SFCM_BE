@@ -657,12 +657,19 @@ const getReportInExOrder = async (whereObj: ReportInEx) => {
   return temp;
 };
 
-const cancelOrder = async (InvNo: string) => {
-  return await orderRepository
+const cancelOrder = async (InvNo: string, cancelReason: string) => {
+  await orderRepository
     .createQueryBuilder()
     .update(DeliverOrderEntity)
     .set({ IS_VALID: false })
     .where('INV_ID = :invno', { invno: InvNo })
+    .execute();
+
+  await invNoRepository
+    .createQueryBuilder()
+    .update(InvNoEntity)
+    .set({ PAYMENT_STATUS: 'C', CANCEL_DATE: new Date(), CANCLE_REMARK: cancelReason })
+    .where('INV_NO = :invno', { invno: InvNo })
     .execute();
 };
 
