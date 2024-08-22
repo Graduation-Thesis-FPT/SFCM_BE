@@ -68,7 +68,6 @@ VALUES
 ('admin','import-order',1,1,1,1,'sql','sql'),
 ('admin','export-order',1,1,1,1,'sql','sql'),
 ('admin','cancel-invoice',1,1,1,1,'sql','sql'),
-('admin','in-ex-order',1,1,1,1,'sql','sql'),
 ('admin','import-tally',1,1,1,1,'sql','sql'),
 ('admin','fork-lift',1,1,1,1,'sql','sql'),
 
