@@ -28,7 +28,7 @@ export class Package extends BaseModel {
   CARGO_PIECE: number;
 
   @IsNotEmpty()
-  @Column()
+  @Column({ type: 'float' })
   CBM: number;
 
   @IsNotEmpty()
