@@ -39,6 +39,10 @@ const authentication = asyncHandler(async (req: Request, res: Response, next: Ne
       throw new UnAuthorizedError(ERROR_MESSAGE.INVALID_REQUEST);
     }
 
+    if (!user.IS_ACTIVE) {
+      throw new BadRequestError('Tài khoản đã bị khóa');
+    }
+
     res.locals.user = user;
     next();
   } catch (error) {
