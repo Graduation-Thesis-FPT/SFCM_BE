@@ -57,6 +57,7 @@ const getAllUser = async (): Promise<UserEntity[]> => {
       'user.ROLE_CODE as ROLE_CODE',
       'role.ROLE_NAME as ROLE_NAME',
     ])
+    .where('user.ROLE_CODE != :ROLE_CODE', { ROLE_CODE: 'customer' })
     .orderBy('user.UPDATE_DATE', 'DESC')
     .getRawMany();
 };
