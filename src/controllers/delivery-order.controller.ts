@@ -3,7 +3,7 @@ import { CREATED, OK, SuccessResponse } from '../core/success.response';
 import { SUCCESS_MESSAGE } from '../constants';
 import InvoiceManagementMisa from '../services/InvoiceMisa.service';
 import { whereExManifest } from '../models/deliver-order.model';
-import { ReportInEx } from '../repositories/delivery-order.repo';
+import { CancelInvoiceWhere, ReportInEx } from '../repositories/delivery-order.repo';
 import DeliveryOrderService from '../services/delivery-order.service';
 class DeliveryOrderController {
   getContList = async (req: Request, res: Response) => {
@@ -130,9 +130,31 @@ class DeliveryOrderController {
 
   // Get thông tin hủy hóa đơn
   getCancelInvoice = async (req: Request, res: Response) => {
+    let whereobj: CancelInvoiceWhere = {
+      to: new Date(),
+      from: new Date(),
+      DE_ORDER_NO: '',
+      CUSTOMER_CODE: '',
+      PAYMENT_STATUS: '',
+    };
+    if (req.query.from && req.query.to) {
+      const fromDate = new Date(req.query?.from as string);
+      const toDate = new Date(req.query?.to as string);
+      whereobj.from = fromDate;
+      whereobj.to = toDate;
+    }
+    if (req.query.DE_ORDER_NO) {
+      whereobj.DE_ORDER_NO = String(req.query.DE_ORDER_NO);
+    }
+    if (req.query.CUSTOMER_CODE) {
+      whereobj.CUSTOMER_CODE = String(req.query.CUSTOMER_CODE);
+    }
+    if (req.query.PAYMENT_STATUS) {
+      whereobj.PAYMENT_STATUS = String(req.query.PAYMENT_STATUS) == 'Y' ? 'Y' : 'C';
+    }
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
-      metadata: await DeliveryOrderService.getCancelInvoice(),
+      metadata: await DeliveryOrderService.getCancelInvoice(whereobj),
     }).send(res);
   };
 

@@ -22,6 +22,6 @@ router.post('/cancel', asyncHandler(deliveryOrderController.cancelInvoice));
 router.get('/getCancelInvoice', asyncHandler(deliveryOrderController.getCancelInvoice));
 
 //report xuất nhập kho
-router.get('/getReportInExOrder', asyncHandler(deliveryOrderController.getCancelInvoice));
+router.get('/getReportInExOrder', asyncHandler(deliveryOrderController.getReportInExOrder));
 
 export default router;
