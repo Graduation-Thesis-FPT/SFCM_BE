@@ -17,6 +17,7 @@ import {
   getReportInExOrder,
   ReportInEx,
   getCancelInvoice,
+  CancelInvoiceWhere,
 } from '../repositories/delivery-order.repo';
 import { checkContSize, roundMoney } from '../utils';
 import { Tariff } from '../models/tariff.model';
@@ -285,11 +286,11 @@ class DeliveryOrderService {
     return await getReportInExOrder(whereObj);
   };
 
-  static getCancelInvoice = async () => {
-    // if (!whereObj.fromDate || !whereObj.toDate) {
-    //   throw new BadRequestError(`Vui lòng chọn từ ngày đến ngày!`);
-    // }
-    return await getCancelInvoice();
+  static getCancelInvoice = async (whereObj: CancelInvoiceWhere) => {
+    if (!whereObj.from || !whereObj.to) {
+      throw new BadRequestError(`Vui lòng chọn từ ngày đến ngày!`);
+    }
+    return await getCancelInvoice(whereObj);
   };
 }
 

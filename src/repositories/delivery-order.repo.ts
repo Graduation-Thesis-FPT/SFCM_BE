@@ -673,8 +673,15 @@ const cancelOrder = async (InvNo: string, cancelReason: string) => {
     .execute();
 };
 
-const getCancelInvoice = async () => {
-  const results = orderRepository
+export type CancelInvoiceWhere = {
+  from: Date;
+  to: Date;
+  CUSTOMER_CODE?: string;
+  PAYMENT_STATUS?: '' | 'Y' | 'C';
+  DE_ORDER_NO: string;
+};
+const getCancelInvoice = async (whereObj: CancelInvoiceWhere) => {
+  let query = orderRepository
     .createQueryBuilder('dt')
     .leftJoin('INV_VAT', 'iv', 'iv.INV_NO = dt.INV_ID')
     .leftJoin('BS_CUSTOMER', 'cus', 'iv.PAYER = cus.CUSTOMER_CODE')
@@ -689,9 +696,23 @@ const getCancelInvoice = async () => {
       'iv.PAYMENT_STATUS as PAYMENT_STATUS',
       'iv.CANCEL_DATE as CANCEL_DATE',
       'iv.CANCLE_REMARK as CANCLE_REMARK',
-    ])
-    .getRawMany();
-  return await results;
+    ]);
+  if (whereObj.CUSTOMER_CODE) {
+    query = query.where('iv.PAYER = :cus', { cus: whereObj.CUSTOMER_CODE });
+  }
+
+  if (whereObj.from && whereObj.to) {
+    query = query
+      .andWhere('dt.ISSUE_DATE >= :fromDate', { fromDate: whereObj.from })
+      .andWhere('dt.ISSUE_DATE <= :toDate', { toDate: whereObj.to });
+  }
+  if (whereObj.DE_ORDER_NO) {
+    query = query.andWhere('dt.DE_ORDER_NO like :order', { order: `%${whereObj.DE_ORDER_NO}%` });
+  }
+  if (whereObj.PAYMENT_STATUS) {
+    query = query.andWhere('iv.PAYMENT_STATUS = :pay', { pay: whereObj.PAYMENT_STATUS });
+  }
+  return await query.getRawMany();
 };
 
 export {
