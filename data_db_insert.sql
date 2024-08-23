@@ -91,7 +91,7 @@ VALUES
 ('procedure-staff','in-ex-order',1,1,1,1,'sql','sql'),
 ('procedure-staff','revenue',1,1,1,1,'sql','sql'),
 
-('warehouse-operator','import-tally',1,1,1,1,'sql','sql'),
+('tally-operator','import-tally',1,1,1,1,'sql','sql'),
 ('warehouse-operator','fork-lift',1,1,1,1,'sql','sql'),
 
 ('customer','all-orders',1,1,1,1,'sql','sql'),
