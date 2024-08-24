@@ -2,6 +2,8 @@
 import moment from 'moment';
 import { genOrderNo } from '../utils/genKey';
 import * as https from 'https';
+import { cancelOrder } from '../repositories/delivery-order.repo';
+import { BadRequestError } from '../core/error.response';
 
 class InvoiceManagementBkav {
   private _token: any = null;
@@ -418,11 +420,12 @@ class InvoiceManagementBkav {
     return this.data;
   };
 
-  cancelInv = async (fkey: any, reason: any, cancelDate: any) => {
+  cancelInv = async (fkey: any, reason: any, cancelDate: any, invNo: any = '') => {
     return await this.cancelInvDirectly({
       fkey: fkey,
       cancelDate: cancelDate,
       cancelReason: reason,
+      invNo: invNo,
     });
   };
 
@@ -433,20 +436,23 @@ class InvoiceManagementBkav {
     }
 
     let args = { ...req.body, ...req };
+    let InvNo = args['invNo'] || '';
     let fkey = args['fkey'] || '';
     let cancelReason = args['cancelReason'] || '';
 
     let path = this.config['API_PATH'];
     let cmdData = {
       CmdType: 202,
-      CommandObject: {
-        PartnerInvoiceID: 0,
-        PartnerInvoiceStringID: fkey,
-        Invoice: {
-          InvoiceTypeID: 1,
-          Reason: cancelReason,
+      CommandObject: [
+        {
+          PartnerInvoiceID: 0,
+          PartnerInvoiceStringID: fkey,
+          Invoice: {
+            InvoiceTypeID: 1,
+            Reason: cancelReason,
+          },
         },
-      },
+      ],
     };
 
     let inputData = {
@@ -458,7 +464,10 @@ class InvoiceManagementBkav {
       this.data.success = false;
       return this.data;
     }
-
+    if (JSON.parse(JSON.parse(atob(JSON.parse(this.responseContent)?.d))?.Object)[0]?.Status) {
+      throw new BadRequestError(`Cơ quan thuế đang duyệt hóa đơn phát hành!!!`);
+    }
+    await cancelOrder(InvNo, cancelReason);
     this.data.success = true;
     return this.data;
   };

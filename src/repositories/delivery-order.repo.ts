@@ -98,6 +98,7 @@ const checkContStatus = async (VOYAGEKEY: string, CNTRNO: string) => {
     .leftJoin('DELIVER_ORDER', 'dto', 'cn.ROWGUID = dto.CONTAINER_ID')
     .where('cn.VOYAGEKEY = :voyagekey', { voyagekey: VOYAGEKEY })
     .andWhere('cn.CNTRNO = :cont', { cont: CNTRNO })
+    .andWhere('dto.IS_VALID = 1')
     .andWhere('dto.CONTAINER_ID is not null')
     .select(['cn.ROWGUID'])
     .getRawMany();
