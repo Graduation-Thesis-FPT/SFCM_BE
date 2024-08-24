@@ -43,4 +43,7 @@ export class DeliverOrderEntity extends BaseModel {
 
   @Column()
   IS_VALID: boolean;
+
+  @Column()
+  CAN_CANCEL: boolean;
 }

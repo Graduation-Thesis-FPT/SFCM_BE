@@ -1,6 +1,7 @@
 import { BadRequestError } from '../core/error.response';
 import { User } from '../entity/user.entity';
 import { getAllAvailableCell } from '../repositories/cell.repo';
+import { updateCanCancelImport } from '../repositories/delivery-order.repo';
 import {
   getAllImportTallyContainer,
   getImportTallyContainerInfoByCONTAINER_ID,
@@ -149,6 +150,7 @@ class JobQuantityCheckService {
         if (!isValid) {
           throw new BadRequestError(`Số lượng kiểm đếm không hợp lệ. Vui lòng kiểm tra lại`);
         }
+        updateCanCancelImport(insertData[0].PACKAGE_ID);
       }
     });
 

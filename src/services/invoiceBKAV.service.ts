@@ -464,9 +464,14 @@ class InvoiceManagementBkav {
       this.data.success = false;
       return this.data;
     }
-    if (JSON.parse(JSON.parse(atob(JSON.parse(this.responseContent)?.d))?.Object)[0]?.Status) {
-      throw new BadRequestError(`Cơ quan thuế đang duyệt hóa đơn phát hành!!!`);
+    try {
+      if (JSON.parse(JSON.parse(atob(JSON.parse(this.responseContent)?.d))?.Object)[0]?.Status) {
+        throw new BadRequestError(`Cơ quan thuế đang duyệt hủy hóa đơn!!!`);
+      }
+    } catch (err) {
+      throw new BadRequestError(`Cơ quan thuế đang duyệt hủy hóa đơn!!!`);
     }
+
     await cancelOrder(InvNo, cancelReason);
     this.data.success = true;
     return this.data;
