@@ -664,7 +664,8 @@ const cancelOrder = async (InvNo: string, cancelReason: string) => {
     .update(DeliverOrderEntity)
     .set({ IS_VALID: false })
     .where('INV_ID = :invno', { invno: InvNo })
-    .execute();
+    .execute()
+    .catch(err => console.log(err));
 
   await invNoRepository
     .createQueryBuilder()
@@ -672,6 +673,38 @@ const cancelOrder = async (InvNo: string, cancelReason: string) => {
     .set({ PAYMENT_STATUS: 'C', CANCEL_DATE: new Date(), CANCLE_REMARK: cancelReason })
     .where('INV_NO = :invno', { invno: InvNo })
     .execute();
+};
+
+const updateCanCancelImport = async (packageID: string) => {
+  const DE_ORDER_NO = await orderRepository
+    .createQueryBuilder('dt')
+    .leftJoin('DT_CNTR_MNF_LD', 'cn', 'dt.CONTAINER_ID = cn.ROWGUID')
+    .leftJoin('DT_PACKAGE_MNF_LD', 'pk', 'dt.CONTAINER_ID = pk.CONTAINER_ID')
+    .select(['dt.DE_ORDER_NO as DE_ORDER_NO'])
+    .where('pk.ROWGUID = :row', { row: packageID })
+    .andWhere('LEFT(dt.DE_ORDER_NO, 2) = :keystring', { keystring: 'NK' })
+    .getRawMany();
+  if (DE_ORDER_NO.length) {
+    return await orderRepository
+      .createQueryBuilder()
+      .update(DeliverOrderEntity)
+      .set({ CAN_CANCEL: false })
+      .where('DE_ORDER_NO = :orderno', { orderno: DE_ORDER_NO[0]?.DE_ORDER_NO })
+      .execute()
+      .catch(err => console.log(err));
+  } else {
+    return 0;
+  }
+};
+
+const updateCanCancelExport = async (packageID: string) => {
+  return await orderRepository
+    .createQueryBuilder()
+    .update(DeliverOrderEntity)
+    .set({ CAN_CANCEL: false })
+    .where('PACKAGE_ID = :packageid', { packageid: packageID })
+    .execute()
+    .catch(err => console.log(err));
 };
 
 export type CancelInvoiceWhere = {
@@ -697,9 +730,10 @@ const getCancelInvoice = async (whereObj: CancelInvoiceWhere) => {
       'iv.PAYMENT_STATUS as PAYMENT_STATUS',
       'iv.CANCEL_DATE as CANCEL_DATE',
       'iv.CANCLE_REMARK as CANCLE_REMARK',
-    ]);
+    ])
+    .where('CAN_CANCEL = 1');
   if (whereObj.CUSTOMER_CODE) {
-    query = query.where('iv.PAYER = :cus', { cus: whereObj.CUSTOMER_CODE });
+    query = query.andWhere('iv.PAYER = :cus', { cus: whereObj.CUSTOMER_CODE });
   }
 
   if (whereObj.from && whereObj.to) {
@@ -740,4 +774,6 @@ export {
   getReportInExOrder,
   cancelOrder,
   getCancelInvoice,
+  updateCanCancelImport,
+  updateCanCancelExport,
 };

@@ -4,6 +4,7 @@ import { ContainerEntity } from '../entity/container.entity';
 import { Package as PackageEntity } from '../entity/package.entity';
 import { Package } from '../models/packageMnfLd.model';
 import { palletRepository } from './pallet.repo';
+import { updateCanCancelExport } from './delivery-order.repo';
 
 export const containerRepository = mssqlConnection.getRepository(ContainerEntity);
 export const packageRepository = mssqlConnection.getRepository(PackageEntity);
@@ -62,6 +63,7 @@ const updatePackageTimeIn = async (packageData: Package, createBy: string) => {
 };
 
 const updatePackageTimeOut = async (packageData: Package, createBy: string) => {
+  await updateCanCancelExport(packageData.ROWGUID);
   return await packageRepository
     .createQueryBuilder('package')
     .update(PackageEntity)
