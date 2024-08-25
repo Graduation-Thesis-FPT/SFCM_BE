@@ -42,7 +42,7 @@ const authentication = asyncHandler(async (req: Request, res: Response, next: Ne
     if (!user.IS_ACTIVE) {
       throw new BadRequestError('Tài khoản đã bị khóa');
     }
-
+    console.log('user', user);
     res.locals.user = user;
     next();
   } catch (error) {

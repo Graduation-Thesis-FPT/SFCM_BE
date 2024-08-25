@@ -11,11 +11,11 @@ router.use(authentication);
 
 router.post(
   '',
-  // asyncHandler(grantPermission),
+  asyncHandler(grantPermission),
   validateItemTypeRequest,
   asyncHandler(itemtypeController.createItemType),
 );
-router.delete('', asyncHandler(itemtypeController.deleteItemType));
+router.delete('', asyncHandler(grantPermission), asyncHandler(itemtypeController.deleteItemType));
 router.get('', asyncHandler(itemtypeController.getItemType));
 
 export default router;

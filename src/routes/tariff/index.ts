@@ -8,18 +8,9 @@ import { validateTariffRequest } from '../../middlewares/helpers/tariffValidator
 const router = Router();
 
 router.use(authentication);
-router.get('', asyncHandler(grantPermission), asyncHandler(tariffController.getTariff));
-// router.get(
-//   '/template',
-//   asyncHandler(grantPermission),
-//   asyncHandler(tariffController.getAllTariffTemplate),
-// );
+router.get('', asyncHandler(tariffController.getTariff));
 
-router.get(
-  '/filter',
-  asyncHandler(grantPermission),
-  asyncHandler(tariffController.getTariffByTemplate),
-);
+router.get('/filter', asyncHandler(tariffController.getTariffByTemplate));
 router.patch(
   '',
   asyncHandler(grantPermission),

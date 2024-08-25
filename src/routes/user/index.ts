@@ -17,8 +17,16 @@ router.patch(
   asyncHandler(grantPermission),
   asyncHandler(userController.deactivateUser),
 );
-router.patch('/active/:id', asyncHandler(userController.activateUser));
-router.patch('/:userId', asyncHandler(userController.updateUser));
-router.patch('/reset-password/:userId', asyncHandler(userController.resetPasswordById));
+router.patch(
+  '/active/:id',
+  asyncHandler(grantPermission),
+  asyncHandler(userController.activateUser),
+);
+router.patch('/:userId', asyncHandler(grantPermission), asyncHandler(userController.updateUser));
+router.patch(
+  '/reset-password/:userId',
+  asyncHandler(grantPermission),
+  asyncHandler(userController.resetPasswordById),
+);
 
 export default router;

@@ -15,7 +15,7 @@ router.post(
   validateWarehouseRequest,
   asyncHandler(warehouseController.createWarehouse),
 );
-router.delete('', asyncHandler(warehouseController.deleteWarehouse));
+router.delete('', asyncHandler(grantPermission), asyncHandler(warehouseController.deleteWarehouse));
 router.get('', asyncHandler(warehouseController.getWarehouse));
 
 export default router;

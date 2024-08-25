@@ -15,7 +15,11 @@ router.post(
   validatePackageUnitRequest,
   asyncHandler(packageUnitController.createPackageUnit),
 );
-router.delete('', asyncHandler(packageUnitController.deletePackageUnit));
+router.delete(
+  '',
+  asyncHandler(grantPermission),
+  asyncHandler(packageUnitController.deletePackageUnit),
+);
 router.get('', asyncHandler(packageUnitController.getPackageUnit));
 
 export default router;

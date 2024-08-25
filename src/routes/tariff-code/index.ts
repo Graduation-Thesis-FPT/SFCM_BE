@@ -8,7 +8,7 @@ import { grantPermission } from '../../middlewares';
 const router = Router();
 
 router.use(authentication);
-router.get('', asyncHandler(grantPermission), asyncHandler(tariffCodeController.getTariffCode));
+router.get('', asyncHandler(tariffCodeController.getTariffCode));
 router.post(
   '',
   asyncHandler(grantPermission),

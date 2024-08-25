@@ -8,11 +8,7 @@ const router = Router();
 
 router.use(authentication);
 
-router.get(
-  '/:METHOD_CODE',
-  asyncHandler(grantPermission),
-  asyncHandler(configAttachSrvController.getConfigAttachSrvByMethodCode),
-);
+router.get('/:METHOD_CODE', asyncHandler(configAttachSrvController.getConfigAttachSrvByMethodCode));
 
 router.post(
   '/:METHOD_CODE',
