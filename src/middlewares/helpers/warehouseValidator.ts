@@ -9,15 +9,17 @@ const validateWarehouse = (data: WareHouse) => {
       'any.required': 'Mã kho không được để trống',
       'string.empty': 'Mã kho không được để trống',
     }),
-    WAREHOUSE_NAME: Joi.string().uppercase().trim().required().messages({
-      'any.required': 'Tên mã kho không được để trống',
-      'string.empty': 'Tên mã kho không được để trống',
+    WAREHOUSE_NAME: Joi.string().trim().required().messages({
+      'any.required': 'Tên kho không được để trống',
+      'string.empty': 'Tên kho không được để trống',
     }),
-    ACREAGE: Joi.number().required().positive().messages({
-      'number.positive': 'Diện tích kho phải lớn hơn 0',
-      'number.base': 'Diện tích kho không được để trống',
-      'number.empty': 'Diện tích kho không được để trống',
-    }),
+    ACREAGE: Joi.number()
+      .optional()
+      .allow('')
+      .custom((value, helpers) => {
+        return 0;
+      }),
+    STATUS: Joi.boolean().optional(),
   });
 
   return blockSchema.validate(data);
@@ -26,14 +28,17 @@ const validateWarehouse = (data: WareHouse) => {
 const validateWarehouseRequest = (req: Request, res: Response, next: NextFunction) => {
   const { insert, update } = req.body;
 
+  const insertData = [];
+  const updateData = [];
+
   if (insert) {
     for (const data of insert) {
       const { error, value } = validateWarehouse(data);
 
       if (error) {
-        console.log(error.details);
         throw new BadRequestError(error.message);
       }
+      insertData.push(value);
     }
   }
 
@@ -42,12 +47,12 @@ const validateWarehouseRequest = (req: Request, res: Response, next: NextFunctio
       const { error, value } = validateWarehouse(data);
 
       if (error) {
-        console.log(error.details);
         throw new BadRequestError(error.message);
       }
+      updateData.push(value);
     }
   }
-  res.locals.requestData = req.body;
+  res.locals.requestData = { insert: insertData, update: updateData };
   next();
 };
 

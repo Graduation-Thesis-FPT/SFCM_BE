@@ -61,12 +61,12 @@ class WarehouseService {
     for (const warehouseCode of warehouseCodeList) {
       const warehouse = await findWarehouse(warehouseCode);
       if (!warehouse) {
-        throw new BadRequestError(`Warehouse with ID ${warehouse.WAREHOUSE_CODE} not exist!`);
+        throw new BadRequestError(`Mã kho ${warehouse.WAREHOUSE_CODE} không tồn tại!`);
       }
 
       if (warehouse.STATUS) {
         throw new BadRequestError(
-          `Không thể xóa kho ${warehouse.WAREHOUSE_NAME} : tồn tại hàng hóa!`,
+          `Không thể xóa kho ${warehouse.WAREHOUSE_NAME} vì kho đang chứa hàng!`,
         );
       }
     }

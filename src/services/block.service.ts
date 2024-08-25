@@ -30,7 +30,7 @@ class BlockService {
         if (isDuplicateBlock) {
           throw new BadRequestError(
             // `Không thể thêm dãy ${blockInfo.BLOCK_NAME} ở kho ${blockInfo.WAREHOUSE_CODE} (Đã tồn tại)`,
-            `Mã dãy ${blockInfo.BLOCK_CODE} (Đã tồn tại)`,
+            `Mã dãy ${blockInfo.BLOCK_CODE} đã tồn tại`,
           );
         }
 
@@ -67,7 +67,7 @@ class BlockService {
     const cellArrStatus = await checkCellStatus(blockListID);
     if (cellArrStatus.length) {
       throw new BadRequestError(
-        `Không thể xóa mã dãy ${cellArrStatus.map(e => e.BLOCK_CODE).join(', ')} đang hoạt động`,
+        `Không thể xóa mã dãy ${cellArrStatus.map(e => e.BLOCK_CODE).join(', ')} vì dãy đang hoạt động`,
       );
     }
     return await deleteBlockMany(blockListID);
