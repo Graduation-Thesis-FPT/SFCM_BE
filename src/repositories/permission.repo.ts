@@ -43,20 +43,6 @@ const getAllPermission = async (role: string): Promise<Permission[]> => {
 };
 
 const updatePermission = async (permissions: Partial<Permission>[], updateBy: User) => {
-  // permissions.forEach(permission => {
-  //   await permissionRepository
-  //     .createQueryBuilder()
-  //     .update(PermissionEntity)
-  //     .set({
-  //       IS_ADD_NEW: permission.IS_ADD_NEW,
-  //       IS_DELETE: permission.IS_DELETE,
-  //       IS_VIEW: permission.IS_VIEW,
-  //       IS_MODIFY: permission.IS_MODIFY,
-  //     })
-  //     .where('ROWGUID= :ROWGUID', { ROWGUID: permission.ROWGUID })
-  //     .execute();
-  // });
-
   const result = [];
   for (const per of permissions) {
     const response = await permissionRepository

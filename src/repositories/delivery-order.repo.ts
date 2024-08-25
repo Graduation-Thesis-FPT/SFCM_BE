@@ -227,9 +227,9 @@ const saveInOrder = async (
     EXP_DATE: reqData[0].EXP_DATE,
     TOTAL_CBM: totalCbm,
     JOB_CHK: false,
-    CREATE_BY: 'sql',
+    CREATE_BY: createBy.ROWGUID,
     CREATE_DATE: new Date(),
-    UPDATE_BY: 'sql',
+    UPDATE_BY: createBy.ROWGUID,
     UPDATE_DATE: new Date(),
   };
 
@@ -242,9 +242,9 @@ const saveInOrder = async (
     LOT_NO: idx + 1,
     // QUANTITY_CHK: false,
     REF_PAKAGE: item.ROWGUID,
-    CREATE_BY: 'sql',
+    CREATE_BY: createBy.ROWGUID,
     CREATE_DATE: new Date(),
-    UPDATE_BY: 'sql',
+    UPDATE_BY: createBy.ROWGUID,
     UPDATE_DATE: new Date(),
   }));
 
@@ -257,9 +257,9 @@ const saveInOrder = async (
     TAMOUNT: paymentInfoHeader.TAMOUNT,
     PAYMENT_STATUS: 'Y',
     ACC_CD: paymentInfoHeader.ACC_CD,
-    CREATE_BY: 'sql',
+    CREATE_BY: createBy.ROWGUID,
     CREATE_DATE: new Date(),
-    UPDATE_BY: 'sql',
+    UPDATE_BY: createBy.ROWGUID,
     UPDATE_DATE: new Date(),
   };
 
@@ -380,9 +380,9 @@ const saveExOrder = async (
     EXP_DATE: reqData[0].EXP_DATE,
     TOTAL_CBM: totalCbm,
     JOB_CHK: false,
-    CREATE_BY: 'sql',
+    CREATE_BY: createBy.ROWGUID,
     CREATE_DATE: new Date(),
-    UPDATE_BY: 'sql',
+    UPDATE_BY: createBy.ROWGUID,
     UPDATE_DATE: new Date(),
   };
 
@@ -395,9 +395,9 @@ const saveExOrder = async (
     LOT_NO: idx + 1,
     // QUANTITY_CHK: false,
     REF_PAKAGE: item.ROWGUID,
-    CREATE_BY: 'sql',
+    CREATE_BY: createBy.ROWGUID,
     CREATE_DATE: new Date(),
-    UPDATE_BY: 'sql',
+    UPDATE_BY: createBy.ROWGUID,
     UPDATE_DATE: new Date(),
   }));
 
@@ -410,9 +410,9 @@ const saveExOrder = async (
     TAMOUNT: paymentInfoHeader.TAMOUNT,
     PAYMENT_STATUS: 'Y',
     ACC_CD: paymentInfoHeader.ACC_CD,
-    CREATE_BY: 'sql',
+    CREATE_BY: createBy.ROWGUID,
     CREATE_DATE: new Date(),
-    UPDATE_BY: 'sql',
+    UPDATE_BY: createBy.ROWGUID,
     UPDATE_DATE: new Date(),
   };
 

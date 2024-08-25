@@ -15,7 +15,7 @@ router.post(
   validateBlockRequest,
   asyncHandler(blockController.createAndUpdateBlock),
 );
-router.delete('', asyncHandler(blockController.deleteBlock));
+router.delete('', asyncHandler(grantPermission), asyncHandler(blockController.deleteBlock));
 router.get('', asyncHandler(blockController.getBlock));
 router.get('/cell', asyncHandler(blockController.getCell));
 

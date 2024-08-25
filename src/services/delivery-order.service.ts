@@ -39,7 +39,7 @@ class DeliveryOrderService {
     }
     const checkStatus = await checkContStatus(VOYAGEKEY, CNTRNO);
     if (!checkStatus) {
-      throw new BadRequestError(`Số cont ${CNTRNO} đã làm lệnh!`);
+      throw new BadRequestError(`Số container ${CNTRNO} đã làm lệnh!`);
     }
 
     return await getManifestPackage(VOYAGEKEY, CNTRNO);

@@ -16,6 +16,6 @@ router.post(
   asyncHandler(customerController.createAndUpdateCustomer),
 );
 router.delete('', asyncHandler(grantPermission), asyncHandler(customerController.deleteCustomer));
-router.get('', asyncHandler(grantPermission), asyncHandler(customerController.getCustomer));
+router.get('', asyncHandler(customerController.getCustomer));
 
 export default router;

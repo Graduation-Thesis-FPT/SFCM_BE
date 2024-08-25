@@ -8,22 +8,8 @@ import { validateDiscountTariffRequest } from '../../middlewares/helpers/discoun
 const router = Router();
 
 router.use(authentication);
-router.get(
-  '',
-  asyncHandler(grantPermission),
-  asyncHandler(discountTariffController.getDiscountTariff),
-);
-// router.get(
-//   '/template',
-//   asyncHandler(grantPermission),
-//   asyncHandler(discountTariffController.getAllTariffTemplate),
-// );
-
-router.get(
-  '/filter',
-  asyncHandler(grantPermission),
-  asyncHandler(discountTariffController.getDiscountTariffByTemplate),
-);
+router.get('', asyncHandler(discountTariffController.getDiscountTariff));
+router.get('/filter', asyncHandler(discountTariffController.getDiscountTariffByTemplate));
 router.post(
   '',
   asyncHandler(grantPermission),
