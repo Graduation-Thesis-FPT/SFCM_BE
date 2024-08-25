@@ -16,7 +16,7 @@ const validateInsertBlock = (data: Block) => {
       'string.empty': 'Mã dãy không được để trống #thêm',
       'string.base': 'Mã dãy không được để trống #thêm',
     }),
-    BLOCK_NAME: Joi.string().uppercase().trim().required().messages({
+    BLOCK_NAME: Joi.string().trim().required().messages({
       'any.required': 'Tên dãy không được để trống #thêm',
       'string.empty': 'Tên dãy không được để trống #thêm',
       'string.base': 'Tên dãy không được để trống #thêm',
