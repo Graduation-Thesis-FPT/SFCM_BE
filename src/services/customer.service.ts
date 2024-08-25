@@ -7,6 +7,7 @@ import {
   deleteCustomerMany,
   findCustomer,
   findCustomerByCode,
+  findCustomerTaxCode,
   getAllCustomer,
   updateCustomer,
 } from '../repositories/customer.repo';
@@ -25,6 +26,16 @@ class CustomerService {
     await manager.transaction(async transactionalEntityManager => {
       if (insertData) {
         for (const customerInfo of insertData) {
+          const isValidCustomerType = await findCustomerTypeByCode(
+            customerInfo.CUSTOMER_TYPE_CODE,
+            transactionalEntityManager,
+          );
+          if (!isValidCustomerType) {
+            throw new BadRequestError(
+              `Mã loại khách hàng ${customerInfo.CUSTOMER_TYPE_CODE} không hợp lệ`,
+            );
+          }
+
           const customer = await findCustomerByCode(
             customerInfo.CUSTOMER_CODE,
             transactionalEntityManager,
@@ -33,16 +44,16 @@ class CustomerService {
             throw new BadRequestError(`Mã khách hàng ${customer.CUSTOMER_CODE} đã tồn tại`);
           }
 
-          const isValidCustomerType = await findCustomerTypeByCode(
-            customerInfo.CUSTOMER_TYPE_CODE,
+          const custByTaxCode = await findCustomerTaxCode(
+            customerInfo.TAX_CODE,
             transactionalEntityManager,
           );
-
-          if (!isValidCustomerType) {
+          if (custByTaxCode) {
             throw new BadRequestError(
-              `Mã loại khách hàng ${customerInfo.CUSTOMER_TYPE_CODE} không hợp lệ`,
+              `Mã số thuế ${customerInfo.TAX_CODE} đã được sử dụng bởi khách hàng ${custByTaxCode.CUSTOMER_CODE}`,
             );
           }
+
           const foundUser = await findUserByUserName(customerInfo.EMAIL);
           if (foundUser) {
             throw new BadRequestError(
@@ -64,6 +75,7 @@ class CustomerService {
             EMAIL: customer.EMAIL,
             FULLNAME: customer.CUSTOMER_NAME,
             ROLE_CODE: 'customer',
+            ADDRESS: customer.ADDRESS,
             IS_ACTIVE: customer.IS_ACTIVE,
             CREATE_BY: createBy.ROWGUID,
             UPDATE_BY: createBy.ROWGUID,
@@ -104,14 +116,28 @@ class CustomerService {
             customerInfo.CUSTOMER_TYPE_CODE,
             transactionalEntityManager,
           );
-
           if (!isValidCustomerType) {
             throw new BadRequestError(
               `Mã loại khách hàng ${customerInfo.CUSTOMER_TYPE_CODE} không hợp lệ`,
             );
           }
+
           if (!customerInfo.EMAIL) {
             throw new BadRequestError(`Email không được để trống`);
+          }
+
+          const custByTaxCode = await findCustomerTaxCode(
+            customerInfo.TAX_CODE,
+            transactionalEntityManager,
+          );
+          if (
+            custByTaxCode &&
+            custByTaxCode.CUSTOMER_CODE !== customerInfo.CUSTOMER_CODE &&
+            custByTaxCode.TAX_CODE === customerInfo.TAX_CODE
+          ) {
+            throw new BadRequestError(
+              `Mã số thuế ${customerInfo.TAX_CODE} đã được sử dụng bởi khách hàng ${custByTaxCode.CUSTOMER_CODE}`,
+            );
           }
 
           customerInfo.UPDATE_BY = createBy.ROWGUID;

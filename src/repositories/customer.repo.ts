@@ -48,6 +48,13 @@ const findCustomerByCode = async (
     .getOne();
 };
 
+const findCustomerTaxCode = async (TAX_CODE: string, transactionalEntityManager: EntityManager) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(CustomerEntity, 'cust')
+    .where('cust.TAX_CODE = :TAX_CODE', { TAX_CODE: TAX_CODE })
+    .getOne();
+};
+
 const findCustomer = async (customerCode: string) => {
   return await customerRepository
     .createQueryBuilder('customer')
@@ -110,4 +117,5 @@ export {
   findCustomerByUserName,
   getCustomers,
   getCustomersWithUserNames,
+  findCustomerTaxCode,
 };
