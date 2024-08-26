@@ -29,4 +29,5 @@ export class PalletStockEntity extends BaseModel {
 
   @Column()
   NOTE: string;
+  PACKAGE_ID: any;
 }

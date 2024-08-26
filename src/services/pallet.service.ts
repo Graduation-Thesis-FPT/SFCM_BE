@@ -22,6 +22,7 @@ import {
   updatePackageTimeIn,
   updatePackageTimeOut,
 } from '../repositories/package.repo';
+import { checkIsValidExportPallet } from '../repositories/delivery-order.repo';
 
 class PalletService {
   static placePalletIntoCell = async (data: PalletReq, createBy: User) => {
@@ -123,6 +124,11 @@ class PalletService {
   static exportPallet = async (data: PalletReq, createBy: User) => {
     const pallet = await findPallet(data.PALLET_NO);
 
+    const isValidExport = await checkIsValidExportPallet(data.PALLET_NO);
+    if (isValidExport) {
+      throw new BadRequestError(`Lệnh xuất kho đã được hủy, không thể xuất pallet!`);
+    }
+
     if (!pallet) {
       throw new BadRequestError(`Mã Pallet không hợp lệ!`);
     }
@@ -145,6 +151,10 @@ class PalletService {
       updateExportPallet(null, data.PALLET_NO, createBy),
       updateOldCellStatus(pallet.CELL_ID),
     ]);
+  };
+
+  static testValidPallet = async (palletNO: string) => {
+    return await checkIsValidExportPallet(palletNO);
   };
 }
 export default PalletService;

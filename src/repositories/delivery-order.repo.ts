@@ -24,6 +24,9 @@ import { genOrderNo } from '../utils/genKey';
 import { containerRepository } from './container.repo';
 import { methodRepository } from './method.repo';
 import { Tariff } from '../models/tariff.model';
+import { PalletStockEntity } from '../entity/pallet-stock.entity';
+import { JobQuantityCheckEntity } from '../entity/job-quantity-check.entity';
+import { BadRequestError } from '../core/error.response';
 
 const orderRepository = mssqlConnection.getRepository(DeliverOrderEntity);
 const orderDtlRepository = mssqlConnection.getRepository(DeliveryOrderDtlEntity);
@@ -33,6 +36,8 @@ const tariffRepository = mssqlConnection.getRepository(TariffEntity);
 const tariffDisRepository = mssqlConnection.getRepository(TariffDisEntity);
 const invNoRepository = mssqlConnection.getRepository(InvNoEntity);
 const invNoDtlRepository = mssqlConnection.getRepository(InvNoDtlEntity);
+const palletRepository = mssqlConnection.getRepository(PalletStockEntity);
+const jobQtyRepository = mssqlConnection.getRepository(JobQuantityCheckEntity);
 
 const createfakeOrderData = async (data: DeliverOrder[]) => {
   const order = orderRepository.create(data);
@@ -780,6 +785,28 @@ const getCancelInvoice = async (whereObj: CancelInvoiceWhere) => {
   return await query.getRawMany();
 };
 
+const checkIsValidExportPallet = async (palletNo: string) => {
+  const pallet = await palletRepository
+    .createQueryBuilder('pallet')
+    .innerJoin('JOB_QUANTITY_CHECK', 'job', 'job.ROWGUID = pallet.JOB_QUANTITY_ID')
+    .select(['job.PACKAGE_ID as PACKAGE_ID'])
+    .where('pallet.PALLET_NO = :palletNo', { palletNo })
+    .getRawOne();
+
+  console.log(pallet);
+
+  const order = await orderRepository
+    .createQueryBuilder('order')
+    .where('order.PACKAGE_ID = :packageId', { packageId: pallet.PACKAGE_ID })
+    .getOne();
+
+  if (!order) {
+    throw new BadRequestError('Pallet No is not valid');
+  }
+
+  return order.IS_VALID;
+};
+
 export {
   checkContStatus,
   checkPackageStatusOrder,
@@ -807,4 +834,5 @@ export {
   updateCanCancelImport,
   updateCanCancelExport,
   checkPackageCanCelOrder,
+  checkIsValidExportPallet,
 };
