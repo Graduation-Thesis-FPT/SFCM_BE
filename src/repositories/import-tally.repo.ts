@@ -21,11 +21,14 @@ export const getAllImportTallyContainer = async () => {
       'deo.CONTAINER_ID as CONTAINER_ID',
       'deo.ISSUE_DATE as ISSUE_DATE',
       'deo.EXP_DATE as EXP_DATE',
+      'vessel.VESSEL_NAME as VESSEL_NAME',
+      'vessel.INBOUND_VOYAGE as INBOUND_VOYAGE',
     ])
     .innerJoin('DT_CNTR_MNF_LD', 'cont', 'deo.CONTAINER_ID = cont.ROWGUID')
     .innerJoin('DT_PACKAGE_MNF_LD', 'pk', 'pk.CONTAINER_ID = cont.ROWGUID')
     .leftJoin('JOB_QUANTITY_CHECK', 'job', 'job.PACKAGE_ID = pk.ROWGUID')
     .leftJoin('DT_PALLET_STOCK', 'pallet', 'pallet.JOB_QUANTITY_ID = job.ROWGUID')
+    .innerJoin('DT_VESSEL_VISIT', 'vessel', 'vessel.VOYAGEKEY = cont.VOYAGEKEY')
     .where('deo.DE_ORDER_NO LIKE :orderNo', { orderNo: '%NK%' })
     .andWhere('deo.IS_VALID = 1')
     .andWhere(
@@ -39,19 +42,9 @@ export const getAllImportTallyContainer = async () => {
     .addGroupBy('deo.CONTAINER_ID')
     .addGroupBy('deo.ISSUE_DATE')
     .addGroupBy('deo.EXP_DATE')
+    .addGroupBy('vessel.VESSEL_NAME')
+    .addGroupBy('vessel.INBOUND_VOYAGE')
     .getRawMany();
-  // return await tbDeliverOrder
-  //   .createQueryBuilder('do')
-  //   .leftJoinAndSelect('DT_CNTR_MNF_LD', 'cn', 'do.CONTAINER_ID = cn.ROWGUID')
-  //   .where('do.JOB_CHK = :job_chk', { job_chk: 0 })
-  //   .andWhere('do.DE_ORDER_NO like :de_order_no', { de_order_no: 'NK%' })
-  //   .select([
-  //     'cn.CNTRNO as CNTRNO',
-  //     'do.CONTAINER_ID as CONTAINER_ID',
-  //     'do.ISSUE_DATE as ISSUE_DATE',
-  //     'do.EXP_DATE as EXP_DATE',
-  //   ])
-  //   .getRawMany();
 };
 
 export const getImportTallyContainerInfoByCONTAINER_ID = async (CONTAINER_ID: string) => {
