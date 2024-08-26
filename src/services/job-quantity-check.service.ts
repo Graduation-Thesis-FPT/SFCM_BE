@@ -159,6 +159,8 @@ class JobQuantityCheckService {
         if (!isValid) {
           throw new BadRequestError(`Số lượng kiểm đếm không hợp lệ. Vui lòng kiểm tra lại`);
         }
+      }
+      if (insertData.length) {
         updateCanCancelImport(insertData[0].PACKAGE_ID);
       }
     });
