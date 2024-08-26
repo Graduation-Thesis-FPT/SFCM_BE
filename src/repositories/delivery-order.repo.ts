@@ -803,13 +803,19 @@ const checkIsValidExportPallet = async (palletNo: string) => {
   const order = await orderRepository
     .createQueryBuilder('order')
     .where('order.PACKAGE_ID = :packageId', { packageId: pallet.PACKAGE_ID })
-    .getOne();
+    .getMany();
 
   if (!order) {
     throw new BadRequestError('Pallet không hợp lệ!');
   }
-
-  return order.IS_VALID;
+  if (order.length) {
+    return order.filter(e => e.IS_VALID == true).length
+      ? order.filter(e => e.IS_VALID == true)[0].IS_VALID
+      : false;
+  } else {
+    return false;
+  }
+  return order[0].IS_VALID;
 };
 
 export {
