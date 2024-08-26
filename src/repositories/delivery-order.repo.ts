@@ -638,12 +638,16 @@ const getReportInExOrder = async (whereObj: ReportInEx) => {
     .createQueryBuilder('dto')
     .leftJoin('DT_CNTR_MNF_LD', 'cn', 'cn.ROWGUID = dto.CONTAINER_ID')
     .leftJoin('BS_CUSTOMER', 'cus', 'cus.CUSTOMER_CODE = dto.CUSTOMER_CODE')
+    .leftJoin('INV_VAT', 'iv', 'iv.INV_NO = dto.INV_ID')
     .select([
       'dto.DE_ORDER_NO as DE_ORDER_NO',
       'dto.INV_ID as INV_ID',
       'cn.CNTRNO as CNTRNO',
       'cus.CUSTOMER_NAME as CUSTOMER_NAME',
       'dto.ISSUE_DATE as ISSUE_DATE',
+      'dto.IS_VALID as IS_VALID',
+      'iv.CANCLE_REMARK as CANCEL_REMARK',
+      'iv.CANCEL_DATE as CANCEL_DATE',
     ])
     .where('dto.ISSUE_DATE >= :fromDate', { fromDate: whereObj.fromDate })
     .andWhere('dto.ISSUE_DATE <= :toDate', { toDate: whereObj.toDate })

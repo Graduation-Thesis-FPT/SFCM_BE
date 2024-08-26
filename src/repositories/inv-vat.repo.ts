@@ -26,6 +26,9 @@ const getReportRevenue = async (whereObj: whereRevenue) => {
       'iv.PAYER as PAYER',
       'iv.ACC_CD as ACC_CD',
       'iv.PAYMENT_STATUS as PAYMENT_STATUS',
+      'iv.CANCLE_REMARK as CANCLE_REMARK',
+      'iv.CANCEL_DATE as CANCEL_DATE',
+      'dl.IS_VALID as IS_VALID',
       'cus.CUSTOMER_NAME as CUSTOMER_NAME',
     ])
     .where('iv.INV_DATE >= :fromDate', { fromDate: whereObj.fromDate })
