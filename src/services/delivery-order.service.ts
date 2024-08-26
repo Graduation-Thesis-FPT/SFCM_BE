@@ -242,7 +242,7 @@ class DeliveryOrderService {
       for (let i = 0; i < services.length; i++) {
         const serviceTariffs = await getServicesTariff(
           services[i],
-          addInfo.ITEM_TYPE_CODE_CNTR,
+          addInfo.ITEM_TYPE_CODE,
           addInfo.PAYER,
         );
         if (!serviceTariffs.length) {
