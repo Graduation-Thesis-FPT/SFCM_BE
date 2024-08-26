@@ -262,10 +262,10 @@ class EmailService {
                             <div class="info-item">
                               <strong>Website</strong>
                               <a
-                                href="http://localhost:2024/login"
+                                href="${data.webUrl}"
                                 style="color: blue;"
                                 target="_blank"
-                                >http://localhost:2024/login</a
+                                >${data.webUrl}</a
                               >
                             </div>
                           </div>

@@ -238,6 +238,7 @@ class DeliveryOrderService {
 
     //Tính tiền dịch vụ đính kèm
     if (services.length) {
+      console.log(addInfo);
       for (let i = 0; i < services.length; i++) {
         const serviceTariffs = await getServicesTariff(
           services[i],

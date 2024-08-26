@@ -21,7 +21,6 @@ const grantPermission = async (req: Request, res: Response, next: NextFunction) 
     DELETE: 'IS_DELETE',
     PATCH: 'IS_MODIFY',
   };
-  console.log('test middleware: ', res.locals);
   const { ROLE_CODE } = res.locals.user;
   const menuCode = req.headers[HEADER.MENU_CODE] as string;
   console.log(menuCode);
@@ -33,7 +32,6 @@ const grantPermission = async (req: Request, res: Response, next: NextFunction) 
   const method = req.method as HttpMethod;
 
   const permission = await checkPermissionAccessMenu(ROLE_CODE, menuCode);
-  console.log(permission);
 
   if (!permission) {
     throw new BadRequestError(ERROR_MESSAGE.YOU_DO_NOT_HAVE_PERMISSION_TO_ACCESS_THIS_PAGE);

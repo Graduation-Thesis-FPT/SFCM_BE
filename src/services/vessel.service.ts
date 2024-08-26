@@ -5,8 +5,11 @@ import { Vessel, VesselList } from '../models/vessel.model';
 import {
   createVessel,
   deleteVesselMany,
+  findContainerByVoyageKey,
+  findContainerByVoyageKeyy,
   findVessel,
   findVesselByCode,
+  findVesselInBoundVoyage,
   getAllVessel,
   updateVessel,
 } from '../repositories/vessel.repo';
@@ -42,6 +45,15 @@ class VesselService {
             throw new BadRequestError(`Mã tàu ${vessel.VOYAGEKEY} đã tồn tại`);
           }
 
+          const isDupicateInboundVoyage = await findVesselInBoundVoyage(
+            vesselInfo.INBOUND_VOYAGE,
+            transactionalEntityManager,
+          );
+
+          if (isDupicateInboundVoyage) {
+            throw new BadRequestError(`Chuyến nhập ${vesselInfo.INBOUND_VOYAGE} đã bị trùng`);
+          }
+
           processVesselInfo(vesselInfo);
         }
         newCreatedVessel = await createVessel(insertData, transactionalEntityManager);
@@ -54,7 +66,20 @@ class VesselService {
             throw new BadRequestError(`Mã tàu ${vesselInfo.VOYAGEKEY} không hợp lệ`);
           }
 
-          processVesselInfo(vesselInfo);
+          const isValidUpdate = await findContainerByVoyageKey(
+            vesselInfo.VOYAGEKEY,
+            transactionalEntityManager,
+          );
+
+          if (isValidUpdate) {
+            throw new BadRequestError(`không thể cập nhật tàu khi đã khai báo container`);
+          }
+
+          if (vesselInfo.CallSign === '') vesselInfo.CallSign = null;
+          if (vesselInfo.IMO === '') vesselInfo.IMO = null;
+
+          vesselInfo.UPDATE_BY = createBy.ROWGUID;
+          vesselInfo.UPDATE_DATE = new Date();
         }
 
         newUpdatedVessel = await updateVessel(updateData, transactionalEntityManager);
@@ -67,15 +92,21 @@ class VesselService {
     };
   };
 
-  static deleteVessel = async (customerCodeList: string[]) => {
-    for (const customerCode of customerCodeList) {
-      const customer = await findVessel(customerCode.trim());
-      if (!customer) {
-        throw new BadRequestError(`EquipType with ID ${customerCode} not exist!`);
+  static deleteVessel = async (vesselCodeList: string[]) => {
+    for (const vesselCode of vesselCodeList) {
+      const vessel = await findVessel(vesselCode.trim());
+      if (!vessel) {
+        throw new BadRequestError(`Vessel with ID ${vesselCode} not exist!`);
+      }
+
+      const isValidUpdate = await findContainerByVoyageKeyy(vesselCode);
+      console.log(isValidUpdate);
+      if (isValidUpdate) {
+        throw new BadRequestError(`không thể xóa tàu khi đã khai báo container`);
       }
     }
 
-    return await deleteVesselMany(customerCodeList);
+    return await deleteVesselMany(vesselCodeList);
   };
 
   static getAllVessel = async (rule: { fromDate: Date; toDate: Date }) => {

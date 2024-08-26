@@ -1,9 +1,11 @@
 import { Between, EntityManager } from 'typeorm';
 import mssqlConnection from '../dbs/mssql.connect';
 import { Vessel as VesselEntity } from '../entity/vessel.entity';
+import { ContainerEntity } from '../entity/container.entity';
 import { Vessel } from '../models/vessel.model';
 
 export const vesselRepository = mssqlConnection.getRepository(VesselEntity);
+const containerReposiory = mssqlConnection.getRepository(ContainerEntity);
 
 const createVessel = async (
   vesselListInfo: Vessel[],
@@ -57,4 +59,45 @@ const getAllVessel = async (rule: { fromDate: Date; toDate: Date }) => {
   });
 };
 
-export { createVessel, updateVessel, findVesselByCode, deleteVesselMany, getAllVessel, findVessel };
+const findVesselInBoundVoyage = async (
+  vesselInboundVoyage: string,
+  transactionalEntityManager: EntityManager,
+) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(VesselEntity, 'vessel')
+    .where('vessel.INBOUND_VOYAGE = :vesselInboundVoyage', { vesselInboundVoyage })
+    .getOne();
+};
+
+const findContainerByVoyageKey = async (
+  voyageKey: string,
+  transactionalEntityManager: EntityManager,
+) => {
+  return await transactionalEntityManager
+    .createQueryBuilder(ContainerEntity, 'container')
+    .where('container.VOYAGEKEY = :voyageKey', {
+      voyageKey: voyageKey,
+    })
+    .getOne();
+};
+
+const findContainerByVoyageKeyy = async (voyageKey: string) => {
+  return await containerReposiory
+    .createQueryBuilder('container')
+    .where('container.VOYAGEKEY = :voyageKey', {
+      voyageKey: voyageKey,
+    })
+    .getOne();
+};
+
+export {
+  createVessel,
+  updateVessel,
+  findVesselByCode,
+  deleteVesselMany,
+  getAllVessel,
+  findVessel,
+  findVesselInBoundVoyage,
+  findContainerByVoyageKey,
+  findContainerByVoyageKeyy,
+};
