@@ -331,6 +331,7 @@ const checkPackageStatusOrder = async (whereExManifest: whereExManifest) => {
     .andWhere('pk.HOUSE_BILL = :pack', { pack: whereExManifest.HOUSE_BILL })
     .andWhere('cn.ROWGUID = :cntrno', { cntrno: whereExManifest.CONTAINER_ID })
     .andWhere('dto.PACKAGE_ID is not null')
+    .andWhere('dto.IS_VALID = 1')
     .select(['pk.ROWGUID'])
     .getRawMany();
   if (list.length) return false;
@@ -511,6 +512,7 @@ const getOrderContList = async (VOYAGEKEY: string) => {
       let temp = await orderRepository
         .createQueryBuilder()
         .where('CONTAINER_ID = :contid', { contid: results[i].CONTAINER_ID })
+        .andWhere('IS_VALID = 1')
         .andWhere('PACKAGE_ID = :package', { package: results[i].ROWGUID })
         .select(['PACKAGE_ID'])
         .getRawMany();
@@ -703,7 +705,9 @@ const checkPackageCanCelOrder = async (packageID: string) => {
     .andWhere('LEFT(dt.DE_ORDER_NO, 2) = :keystring', { keystring: 'NK' })
     .getRawMany();
   if (DE_ORDER_NO.length) {
-    return DE_ORDER_NO[0].IS_VALID;
+    return DE_ORDER_NO.filter(e => e.IS_VALID == true).length
+      ? DE_ORDER_NO.filter(e => e.IS_VALID == true)[0].IS_VALID
+      : false;
   } else {
     return false;
   }
