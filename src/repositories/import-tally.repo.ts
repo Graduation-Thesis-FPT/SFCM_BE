@@ -112,6 +112,11 @@ export const getAllJobQuantityCheckByPackageId = async (PACKAGE_ID: string) => {
   return await tbJobQuantityCheck
     .createQueryBuilder('job')
     .leftJoinAndSelect('DT_PALLET_STOCK', 'pl', 'job.ROWGUID = pl.JOB_QUANTITY_ID')
+    .leftJoinAndSelect('DT_PACKAGE_MNF_LD', 'pk', 'job.PACKAGE_ID = pk.ROWGUID')
+    .leftJoinAndSelect('BS_PACKAGE_UNIT', 'unit', 'pk.PACKAGE_UNIT_CODE = unit.PACKAGE_UNIT_CODE')
+    .leftJoinAndSelect('DT_CNTR_MNF_LD', 'cont', 'pk.CONTAINER_ID = cont.ROWGUID')
+    .leftJoinAndSelect('BS_ITEM_TYPE', 'item', 'pk.ITEM_TYPE_CODE = item.ITEM_TYPE_CODE')
+    .leftJoinAndSelect('DT_VESSEL_VISIT', 'vessel', 'vessel.VOYAGEKEY = cont.VOYAGEKEY')
     .where('job.PACKAGE_ID = :package_id', { package_id: PACKAGE_ID })
     .select([
       'job.ROWGUID as ROWGUID',
@@ -127,6 +132,16 @@ export const getAllJobQuantityCheckByPackageId = async (PACKAGE_ID: string) => {
       'pl.PALLET_WIDTH as PALLET_WIDTH',
       'pl.PALLET_HEIGHT as PALLET_HEIGHT',
       'pl.NOTE as NOTE',
+      'cont.CNTRNO as CNTRNO',
+      'cont.BILLOFLADING as BILLOFLADING',
+      'cont.CNTRSZTP as CNTRSZTP',
+      'vessel.VESSEL_NAME as VESSEL_NAME',
+      'vessel.INBOUND_VOYAGE as INBOUND_VOYAGE',
+      'vessel.ETA as ETA',
+      'pk.ITEM_TYPE_CODE as ITEM_TYPE_CODE',
+      'pk.PACKAGE_UNIT_CODE as PACKAGE_UNIT_CODE',
+      'item.ITEM_TYPE_NAME as ITEM_TYPE_NAME',
+      'unit.PACKAGE_UNIT_NAME as PACKAGE_UNIT_NAME',
     ])
     .orderBy('job.SEQ', 'ASC')
     .getRawMany();
