@@ -294,6 +294,8 @@ const saveInOrder = async (
     .createQueryBuilder('orderDtl')
     .leftJoinAndSelect('DT_PACKAGE_MNF_LD', 'pk', 'pk.ROWGUID = orderDtl.REF_PAKAGE')
     .leftJoinAndSelect('BS_ITEM_TYPE', 'item', 'pk.ITEM_TYPE_CODE = item.ITEM_TYPE_CODE')
+    .leftJoinAndSelect('DT_CNTR_MNF_LD', 'cn', 'pk.CONTAINER_ID = cn.ROWGUID')
+    .leftJoinAndSelect('DT_VESSEL_VISIT', 'vessel', 'vessel.VOYAGEKEY = cn.VOYAGEKEY')
     .where('orderDtl.ROWGUID IN (:...ids)', { ids: neworderDtlIds })
     .select([
       'orderDtl.ROWGUID as ROWGUID',
@@ -311,6 +313,9 @@ const saveInOrder = async (
       'pk.CARGO_PIECE as PK_CARGO_PIECE',
       'pk.NOTE as PK_NOTE',
       'item.ITEM_TYPE_NAME as ITEM_TYPE_NAME',
+      'cn.CNTRNO as CNTRNO',
+      'vessel.VESSEL_NAME as VESSEL_NAME',
+      'vessel.INBOUND_VOYAGE as INBOUND_VOYAGE',
     ])
     .orderBy('orderDtl.LOT_NO', 'ASC')
     .getRawMany();
@@ -448,6 +453,8 @@ const saveExOrder = async (
     .createQueryBuilder('orderDtl')
     .leftJoinAndSelect('DT_PACKAGE_MNF_LD', 'pk', 'pk.ROWGUID = orderDtl.REF_PAKAGE')
     .leftJoinAndSelect('BS_ITEM_TYPE', 'item', 'pk.ITEM_TYPE_CODE = item.ITEM_TYPE_CODE')
+    .leftJoinAndSelect('DT_CNTR_MNF_LD', 'cn', 'pk.CONTAINER_ID = cn.ROWGUID')
+    .leftJoinAndSelect('DT_VESSEL_VISIT', 'vessel', 'vessel.VOYAGEKEY = cn.VOYAGEKEY')
     .where('orderDtl.ROWGUID IN (:...ids)', { ids: neworderDtlIds })
     .select([
       'orderDtl.ROWGUID as ROWGUID',
@@ -465,6 +472,9 @@ const saveExOrder = async (
       'pk.CARGO_PIECE as PK_CARGO_PIECE',
       'pk.NOTE as PK_NOTE',
       'item.ITEM_TYPE_NAME as ITEM_TYPE_NAME',
+      'cn.CNTRNO as CNTRNO',
+      'vessel.VESSEL_NAME as VESSEL_NAME',
+      'vessel.INBOUND_VOYAGE as INBOUND_VOYAGE',
     ])
     .orderBy('orderDtl.LOT_NO', 'ASC')
     .getRawMany();
