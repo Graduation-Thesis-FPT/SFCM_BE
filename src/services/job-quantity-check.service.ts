@@ -1,7 +1,10 @@
 import { BadRequestError } from '../core/error.response';
 import { User } from '../entity/user.entity';
 import { getAllAvailableCell } from '../repositories/cell.repo';
-import { updateCanCancelImport } from '../repositories/delivery-order.repo';
+import {
+  checkPackageCanCelOrder,
+  updateCanCancelImport,
+} from '../repositories/delivery-order.repo';
 import {
   getAllImportTallyContainer,
   getImportTallyContainerInfoByCONTAINER_ID,
@@ -43,6 +46,12 @@ class JobQuantityCheckService {
 
     if (!insertData.length && !updateData.length) {
       throw new BadRequestError(`Không có dữ liệu để thực hiện thao tác. Vui lòng kiểm tra lại!`);
+    }
+    if (insertData.length) {
+      const checkCanceledOrder = await checkPackageCanCelOrder(insertData[0].PACKAGE_ID);
+      if (!checkCanceledOrder) {
+        throw new BadRequestError(`Lệnh đã được hủy, không thể kiểm đếm!`);
+      }
     }
 
     let newCreateData;

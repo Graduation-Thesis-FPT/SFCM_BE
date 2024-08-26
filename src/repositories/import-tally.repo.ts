@@ -27,6 +27,7 @@ export const getAllImportTallyContainer = async () => {
     .leftJoin('JOB_QUANTITY_CHECK', 'job', 'job.PACKAGE_ID = pk.ROWGUID')
     .leftJoin('DT_PALLET_STOCK', 'pallet', 'pallet.JOB_QUANTITY_ID = job.ROWGUID')
     .where('deo.DE_ORDER_NO LIKE :orderNo', { orderNo: '%NK%' })
+    .andWhere('deo.IS_VALID = 1')
     .andWhere(
       new Brackets((qb: any) => {
         qb.where('pallet.PALLET_STATUS IS NULL').orWhere('pallet.PALLET_STATUS = :status', {

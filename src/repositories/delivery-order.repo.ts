@@ -673,6 +673,35 @@ const cancelOrder = async (InvNo: string, cancelReason: string) => {
     .set({ PAYMENT_STATUS: 'C', CANCEL_DATE: new Date(), CANCLE_REMARK: cancelReason })
     .where('INV_NO = :invno', { invno: InvNo })
     .execute();
+
+  const packageID = await orderRepository
+    .createQueryBuilder('dt')
+    .innerJoin('DT_PACKAGE_MNF_LD', 'pk', 'pk.ROWGUID = dt.PACKAGE_ID')
+    .select(['dt.PACKAGE_ID as PACKAGE_ID'])
+    .where('INV_ID = :inv', { inv: InvNo })
+    .andWhere('LEFT(dt.DE_ORDER_NO, 2) = :keystring', { keystring: 'XK' })
+    .getRawMany();
+  if (packageID.length) {
+    await packageRepository
+      .update(packageID[0].PACKAGE_ID, { JOB_TYPE: 'NK' })
+      .catch(err => console.log(err));
+  }
+};
+
+const checkPackageCanCelOrder = async (packageID: string) => {
+  const DE_ORDER_NO = await orderRepository
+    .createQueryBuilder('dt')
+    .leftJoin('DT_CNTR_MNF_LD', 'cn', 'dt.CONTAINER_ID = cn.ROWGUID')
+    .leftJoin('DT_PACKAGE_MNF_LD', 'pk', 'dt.CONTAINER_ID = pk.CONTAINER_ID')
+    .select(['dt.IS_VALID as IS_VALID'])
+    .where('pk.ROWGUID = :row', { row: packageID })
+    .andWhere('LEFT(dt.DE_ORDER_NO, 2) = :keystring', { keystring: 'NK' })
+    .getRawMany();
+  if (DE_ORDER_NO.length) {
+    return DE_ORDER_NO[0].IS_VALID;
+  } else {
+    return false;
+  }
 };
 
 const updateCanCancelImport = async (packageID: string) => {
@@ -731,6 +760,7 @@ const getCancelInvoice = async (whereObj: CancelInvoiceWhere) => {
       'iv.CANCEL_DATE as CANCEL_DATE',
       'iv.CANCLE_REMARK as CANCLE_REMARK',
     ])
+    .orderBy('iv.INV_DATE', 'DESC')
     .where('CAN_CANCEL = 1');
   if (whereObj.CUSTOMER_CODE) {
     query = query.andWhere('iv.PAYER = :cus', { cus: whereObj.CUSTOMER_CODE });
@@ -776,4 +806,5 @@ export {
   getCancelInvoice,
   updateCanCancelImport,
   updateCanCancelExport,
+  checkPackageCanCelOrder,
 };
