@@ -99,8 +99,8 @@ const validateCustomerRequest = (req: Request, res: Response, next: NextFunction
     }
   }
 
-  if (insert) checkDuplicatedID(insert, ['CUSTOMER_CODE'], 'thêm mới');
-  if (update) checkDuplicatedID(update, ['CUSTOMER_CODE'], 'cập nhật');
+  if (insert) checkDuplicatedID(insert, ['CUSTOMER_CODE', 'TAX_CODE', 'EMAIL'], 'thêm mới');
+  if (update) checkDuplicatedID(update, ['CUSTOMER_CODE', 'TAX_CODE', 'EMAIL'], 'cập nhật');
 
   res.locals.requestData = { insert: insertData, update: updateData };
   next();

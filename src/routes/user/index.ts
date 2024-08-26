@@ -22,7 +22,8 @@ router.patch(
   asyncHandler(grantPermission),
   asyncHandler(userController.activateUser),
 );
-router.patch('/:userId', asyncHandler(grantPermission), asyncHandler(userController.updateUser));
+
+router.patch('/:userId', asyncHandler(userController.updateUser));
 router.patch(
   '/reset-password/:userId',
   asyncHandler(grantPermission),

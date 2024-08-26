@@ -267,6 +267,8 @@ export const dbColumns: any = {
 
   // customer
   CUSTOMER_CODE: 'mã khách hàng',
+  EMAIL: 'email',
+  TAX_CODE: 'mã số thuế',
 
   // vessel
   VOYAGEKEY: 'mã tàu',
