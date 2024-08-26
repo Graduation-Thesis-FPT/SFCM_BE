@@ -720,6 +720,7 @@ const updateCanCancelImport = async (packageID: string) => {
     .leftJoin('DT_PACKAGE_MNF_LD', 'pk', 'dt.CONTAINER_ID = pk.CONTAINER_ID')
     .select(['dt.DE_ORDER_NO as DE_ORDER_NO'])
     .where('pk.ROWGUID = :row', { row: packageID })
+    .andWhere('dt.IS_VALID = 1')
     .andWhere('LEFT(dt.DE_ORDER_NO, 2) = :keystring', { keystring: 'NK' })
     .getRawMany();
   if (DE_ORDER_NO.length) {
