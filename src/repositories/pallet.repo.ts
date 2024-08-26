@@ -116,6 +116,8 @@ const getListJobImport = async (palletStatus: string) => {
       'warehouse',
       'block.WAREHOUSE_CODE = warehouse.WAREHOUSE_CODE',
     )
+    .leftJoinAndSelect('DT_CNTR_MNF_LD', 'cont', 'package.CONTAINER_ID = cont.ROWGUID')
+    .leftJoinAndSelect('DT_VESSEL_VISIT', 'vessel', 'vessel.VOYAGEKEY = cont.VOYAGEKEY')
     .where('PALLET_STATUS = :palletStatus', { palletStatus }) // truyền I để lấy pallet chưa vào kho
     .andWhere('job.JOB_STATUS = :jobQuantityStatus', { jobQuantityStatus: 'C' }) // job Quantity check phải là complate mới lấy đc danh sách cv xe nâng
     .select([
@@ -135,6 +137,10 @@ const getListJobImport = async (palletStatus: string) => {
       'pallet.PALLET_HEIGHT as PALLET_HEIGHT',
       'warehouse.WAREHOUSE_CODE as WAREHOUSE_CODE',
       'warehouse.WAREHOUSE_NAME as WAREHOUSE_NAME',
+      'cont.CNTRNO as CNTRNO',
+      'vessel.VESSEL_NAME as VESSEL_NAME',
+      'vessel.INBOUND_VOYAGE as INBOUND_VOYAGE',
+      'package.HOUSE_BILL as HOUSE_BILL',
     ])
     .getRawMany();
 };
@@ -147,6 +153,8 @@ const getListJobExport = async () => {
     .innerJoin('BS_CELL', 'cell', 'pallet.CELL_ID = cell.ROWGUID')
     .innerJoin('BS_BLOCK', 'block', 'cell.BLOCK_CODE = block.BLOCK_CODE')
     .innerJoin('BS_WAREHOUSE', 'warehouse', 'block.WAREHOUSE_CODE = warehouse.WAREHOUSE_CODE')
+    .innerJoin('DT_CNTR_MNF_LD', 'cont', 'package.CONTAINER_ID = cont.ROWGUID')
+    .innerJoin('DT_VESSEL_VISIT', 'vessel', 'vessel.VOYAGEKEY = cont.VOYAGEKEY')
     .where('package.JOB_TYPE = :jobType', { jobType: 'XK' })
     .andWhere('pallet.PALLET_STATUS = :palletStatus', { palletStatus: 'S' })
     .select([
@@ -166,6 +174,10 @@ const getListJobExport = async () => {
       'pallet.PALLET_HEIGHT as PALLET_HEIGHT',
       'warehouse.WAREHOUSE_CODE as WAREHOUSE_CODE',
       'warehouse.WAREHOUSE_NAME as WAREHOUSE_NAME',
+      'cont.CNTRNO as CNTRNO',
+      'vessel.VESSEL_NAME as VESSEL_NAME',
+      'vessel.INBOUND_VOYAGE as INBOUND_VOYAGE',
+      'package.HOUSE_BILL as HOUSE_BILL',
     ])
     .getRawMany();
 };
