@@ -2,6 +2,7 @@ import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
 import { Vessel } from '../../models/vessel.model';
 import { BadRequestError } from '../../core/error.response';
+import { checkDuplicatedID } from '../../utils';
 
 const validateInsertVessel = (data: Vessel) => {
   const methodSchema = Joi.object({
@@ -73,6 +74,9 @@ const validateVesselRequest = (req: Request, res: Response, next: NextFunction) 
       updateData.push(value);
     }
   }
+
+  if (insert) checkDuplicatedID(insert, ['INBOUND_VOYAGE'], 'thêm mới');
+  if (update) checkDuplicatedID(update, ['INBOUND_VOYAGE'], 'cập nhật');
 
   res.locals.requestData = { insert: insertData, update: updateData };
   next();

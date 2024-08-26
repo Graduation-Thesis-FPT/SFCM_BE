@@ -130,11 +130,7 @@ class CustomerService {
             customerInfo.TAX_CODE,
             transactionalEntityManager,
           );
-          if (
-            custByTaxCode &&
-            custByTaxCode.CUSTOMER_CODE !== customerInfo.CUSTOMER_CODE &&
-            custByTaxCode.TAX_CODE === customerInfo.TAX_CODE
-          ) {
+          if (custByTaxCode && custByTaxCode.CUSTOMER_CODE !== customerInfo.CUSTOMER_CODE) {
             throw new BadRequestError(
               `Mã số thuế ${customerInfo.TAX_CODE} đã được sử dụng bởi khách hàng ${custByTaxCode.CUSTOMER_CODE}`,
             );

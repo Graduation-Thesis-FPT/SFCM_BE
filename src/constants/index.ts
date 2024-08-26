@@ -272,8 +272,11 @@ export const dbColumns: any = {
 
   // vessel
   VOYAGEKEY: 'mã tàu',
-
+  VESSEL_NAME: 'tên tàu',
+  INBOUND_VOYAGE: 'chuyến nhập',
   //
   ITEM_TYPE_CODE: 'mã loại hàng hóa',
   ITEM_TYPE_NAME: 'tên loại hàng hóa',
+
+  CNTRNO: 'số container',
 };

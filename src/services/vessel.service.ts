@@ -40,10 +40,6 @@ class VesselService {
             vesselInfo.INBOUND_VOYAGE,
             vesselInfo.ETA,
           );
-          const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY, transactionalEntityManager);
-          if (vessel) {
-            throw new BadRequestError(`Mã tàu ${vessel.VOYAGEKEY} đã tồn tại`);
-          }
 
           const isDupicateInboundVoyage = await findVesselInBoundVoyage(
             vesselInfo.INBOUND_VOYAGE,
@@ -51,7 +47,14 @@ class VesselService {
           );
 
           if (isDupicateInboundVoyage) {
-            throw new BadRequestError(`Chuyến nhập ${vesselInfo.INBOUND_VOYAGE} đã bị trùng`);
+            throw new BadRequestError(`Chuyến nhập ${vesselInfo.INBOUND_VOYAGE} đã tồn tại`);
+          }
+
+          const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY, transactionalEntityManager);
+          if (vessel) {
+            throw new BadRequestError(
+              `Tàu ${vessel.VESSEL_NAME} với chuyến nhập ${vesselInfo.INBOUND_VOYAGE} đã tồn tại`,
+            );
           }
 
           processVesselInfo(vesselInfo);
@@ -63,7 +66,18 @@ class VesselService {
         for (const vesselInfo of updateData) {
           const vessel = await findVesselByCode(vesselInfo.VOYAGEKEY, transactionalEntityManager);
           if (!vessel) {
-            throw new BadRequestError(`Mã tàu ${vesselInfo.VOYAGEKEY} không hợp lệ`);
+            throw new BadRequestError(
+              `Tàu ${vesselInfo.VESSEL_NAME} với chuyến nhập ${vesselInfo.INBOUND_VOYAGE} không tồn tại`,
+            );
+          }
+
+          const vesselByInBoundVoy = await findVesselInBoundVoyage(
+            vesselInfo.INBOUND_VOYAGE,
+            transactionalEntityManager,
+          );
+
+          if (vesselByInBoundVoy && vesselByInBoundVoy.VOYAGEKEY !== vesselInfo.VOYAGEKEY) {
+            throw new BadRequestError(`Chuyến nhập ${vesselInfo.INBOUND_VOYAGE} đã tồn tại`);
           }
 
           const isValidUpdate = await findContainerByVoyageKey(

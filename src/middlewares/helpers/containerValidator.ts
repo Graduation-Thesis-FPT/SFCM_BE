@@ -2,6 +2,7 @@ import Joi from 'joi';
 import { NextFunction, Request, Response } from 'express';
 import { Container } from '../../models/container.model';
 import { BadRequestError } from '../../core/error.response';
+import { checkDuplicatedID } from '../../utils';
 
 const validateInsertContainer = (data: Container) => {
   const methodSchema = Joi.object({
@@ -89,6 +90,9 @@ const validateContainerRequest = (req: Request, res: Response, next: NextFunctio
       updateData.push(value);
     }
   }
+
+  if (insert) checkDuplicatedID(insert, ['CNTRNO'], 'thêm mới');
+  if (update) checkDuplicatedID(update, ['CNTRNO'], 'cập nhật');
   res.locals.requestData = { insert: insertData, update: updateData };
   next();
 };
