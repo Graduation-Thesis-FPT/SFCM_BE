@@ -125,7 +125,7 @@ class PalletService {
     const pallet = await findPallet(data.PALLET_NO);
 
     const isValidExport = await checkIsValidExportPallet(data.PALLET_NO);
-    if (isValidExport) {
+    if (!isValidExport) {
       throw new BadRequestError(`Lệnh xuất kho đã được hủy, không thể xuất pallet!`);
     }
 

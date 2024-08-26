@@ -801,7 +801,7 @@ const checkIsValidExportPallet = async (palletNo: string) => {
     .getOne();
 
   if (!order) {
-    throw new BadRequestError('Pallet No is not valid');
+    throw new BadRequestError('Pallet không hợp lệ!');
   }
 
   return order.IS_VALID;
