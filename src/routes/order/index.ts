@@ -51,7 +51,7 @@ router.get('/getCancelInvoice', asyncHandler(deliveryOrderController.getCancelIn
 //report xuất nhập kho
 router.get('/getReportInExOrder', asyncHandler(deliveryOrderController.getReportInExOrder));
 router.get(
-  '/order/:orderNo',
+  '/viewOrderDtl/:orderNo',
   asyncHandler(grantPermission),
   asyncHandler(customerOrderController.getOrderByOrderNo),
 );
