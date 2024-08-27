@@ -3,6 +3,7 @@ import { asyncHandler } from '../../utils';
 import deliveryOrderController from '../../controllers/delivery-order.controller';
 import { grantPermission } from '../../middlewares';
 import { authentication } from '../../auth/authUtils';
+import customerOrderController from '../../controllers/customer-order.controller';
 
 const router = Router();
 
@@ -49,5 +50,9 @@ router.get('/getCancelInvoice', asyncHandler(deliveryOrderController.getCancelIn
 
 //report xuất nhập kho
 router.get('/getReportInExOrder', asyncHandler(deliveryOrderController.getReportInExOrder));
-
+router.get(
+  '/order/:orderNo',
+  asyncHandler(grantPermission),
+  asyncHandler(customerOrderController.getOrderByOrderNo),
+);
 export default router;

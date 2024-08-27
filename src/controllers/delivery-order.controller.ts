@@ -188,6 +188,9 @@ class DeliveryOrderController {
     if (req.query.CNTRNO) {
       rule.CNTRNO = String(req.query.CNTRNO);
     }
+    if (req.query.DE_ORDER_NO) {
+      rule.DE_ORDER_NO = String(req.query.DE_ORDER_NO);
+    }
     new OK({
       message: SUCCESS_MESSAGE.GET_DATA_SUCCESS,
       metadata: await DeliveryOrderService.getReportInExOrder(rule),

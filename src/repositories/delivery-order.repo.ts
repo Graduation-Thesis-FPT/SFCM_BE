@@ -641,6 +641,7 @@ export type ReportInEx = {
   toDate: Date;
   CNTRNO?: string;
   CUSTOMER_CODE?: string;
+  DE_ORDER_NO?: string;
   isInEx: '' | 'I' | 'E';
 };
 const getReportInExOrder = async (whereObj: ReportInEx) => {
@@ -664,6 +665,9 @@ const getReportInExOrder = async (whereObj: ReportInEx) => {
     .orderBy('dto.UPDATE_DATE', 'DESC');
   if (whereObj.CNTRNO) {
     query = query.andWhere('cn.CNTRNO LIKE :cnt', { cnt: `%${whereObj.CNTRNO}%` });
+  }
+  if (whereObj.DE_ORDER_NO) {
+    query = query.andWhere('dto.DE_ORDER_NO LIKE :dtoer', { dtoer: `%${whereObj.DE_ORDER_NO}%` });
   }
   if (whereObj.CUSTOMER_CODE) {
     query = query.andWhere('cus.CUSTOMER_CODE = :customer', { customer: whereObj.CUSTOMER_CODE });
