@@ -58,6 +58,7 @@ export enum ImportedOrderStatus {
   isConfirmed = 'isConfirmed',
   isChecked = 'isChecked',
   isStored = 'isStored',
+  isCanceled = 'isCanceled',
 }
 
 export interface ImportedOrder extends DeliverOrder {
@@ -73,6 +74,7 @@ export interface ExtendedImportedOrder extends ImportedOrder {
 export enum ExportedOrderStatus {
   isConfirmed = 'isConfirmed',
   isReleased = 'isReleased',
+  isCanceled = 'isCanceled',
 }
 
 export interface ExportedOrder extends DeliverOrder {

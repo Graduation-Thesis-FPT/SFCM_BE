@@ -64,7 +64,9 @@ class CustomerOrderService {
 
     const processOrder = async (order: any): Promise<ExtendedImportedOrder> => {
       let orderStatus: ImportedOrderStatus;
-      if (order.TOTAL_PACKAGES === order.TOTAL_JOBS_BY_PACKAGE) {
+      if (!order.IS_VALID) {
+        orderStatus = ImportedOrderStatus.isCanceled;
+      } else if (order.TOTAL_PACKAGES === order.TOTAL_JOBS_BY_PACKAGE) {
         if (order.TOTAL_PALLETS === order.STORED_PALLETS) {
           orderStatus = ImportedOrderStatus.isStored;
         } else if (order.TOTAL_JOBS === order.CHECKED_JOBS) {
@@ -160,7 +162,9 @@ class CustomerOrderService {
 
     const processOrder = async (order: any): Promise<ExtendedExportedOrder> => {
       let orderStatus: ExportedOrderStatus;
-      if (
+      if (!order.IS_VALID) {
+        orderStatus = ExportedOrderStatus.isCanceled;
+      } else if (
         order.TOTAL_JOBS === order.TOTAL_PALLETS &&
         order.TOTAL_PALLETS === order.RELEASED_PALLETS
       ) {

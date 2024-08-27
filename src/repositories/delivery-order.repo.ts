@@ -559,6 +559,7 @@ const findImportedOrdersByStatus = async (customerCode: string): Promise<Importe
       do.EXP_DATE,
       do.TOTAL_CBM,
       do.JOB_CHK,
+      do.IS_VALID,
       do.NOTE, 
       COUNT(DISTINCT dod.REF_PAKAGE) AS TOTAL_PACKAGES,
       COUNT(DISTINCT jqc.PACKAGE_ID) AS TOTAL_JOBS_BY_PACKAGE,
@@ -579,7 +580,7 @@ const findImportedOrdersByStatus = async (customerCode: string): Promise<Importe
       and do.DE_ORDER_NO like 'NK%'
   GROUP BY
       do.DE_ORDER_NO, do.CUSTOMER_CODE, do.CONTAINER_ID, do.PACKAGE_ID, do.INV_ID, 
-    do.ISSUE_DATE, do.EXP_DATE, do.TOTAL_CBM, do.JOB_CHK, do.NOTE`;
+    do.ISSUE_DATE, do.EXP_DATE, do.TOTAL_CBM, do.JOB_CHK, do.IS_VALID, do.NOTE`;
 
   const queryRunner = await mssqlConnection.createQueryRunner();
   try {
@@ -602,6 +603,7 @@ const findExportedOrdersByStatus = async (customerCode: string): Promise<Exporte
       do.EXP_DATE,
       do.TOTAL_CBM,
       do.JOB_CHK,
+      do.IS_VALID,
       do.NOTE, 
       COUNT(DISTINCT jqc.ROWGUID) AS TOTAL_JOBS,
       COUNT(DISTINCT ps.PALLET_NO) AS TOTAL_PALLETS,
@@ -617,7 +619,7 @@ const findExportedOrdersByStatus = async (customerCode: string): Promise<Exporte
       AND do.DE_ORDER_NO LIKE 'XK%'
     GROUP BY 
       do.DE_ORDER_NO, do.CUSTOMER_CODE, do.CONTAINER_ID, do.PACKAGE_ID, do.INV_ID, 
-    do.ISSUE_DATE, do.EXP_DATE, do.TOTAL_CBM, do.JOB_CHK, do.NOTE
+    do.ISSUE_DATE, do.EXP_DATE, do.TOTAL_CBM, do.JOB_CHK, do.IS_VALID, do.NOTE
   `;
 
   const queryRunner = await mssqlConnection.createQueryRunner();
